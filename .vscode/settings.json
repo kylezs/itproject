@@ -1,0 +1,10 @@
+{
+    "python.pythonPath": "./back/.venv/bin/python",
+    "python.linting.pep8Enabled": true,
+    "python.linting.pylintPath": "./back/.venv/bin/pylint",
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+        "pylint_django"
+    ],
+    "python.linting.pylintEnabled": true
+}
