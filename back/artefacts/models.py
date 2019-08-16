@@ -16,4 +16,4 @@ class Artefact(models.Model):
     def __str__(self):
         # NB: Pk is a unique identifier. It is automatically assigned to every
         # created object
-        return '{} (#{})'.format(self.title, self.pk)
+        return '{} (#{})'.format(self.name, self.pk)

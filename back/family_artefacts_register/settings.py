@@ -39,10 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third party apps
+    'graphene_django',
+    'corsheaders',
 
     # Custom apps
     'artefacts',
 ]
+
+GRAPHENE = {
+    'SCHEMA': 'gql.schema.schema'
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,7 +58,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Third party middleware
+    'corsheaders.middleware.CorsMiddleWare',
+    # Custom middleware
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'family_artefacts_register.urls'
 
