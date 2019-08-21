@@ -22,3 +22,10 @@
         - You will have already done some steps from that guide
         - You will not need to run > python manage.py makemigrations as they are already in the repo
         - Some set-up in settings already done, you should only have to change the username and password to whatever you used
+
+
+### Front end
+1. Setup backend first
+2. `cd front`
+3. `npm install`
+4. `npm start`
