@@ -24,6 +24,8 @@ export default function HomeView() {
 
     return (
     <div>
+        <h1>Here are 5 artefacts</h1>
+            <button><Link to={`/artefacts/create/`}>Create a new artefact in the listing</Link></button>
         {data.artefacts.edges.map(item => (
             <p key={item.node.id}>
                 <Link to={`/artefacts/${item.node.id}/`}>
