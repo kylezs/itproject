@@ -1,8 +1,9 @@
 from graphene import Argument, Field, ID, ObjectType, Schema
 from graphene_django import DjangoConnectionField
+from graphene_django.filter import DjangoFilterConnectionField
+# Artefacts
 from artefacts.models import Artefact
 from .artefacts.types import ArtefactType
-from graphene_django.filter import DjangoFilterConnectionField
 from .artefacts.filters import ArtefactFilter
 from .artefacts.mutations import ArtefactCreate, ArtefactDelete
 
