@@ -1,4 +1,5 @@
 from graphene import Argument, Field, ID, ObjectType, Schema, List
+import graphql_jwt
 from graphene_django import DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 # Artefacts
@@ -29,15 +30,30 @@ class Query(ObjectType):
 
     # ==== User queries and resolvers ====
     users = List(UserType)
+    
+    user = Field(UserType)
 
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
 
+    def resolve_user(self, info, **kwargs):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception("Not Logged in!")
+        
+        return user
+
 
 class Mutation(ObjectType):
+    # ==== Artefact mutations ====
     artefact_create = ArtefactCreate.Field()
     artefact_delete = ArtefactDelete.Field()
+
+    # ==== UserAuth mutations ====
     create_user = CreateUser.Field()
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
 
 
 schema = Schema(query=Query, mutation=Mutation)
