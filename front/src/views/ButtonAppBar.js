@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HomeView() {
+export default function ButtonAppBar() {
   const classes = useStyles();
 
   return (

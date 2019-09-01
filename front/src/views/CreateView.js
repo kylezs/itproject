@@ -14,6 +14,7 @@ mutation ArtefactCreate($artefactInput:ArtefactInputType!) {
 
 export default function CreateView(props) {
     let name, description;
+    // eslint-disable-next-line
     const [createArtefact, { data, loading, errors }] = useMutation(CREATE_ARTEFACT);
     if (loading) {
         return <div>Loading...</div>;
@@ -46,7 +47,7 @@ export default function CreateView(props) {
                 />
                 <br />
                 <label>Description</label>
-                <input 
+                <input
                     ref={node => {
                         description = node;
                     }}

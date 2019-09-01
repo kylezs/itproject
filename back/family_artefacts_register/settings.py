@@ -99,9 +99,9 @@ WSGI_APPLICATION = 'family_artefacts_register.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'artefacts_register',
+        'NAME': 'artefacts_db',
         'USER': 'artefacts_user',
-        'PASSWORD': 'Password123',
+        'PASSWORD': 'its tic zaps a Cacophony4',
         'HOST': 'localhost',
         'PORT': '5432'
     }
