@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
+# NB: You may need to update the graphql logic if you are updating this
 class Artefact(models.Model):
 
     name = models.CharField(max_length=255)
