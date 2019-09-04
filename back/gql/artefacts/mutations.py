@@ -11,12 +11,19 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'description',
+            'test', # test
+            'date',
+            'LostOrDamaged',
+            'isPublic',
         )
 
 
 class ArtefactInputType(InputObjectType):
     name = String()
     description = String()
+    test = String() # test
+    LostOrDamaged = Boolean()
+    isPublic = Boolean()
 
 
 class ArtefactCreate(Mutation):
