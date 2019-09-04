@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
@@ -20,11 +18,15 @@ import gql from 'graphql-tag'
 
 
 const SIGNUP_MUTATION = gql`
-  mutation SignupMutation($email: String!, $password: String!, $name: String!) {
-    create_user(email: $email, password: $password, name: $name) {
-      token
+mutation SignupMutation($email: String!, $password: String!, $username: String!){
+    createUser(email: $email, username: $username, password: $password) {
+        user {
+            id
+            username
+            email
+        }
     }
-  }
+}
 `
 
 function useStyles(){
@@ -68,72 +70,71 @@ class Signup extends Component {
         const { username, email, password, showPassword } = this.state
         return (
             <Box component="span" m={1}>
-            <form className={classes.container} noValidate autoComplete="off">
-            <FormControl className={clsx(classes.margin, classes.textField)}>
-            <InputLabel htmlFor="username">Username</InputLabel>
-            <Input
-            id="username"
-            type={'text'}
-            value={username}
-            onChange={e => this.setState({ username: e.target.value })}
-            />
-            </FormControl>
+                <form className={classes.container} noValidate autoComplete="off">
+                    <FormControl className={clsx(classes.margin, classes.textField)}>
+                        <InputLabel htmlFor="username">Username</InputLabel>
+                        <Input
+                            id="username"
+                            type={'text'}
+                            value={username}
+                            onChange={e => this.setState({ username: e.target.value })}
+                            />
+                    </FormControl>
 
-            <FormControl className={clsx(classes.margin, classes.textField)}>
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input
-            id="email"
-            type={'text'}
-            value={email}
-            onChange={e => this.setState({ email: e.target.value })}
-            />
-            </FormControl>
+                    <FormControl className={clsx(classes.margin, classes.textField)}>
+                        <InputLabel htmlFor="email">Email</InputLabel>
+                        <Input
+                            id="email"
+                            type={'text'}
+                            value={email}
+                            onChange={e => this.setState({ email: e.target.value })}
+                            />
+                    </FormControl>
 
-            <FormControl className={clsx(classes.margin, classes.textField)}>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={e => this.setState({ password: e.target.value })}
-            endAdornment={
-                <InputAdornment position="end">
-                <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-                >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-                </InputAdornment>
-            }
-            />
-            </FormControl>
+                    <FormControl className={clsx(classes.margin, classes.textField)}>
+                        <InputLabel htmlFor="password">Password</InputLabel>
+                        <Input
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={e => this.setState({ password: e.target.value })}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            />
+                    </FormControl>
 
-            <Mutation
-            mutation={SIGNUP_MUTATION}
-            variables={{ username, email, password }}
-            onCompleted={data => this._confirm(data)}
-            >
-            {mutation => (
-                <Button
-                color="inherit"
-                onClick={mutation}
-                >
-                Sign Up
-                </Button>
-            )}
-            </Mutation>
+                    <Mutation
+                        mutation={SIGNUP_MUTATION}
+                        variables={{ username, email, password }}
+                        onCompleted={data => this._confirm(data)}
+                        >
+                        {mutation => (
+                            <Button
+                                color="inherit"
+                                onClick={mutation}
+                                >
+                                Sign Up
+                            </Button>
+                        )}
+                    </Mutation>
 
-            </form>
+                </form>
             </Box   >
         );
     }
 
     _confirm = async data => {
-        const { token } = data.signup
-        this._saveUserData(token)
-        this.props.history.push(`/`)
+        // handle signup errors and potentially login
+        this.props.history.push(`/login`)
     }
 
     _saveUserData = token => {

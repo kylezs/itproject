@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
@@ -20,8 +18,8 @@ import gql from 'graphql-tag'
 
 
 const LOGIN_MUTATION = gql`
-mutation LoginMutation($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
+mutation TokenAuth($username: String!, $password: String!) {
+    tokenAuth(username: $username, password: $password) {
         token
     }
 }
@@ -67,61 +65,61 @@ class Login extends Component {
         const { username, password, showPassword } = this.state
         return (
             <Box component="span" m={1}>
-            <form className={classes.container} noValidate autoComplete="off">
-            <FormControl className={clsx(classes.margin, classes.textField)}>
-            <InputLabel htmlFor="username">Username</InputLabel>
-            <Input
-            id="username"
-            type={'text'}
-            value={username}
-            onChange={e => this.setState({ username: e.target.value })}
-            />
-            </FormControl>
+                <form className={classes.container} noValidate autoComplete="off">
+                    <FormControl className={clsx(classes.margin, classes.textField)}>
+                        <InputLabel htmlFor="username">Username</InputLabel>
+                        <Input
+                            id="username"
+                            type={'text'}
+                            value={username}
+                            onChange={e => this.setState({ username: e.target.value })}
+                            />
+                    </FormControl>
 
-            <FormControl className={clsx(classes.margin, classes.textField)}>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={e => this.setState({ password: e.target.value })}
-            endAdornment={
-                <InputAdornment position="end">
-                <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-                >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-                </InputAdornment>
-            }
-            />
-            </FormControl>
+                    <FormControl className={clsx(classes.margin, classes.textField)}>
+                        <InputLabel htmlFor="password">Password</InputLabel>
+                        <Input
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={e => this.setState({ password: e.target.value })}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            />
+                    </FormControl>
 
-            <Mutation
-            mutation={LOGIN_MUTATION}
-            variables={{ username, password }}
-            onCompleted={data => this._confirm(data)}
-            >
-            {mutation => (
-                <Button
-                color="inherit"
-                onClick={mutation}
-                >
-                Login
-                </Button>
-            )}
-            </Mutation>
+                    <Mutation
+                        mutation={LOGIN_MUTATION}
+                        variables={{ username, password }}
+                        onCompleted={data => this._confirm(data)}
+                        >
+                        {mutation => (
+                            <Button
+                                color="inherit"
+                                onClick={mutation}
+                                >
+                                Login
+                            </Button>
+                        )}
+                    </Mutation>
 
 
-            </form>
+                </form>
             </Box   >
         );
     }
 
     _confirm = async data => {
-        const { token } = data.login
+        const { token } = data.tokenAuth
         this._saveUserData(token)
         this.props.history.push(`/`)
     }
