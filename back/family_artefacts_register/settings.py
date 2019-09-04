@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+# django-environ package, allows usage of a .env file
+import environ
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -100,9 +109,9 @@ WSGI_APPLICATION = 'family_artefacts_register.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'artefacts_register',
-        'USER': 'artefacts_user',
-        'PASSWORD': 'Password123',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432'
     }
