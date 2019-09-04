@@ -13,9 +13,13 @@ from .userAuth.types import UserType
 from .userAuth.mutations import CreateUser
 from django.contrib.auth import get_user_model
 
+# User Profile
+from .profiles.types import ProfileType
+from .profiles.mutations import UpdateProfile
+
 
 class Query(ObjectType):
-    
+
     # ==== Artefact queries and resolvers ====
     artefacts = DjangoFilterConnectionField(ArtefactType,
                                             filterset_class=ArtefactFilter)
@@ -30,8 +34,8 @@ class Query(ObjectType):
 
     # ==== User queries and resolvers ====
     users = List(UserType)
-    
-    user = Field(UserType)
+
+    user = Field(UserType, id=Argument(ID, required=True))
 
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
@@ -40,7 +44,7 @@ class Query(ObjectType):
         user = info.context.user
         if user.is_anonymous:
             raise Exception("Not Logged in!")
-        
+
         return user
 
 
@@ -54,6 +58,9 @@ class Mutation(ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+
+    # ==== User Profile mutation ====
+    update_profile = UpdateProfile.Field()
 
 
 schema = Schema(query=Query, mutation=Mutation)

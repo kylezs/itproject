@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Custom apps
     'artefacts',
+    'userprofile',
 ]
 
 GRAPHENE = {
