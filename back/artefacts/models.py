@@ -15,10 +15,20 @@ class Artefact(models.Model):
     # also, used timezone.now() for migration when prompted default value.. change later
     date = models.DateTimeField(auto_now=True) 
 
-    LostOrDamaged = models.BooleanField(default=False)
-    isPublic = models.BooleanField(default=False)
+    artifact_flag_choices = [
+        ('okay', 'No Problem'),
+        ('lost', 'Lost'),
+        ('damaged', 'Damaged'),
+        ('destroyed', 'Destroyed'),
+    ]
+    artifact_flag_choices = models.CharField(
+        max_length=9,
+        choices = artifact_flag_choices,
+        default = 'okay'
+    )
+    is_public = models.BooleanField(default=False)
     # test variable
-    test = models.TextField(default='')
+    information_on_handling = models.TextField(default='')
 
     
     added_at = models.DateTimeField(auto_now_add=True)
