@@ -13,7 +13,7 @@ class Family(models.Model):
     about = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     join_code = models.UUIDField(unique=True, default=uuid.uuid4)
-    family_members = models.ManyToManyField(get_user_model())
+    family_members = models.ManyToManyField(get_user_model(), related_name="members")
 
     class Meta:
         verbose_name = _('family')
