@@ -26,7 +26,7 @@ class Profile(models.Model):
         # created object
         return '{} (#{})'.format(self.user.username, self.pk)
 
-"""
+
 # These methods creates a profile when a user is created
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -37,4 +37,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-"""

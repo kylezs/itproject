@@ -10,10 +10,11 @@ class ArtefactType(DjangoObjectType):
             'name',
             'description',
             'added_at',
-            'test', # test
+            
             'date',
             'LostOrDamaged',
             'isPublic',
+            'test', # test
         )
         # Creates a connection for ArtefactType, to paginate data when we get
         # a list of Artefacts

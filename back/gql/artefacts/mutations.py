@@ -21,9 +21,9 @@ class ArtefactSerializer(serializers.ModelSerializer):
 class ArtefactInputType(InputObjectType):
     name = String()
     description = String()
-    test = String() # test
     LostOrDamaged = Boolean()
     isPublic = Boolean()
+    test = String() # test
 
 
 class ArtefactCreate(Mutation):
