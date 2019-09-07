@@ -8,6 +8,7 @@ class FamilyType(DjangoObjectType):
         only_fields = (
             'id',
             'family_name',
+            'family_admin',
             'about',
             'join_code',
             'family_members',

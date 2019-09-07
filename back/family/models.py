@@ -9,11 +9,13 @@ import uuid
 class Family(models.Model):
     family_name = models.CharField(max_length=150)
     family_admin = models.ForeignKey(get_user_model(),
-                                     on_delete=models.SET_NULL, null=True)
+                                     on_delete=models.SET_NULL, null=True,
+                                     related_name="administrator_of")
     about = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     join_code = models.UUIDField(unique=True, default=uuid.uuid4)
-    family_members = models.ManyToManyField(get_user_model(), related_name="members")
+    family_members = models.ManyToManyField(get_user_model(),
+                                            related_name="is_member_of")
 
     class Meta:
         verbose_name = _('family')
