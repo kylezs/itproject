@@ -37,6 +37,15 @@ class ArtefactCreate(Mutation):
         serializer = ArtefactSerializer(data=data.get('input'))
         serializer.is_valid(raise_exception=True)
 
+        user = info.context.user
+        input = data.get('input')
+        artefact = Artefact(
+            artefact_admin=user
+        )
+        
+        #family.save()
+        artefact.save()
+        #return FamilyCreate(family=family)
         return ArtefactCreate(artefact=serializer.save())
 
 
