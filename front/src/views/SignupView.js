@@ -82,11 +82,14 @@ class Signup extends Component {
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <div className={classes.paper}>
-                    <Typography component="h1" variant="h5">
-                        Sign up
-                    </Typography>
                     <form className={classes.form} noValidate>
                         <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Typography component="h1" variant="h5">
+                                    Sign up
+                                </Typography>
+                            </Grid>
+
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="username"
@@ -138,39 +141,43 @@ class Signup extends Component {
                                     onChange={e => this.setState({ confirmPassword: e.target.value })}
                                     />
                             </Grid>
-                        </Grid>
 
-                        {confirmPassword == password ?
-                            <Mutation
-                                mutation={SIGNUP_MUTATION}
-                                variables={{ username, email, password }}
-                                onCompleted={data => this._confirm(data)}
-                                >
-                                {mutation => (
+                            <Grid item xs={12}>
+                                {
+                                    confirmPassword == password ?
+                                    <Mutation
+                                        mutation={SIGNUP_MUTATION}
+                                        variables={{ username, email, password }}
+                                        onCompleted={data => this._confirm(data)}
+                                        >
+                                        {mutation => (
+                                            <Button
+                                                fullWidth
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={mutation}
+                                                >
+                                                Sign Up
+                                            </Button>
+                                        )}
+                                    </Mutation>
+                                    :
                                     <Button
                                         fullWidth
                                         variant="contained"
                                         color="primary"
-                                        onClick={mutation}
                                         >
-                                        Sign Up
+                                        Passwords Do Not Match
                                     </Button>
-                                )}
-                            </Mutation>
-                            : <Button
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                >
-                                Passwords Do Not Match
-                            </Button>
-                        }
+                                }
+                            </Grid>
 
-                        <Grid container justify="flex-end">
-                            <Grid item>
-                                <Link href="/login" variant="body2">
-                                    Already have an account? Sign in
-                                </Link>
+                            <Grid item xs={12}>
+                                <Grid item>
+                                    <Link href="/login" variant="body2">
+                                        Already have an account? Log in
+                                    </Link>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </form>

@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-
-import IconButton from '@material-ui/core/IconButton';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import Box from '@material-ui/core/Box';
+import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
 
 import { AUTH_TOKEN } from '../constants'
 import { Mutation } from 'react-apollo'
@@ -64,69 +65,86 @@ class Login extends Component {
 
         const { username, password, showPassword } = this.state
         return (
-            <Box component="span" m={1}>
-                <form className={classes.container} noValidate autoComplete="off">
-                    <FormControl className={clsx(classes.margin, classes.textField)}>
-                        <InputLabel htmlFor="username">Username</InputLabel>
-                        <Input
-                            id="username"
-                            type={'text'}
-                            value={username}
-                            onChange={e => this.setState({ username: e.target.value })}
-                            />
-                    </FormControl>
+            <Container component="main" maxWidth="xs">
+                <CssBaseline />
+                <div className={classes.paper}>
+                    <form className={classes.form} noValidate>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Typography component="h1" variant="h5">
+                                    Log In
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    autoComplete="username"
+                                    name="username"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="username"
+                                    label="Username"
+                                    autoFocus
+                                    onChange={e => this.setState({ username: e.target.value })}
+                                    />
+                            </Grid>
 
-                    <FormControl className={clsx(classes.margin, classes.textField)}>
-                        <InputLabel htmlFor="password">Password</InputLabel>
-                        <Input
-                            id="password"
-                            type={showPassword ? 'text' : 'password'}
-                            value={password}
-                            onChange={e => this.setState({ password: e.target.value })}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        >
-                                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            />
-                    </FormControl>
+                            <Grid item xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                    onChange={e => this.setState({ password: e.target.value })}
+                                    />
+                            </Grid>
 
-                    <Mutation
-                        mutation={LOGIN_MUTATION}
-                        variables={{ username, password }}
-                        onCompleted={data => this._confirm(data)}
-                        >
-                        {mutation => (
-                            <Button
-                                color="inherit"
-                                onClick={mutation}
-                                >
-                                Login
-                            </Button>
-                        )}
-                    </Mutation>
+                            <Grid item xs={12}>
+                                <Mutation
+                                    mutation={LOGIN_MUTATION}
+                                    variables={{ username, password }}
+                                    onCompleted={data => this._confirm(data)}
+                                    >
+                                    {mutation => (
+                                        <Button
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={mutation}
+                                            >
+                                            Login
+                                        </Button>
+                                    )}
+                                </Mutation>
+                            </Grid>
 
-
+                            <Grid item xs={12}>
+                                <Grid item>
+                                    <Link href="/signup" variant="body2">
+                                        Need an account? Sign up
+                                    </Link>
+                                </Grid>
+                            </Grid>
+                        </Grid>
                 </form>
-            </Box   >
-        );
-    }
+            </div>
+        </Container>
+    );
+}
 
-    _confirm = async data => {
-        const { token } = data.tokenAuth
-        this._saveUserData(token)
-        this.props.history.push(`/`)
-    }
+_confirm = async data => {
+    const { token } = data.tokenAuth
+    this._saveUserData(token)
+    this.props.history.push(`/`)
+}
 
-    _saveUserData = token => {
-        localStorage.setItem(AUTH_TOKEN, token)
-    }
+_saveUserData = token => {
+    localStorage.setItem(AUTH_TOKEN, token)
+}
 }
 
 export default Login
