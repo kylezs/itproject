@@ -11,7 +11,7 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import Layout from '../components/Layout';
 
 import { AUTH_TOKEN } from '../constants'
 import { Mutation } from 'react-apollo'
@@ -79,7 +79,7 @@ class Signup extends Component {
 
         const { username, email, password, confirmPassword, showPassword } = this.state
         return (
-            <Container component="main" maxWidth="xs">
+            <Layout>
                 <CssBaseline />
                 <div className={classes.paper}>
                     <form className={classes.form} noValidate>
@@ -182,7 +182,7 @@ class Signup extends Component {
                         </Grid>
                     </form>
                 </div>
-            </Container>
+            </Layout>
         );
     }
 
