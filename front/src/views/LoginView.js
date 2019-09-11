@@ -11,7 +11,7 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Layout from '../components/Layout';
+import Container from '@material-ui/core/Container';
 
 import { AUTH_TOKEN } from '../constants'
 import { Mutation } from 'react-apollo'
@@ -65,10 +65,10 @@ class Login extends Component {
 
         const { username, password, showPassword } = this.state
         return (
-            <Layout>
+            <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <div className={classes.paper}>
-                    <form key="formKey" className={classes.form} noValidate>
+                    <form className={classes.form} noValidate>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <Typography component="h1" variant="h5">
@@ -85,12 +85,7 @@ class Login extends Component {
                                     id="username"
                                     label="Username"
                                     autoFocus
-                                    onInput={e => {
-                                        e.preventDefault();
-                                        this.setState({ username: e.target.value });
-                                    }
-                                    }
-                                        
+                                    onChange={e => this.setState({ username: e.target.value })}
                                     />
                             </Grid>
 
@@ -104,10 +99,7 @@ class Login extends Component {
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
-                                    onInput={e => {
-                                        e.preventDefault();
-                                        this.setState({ password: e.target.value });
-                                    }}
+                                    onChange={e => this.setState({ password: e.target.value })}
                                     />
                             </Grid>
 
@@ -140,7 +132,7 @@ class Login extends Component {
                         </Grid>
                 </form>
             </div>
-            </Layout>
+        </Container>
     );
 }
 
