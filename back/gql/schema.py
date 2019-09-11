@@ -57,7 +57,7 @@ class Query(ObjectType):
     # ==== Family queries and resolvers ====
     # get all families
     family = Field(FamilyType)
-    
+
     families = List(FamilyType)
 
     def resolve_families(self, info, **kwargs):
