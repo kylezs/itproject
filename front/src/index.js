@@ -6,11 +6,16 @@ import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import App from './App';
 import { AUTH_TOKEN } from './constants'
+
+import { onError } from 'apollo-link-error'
+
+const errorLink = onError(({ graphQLErrors }) => {
+  if (graphQLErrors) graphQLErrors.map(({ message }) => console.log(message))
+})
 
 const httpLink = createHttpLink({
     uri: 'http://127.0.0.1:8000/graphql/'
@@ -30,13 +35,9 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  onError: errorLink
 });
-
-// const client = new ApolloClient({
-//     cache,
-//     link
-// })
 
 ReactDOM.render(
     <ApolloProvider client={client}>

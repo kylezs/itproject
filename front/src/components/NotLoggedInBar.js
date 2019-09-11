@@ -12,16 +12,6 @@ const SignupLink = React.forwardRef((props, ref) => (
 
 
 export default props => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-
-    function handleMenu(event) {
-        setAnchorEl(event.currentTarget);
-    }
-
-    function handleClose() {
-        setAnchorEl(null);
-    }
     return (
         <div>
             <Button color="inherit" underline="none" component={SignupLink}>Sign up</Button>

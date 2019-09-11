@@ -5,10 +5,23 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import { useMutation } from '@apollo/react-hooks';
+
 import LoggedInBar from './LoggedInBar';
 import NotLoggedInBar from './NotLoggedInBar';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link }  from '@material-ui/core';
+
+import { AUTH_TOKEN } from '../constants'
+import gql from 'graphql-tag'
+
+const VERIFY_TOKEN_MUTATION = gql`
+mutation VerifyToken($token: String!) {
+    verifyToken(token: $token) {
+        payload
+    }
+}
+`
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -24,8 +37,22 @@ const useStyles = makeStyles(theme => ({
 
 export default function MenuAppBar() {
     const classes = useStyles();
-    const auth = false;
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    let loggedIn = false;
+    let username = null;
+    const authToken = localStorage.getItem(AUTH_TOKEN);
+    
+    const [VerifyToken, { data }] = useMutation(VERIFY_TOKEN_MUTATION);
+
+    if (authToken) {
+        VerifyToken({ variables: { token: authToken } })
+    }
+    
+
+    if (data && data.verifyToken) {
+        console.log("token verified")
+        loggedIn = true
+        username = data.verifyToken.payload.username
+    }
 
     return (
         <div className={classes.root}>
@@ -39,10 +66,10 @@ export default function MenuAppBar() {
                             Family AR
                         </Link>
                     </Typography>
-            {auth && (
-                <LoggedInBar />
+            {loggedIn && (
+                <LoggedInBar username={username} />
             )}
-            {!auth && (
+            {!loggedIn && (
                 <NotLoggedInBar />
             )}
                 </Toolbar>
