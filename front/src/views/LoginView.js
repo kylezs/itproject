@@ -10,6 +10,7 @@ import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import { useMutation } from '@apollo/react-hooks';
 
 
 const LOGIN_MUTATION = gql`
@@ -44,6 +45,7 @@ const useStyles = makeStyles(theme => ({
 function Login(props) {
 
     const context = useContext(authContext);
+    const classes = useStyles();
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -61,13 +63,25 @@ function Login(props) {
         console.log(errors);
     }
 
-    const classes = useStyles();
+    const [login, { data }] = useMutation(
+        LOGIN_MUTATION,
+        {
+            onCompleted: _confirm,
+            onError: _handleError,
+        }
+    );
+
+    const submitForm = async (event) => {
+        console.log("form submitted")
+        login({ variables: {username: username, password: password} })
+        event.preventDefault();
+    }
 
     return (
         <Layout>
             <CssBaseline />
             <div className={classes.paper}>
-                <form className={classes.form} noValidate>
+                <form className={classes.form} onSubmit={submitForm}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Typography component="h1" variant="h5">
@@ -99,23 +113,16 @@ function Login(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Mutation
-                                mutation={LOGIN_MUTATION}
-                                variables={{ username, password }}
-                                onCompleted={_confirm}
-                                onError={_handleError}
+                            <Button
+                                name="submit"
+                                label="Submit"
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
                                 >
-                                {mutation => (
-                                    <Button
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={mutation}
-                                        >
-                                        Login
-                                    </Button>
-                                )}
-                            </Mutation>
+                                Log In
+                            </Button>
                         </Grid>
 
                         <Grid item xs={12}>
