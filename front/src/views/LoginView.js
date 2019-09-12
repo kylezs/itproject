@@ -1,19 +1,13 @@
 import React, { Component } from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-
-import { AUTH_TOKEN } from '../constants'
+import Layout from '../components/Layout';
+import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -46,6 +40,8 @@ function useStyles(){
 }
 
 class Login extends Component {
+
+    static contextType = authContext;
     state = {
         username: '',
         password: '',
@@ -53,6 +49,7 @@ class Login extends Component {
     }
 
     render() {
+
         const classes = useStyles();
 
         const handleClickShowPassword = () => {
@@ -65,7 +62,7 @@ class Login extends Component {
 
         const { username, password, showPassword } = this.state
         return (
-            <Container component="main" maxWidth="xs">
+            <Layout>
                 <CssBaseline />
                 <div className={classes.paper}>
                     <form className={classes.form} noValidate>
@@ -77,7 +74,6 @@ class Login extends Component {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
-                                    autoComplete="username"
                                     name="username"
                                     variant="outlined"
                                     required
@@ -98,8 +94,11 @@ class Login extends Component {
                                     label="Password"
                                     type="password"
                                     id="password"
-                                    autoComplete="current-password"
-                                    onChange={e => this.setState({ password: e.target.value })}
+                                    onInput={e => {
+                                        e.preventDefault();
+                                        this.setState({ password: e.target.value });
+                                    }}
+
                                     />
                             </Grid>
 
@@ -132,19 +131,25 @@ class Login extends Component {
                         </Grid>
                 </form>
             </div>
-        </Container>
+            </Layout>
     );
 }
 
 _confirm = async data => {
     const { token } = data.tokenAuth
-    this._saveUserData(token)
+    console.log("getting token first in confirm mutation");
+    console.log(token);
+    this.context.handleAuthentication(token);
+    // this._saveUserData(token)
     this.props.history.push(`/`)
 }
 
-_saveUserData = token => {
-    localStorage.setItem(AUTH_TOKEN, token)
-}
+// _saveUserData = token => {
+//     console.log("Save user data being called, but nothing being done");
+//     authContext.handle
+//     console.log(this.context);
+//     // localStorage.setItem(AUTH_TOKEN, token)
+// }
 }
 
 export default Login
