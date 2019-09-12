@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
+import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -127,7 +128,7 @@ function Login(props) {
 
                         <Grid item xs={12}>
                             <Grid item>
-                                <Link href="/signup" variant="body2">
+                                <Link component={RouterLink} to="/signup">
                                     Need an account? Sign up
                                 </Link>
                             </Grid>
