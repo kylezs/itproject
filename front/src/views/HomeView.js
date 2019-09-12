@@ -55,7 +55,7 @@ function HomeView(props) {
     VerifyToken({ variables: {token: authToken}})
 
     if (data && data.verifyToken){
-        console.log("data has verifyToken att")
+        console.log("token verified")
         loggedIn = true
         username = data.verifyToken.payload.username
     }
