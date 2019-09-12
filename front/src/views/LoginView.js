@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -20,132 +20,116 @@ mutation TokenAuth($username: String!, $password: String!) {
 }
 `
 
-function useStyles(){
-    return makeStyles(theme => ({
-        container: {
-            display: 'flex',
-            flexWrap: 'wrap',
+const useStyles = makeStyles(theme => ({
+    '@global': {
+        body: {
+            backgroundColor: theme.palette.common.white,
         },
-        textField: {
-            marginLeft: theme.spacing(1),
-            marginRight: theme.spacing(1),
-        },
-        dense: {
-            marginTop: theme.spacing(2),
-        },
-        menu: {
-            width: 200,
-        },
-    }));
-}
+    },
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    form: {
+        width: '50%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}));
 
-class Login extends Component {
+function Login(props) {
 
-    static contextType = authContext;
-    state = {
-        username: '',
-        password: '',
+    const context = useContext(authContext);
+
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+
+    const _confirm = async data => {
+        const { token } = data.tokenAuth
+        console.log("getting token first in confirm mutation");
+        console.log(token);
+        context.handleAuthentication(token);
+        // this._saveUserData(token)
+        props.history.push(`/`)
     }
 
-    render() {
+    const _handleError = async errors => {
+        console.log(errors);
+    }
 
-        const classes = useStyles();
+    const classes = useStyles();
 
-        const { username, password } = this.state
-        return (
-            <Layout>
-                <CssBaseline />
-                <div className={classes.paper}>
-                    <form className={classes.form} noValidate>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Typography component="h1" variant="h5">
-                                    Log In
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    name="username"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="username"
-                                    label="Username"
-                                    autoFocus
-                                    onChange={e => this.setState({ username: e.target.value })}
-                                    />
-                            </Grid>
+    return (
+        <Layout>
+            <CssBaseline />
+            <div className={classes.paper}>
+                <form className={classes.form} noValidate>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Typography component="h1" variant="h5">
+                                Log In
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="username"
+                                label="Username"
+                                autoFocus
+                                onChange={e => setUsername(e.target.value)}
+                                />
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    onInput={e => {
-                                        e.preventDefault();
-                                        this.setState({ password: e.target.value });
-                                    }}
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                label="Password"
+                                type="password"
+                                id="password"
+                                onChange={e => setPassword(e.target.value)}
+                                />
+                        </Grid>
 
-                                    />
-                            </Grid>
+                        <Grid item xs={12}>
+                            <Mutation
+                                mutation={LOGIN_MUTATION}
+                                variables={{ username, password }}
+                                onCompleted={_confirm}
+                                onError={_handleError}
+                                >
+                                {mutation => (
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={mutation}
+                                        >
+                                        Login
+                                    </Button>
+                                )}
+                            </Mutation>
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <Mutation
-                                    mutation={LOGIN_MUTATION}
-                                    variables={{ username, password }}
-                                    onCompleted={data => this._confirm(data)}
-                                    onError={errors => this._handleError(errors)}
-                                    >
-                                    {mutation => (
-                                        <Button
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={mutation}
-                                            >
-                                            Login
-                                        </Button>
-                                    )}
-                                </Mutation>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Grid item>
-                                    <Link href="/signup" variant="body2">
-                                        Need an account? Sign up
-                                    </Link>
-                                </Grid>
+                        <Grid item xs={12}>
+                            <Grid item>
+                                <Link href="/signup" variant="body2">
+                                    Need an account? Sign up
+                                </Link>
                             </Grid>
                         </Grid>
+                    </Grid>
                 </form>
             </div>
-            </Layout>
+        </Layout>
     );
-}
-
-_confirm = async data => {
-    const { token } = data.tokenAuth
-    console.log("getting token first in confirm mutation");
-    console.log(token);
-    this.context.handleAuthentication(token);
-    // this._saveUserData(token)
-    this.props.history.push(`/`)
-}
-
-_handleError = async errors => {
-    console.log(errors);
-}
-
-// _saveUserData = token => {
-//     console.log("Save user data being called, but nothing being done");
-//     authContext.handle
-//     console.log(this.context);
-//     // localStorage.setItem(AUTH_TOKEN, token)
-// }
 }
 
 export default Login

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -12,8 +12,8 @@ import Layout from '../components/Layout';
 
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import { useMutation } from '@apollo/react-hooks';
 import { USERNAME_TAKEN_ERR_MSG } from "../constants.js"
-
 
 const SIGNUP_MUTATION = gql`
 mutation SignupMutation($email: String!, $password: String!, $username: String!){
@@ -27,185 +27,179 @@ mutation SignupMutation($email: String!, $password: String!, $username: String!)
 }
 `
 
-function useStyles(){
-    return makeStyles(theme => ({
-        '@global': {
-            body: {
-                backgroundColor: theme.palette.common.white,
-            },
+const useStyles = makeStyles(theme => ({
+    '@global': {
+        body: {
+            backgroundColor: theme.palette.common.white,
         },
-        paper: {
-            marginTop: theme.spacing(8),
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-        },
-        avatar: {
-            margin: theme.spacing(1),
-            backgroundColor: theme.palette.secondary.main,
-        },
-        form: {
-            width: '100%', // Fix IE 11 issue.
-            marginTop: theme.spacing(3),
-        },
-        submit: {
-            margin: theme.spacing(3, 0, 2),
-        },
-    }));
-}
+    },
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    form: {
+        width: '50%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}));
 
-class Signup extends Component {
-    state = {
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        usernameIsTaken: false,
-        emailIsTaken: false,
-    }
+function Signup(props) {
+    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const [usernameIsTaken, setUsernameIsTaken] = useState(false)
+    const [emailIsTaken, setEmailIsTaken] = useState(false)
 
-    render() {
-        const classes = useStyles();
-
-        const { username, email, password, confirmPassword } = this.state
-        const { usernameIsTaken, emailIsTaken } = this.state
-
-        return (
-            <Layout>
-                <CssBaseline />
-                <div className={classes.paper}>
-                    <form className={classes.form} noValidate>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Typography component="h1" variant="h5">
-                                    Sign up
-                                </Typography>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <TextField
-                                    autoComplete="username"
-                                    name="username"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="username"
-                                    label="Username"
-                                    autoFocus
-                                    error={usernameIsTaken}
-                                    onChange={e => this.setState({ username: e.target.value })}
-                                    />
-
-                                {
-                                    usernameIsTaken &&
-                                    <FormControl className={classes.form} error>
-                                        <FormHelperText id="username">Username is taken</FormHelperText>
-                                    </FormControl>
-                                }
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Email Address"
-                                    name="email"
-                                    autoComplete="email"
-                                    onChange={e => this.setState({ email: e.target.value })}
-                                    />
-
-                                {
-                                    emailIsTaken &&
-                                    <FormControl className={classes.form} error>
-                                        <FormHelperText id="email">Email is taken</FormHelperText>
-                                    </FormControl>
-                                }
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
-                                    onChange={e => this.setState({ password: e.target.value })}
-                                    />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="confirmPassword"
-                                    label="Confirm Password"
-                                    type="password"
-                                    id="confirmPassword"
-                                    autoComplete="current-password"
-                                    onChange={e => this.setState({ confirmPassword: e.target.value })}
-                                    />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                {
-                                    confirmPassword === password ?
-                                    <Mutation
-                                        mutation={SIGNUP_MUTATION}
-                                        variables={{ username, email, password }}
-                                        onCompleted={this._confirm}
-                                        onError={this._handleError}
-                                        >
-                                        {mutation => (
-                                            <Button
-                                                fullWidth
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={mutation}
-                                                >
-                                                Sign Up
-                                            </Button>
-                                        )}
-                                    </Mutation>
-                                    :
-                                    <Button
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        >
-                                        Passwords Do Not Match
-                                    </Button>
-                                }
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Grid item>
-                                    <Link href="/login" variant="body2">
-                                        Already have an account? Log in
-                                    </Link>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </form>
-                </div>
-            </Layout>
-        );
-    }
-
-    _confirm = async data => {
+    const classes = useStyles();
+    const _confirm = async data => {
         // handle signup errors and potentially login
         console.log(data)
-        this.props.history.push(`/login`)
+        console.log("_confirm run")
+        props.history.push(`/login`)
     }
 
-    _handleError = async error => {
-        console.log(error.graphQLErrors)
-        if (error === USERNAME_TAKEN_ERR_MSG){
-            console.log("username taken")
+    const _handleError = async errors => {
+        console.log("_handleError run")
+        if (errors.graphQLErrors){
+            const subMessage = errors.graphQLErrors[0].message.substring(0, 10)
+            if (USERNAME_TAKEN_ERR_MSG.startsWith(subMessage)){
+                setUsernameIsTaken(true)
+                console.log("username taken:", usernameIsTaken)
+            } else {
+                console.log(errors)
+            }
         }
     }
+
+    const [signup, { data }] = useMutation(
+        SIGNUP_MUTATION,
+        {
+            onCompleted: _confirm,
+            onError: _handleError,
+        }
+    );
+
+    const submitForm = async (event) => {
+        console.log("form submitted")
+        signup({ variables: {username: username, email: email, password: password} })
+        event.preventDefault();
+    }
+
+    return (
+        <Layout>
+            <CssBaseline />
+            <div className={classes.paper}>
+                <form className={classes.form} onSubmit={submitForm}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Typography component="h1" variant="h5">
+                                Sign up
+                            </Typography>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                autoComplete="username"
+                                name="username"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="username"
+                                label="Username"
+                                autoFocus
+                                error={usernameIsTaken}
+                                onChange={e => setUsername(e.target.value)}
+                                />
+                            {
+                                usernameIsTaken &&
+                                <FormHelperText id="username" error={usernameIsTaken}>Username is taken</FormHelperText>
+                            }
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                type="email"
+                                error={emailIsTaken}
+                                onChange={e => setEmail(e.target.value)}
+                                />
+                            {
+                                emailIsTaken &&
+                                <FormHelperText id="email" error={emailIsTaken}>Email is taken</FormHelperText>
+                            }
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                onChange={ e => setPassword(e.target.value)}
+                                />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="confirmPassword"
+                                label="Confirm Password"
+                                type="password"
+                                id="confirmPassword"
+                                autoComplete="current-password"
+                                onChange={ e => setConfirmPassword(e.target.value)}
+                                error={!(confirmPassword === password)}
+                                />
+                            {
+                                !(confirmPassword === password) &&
+                                <FormHelperText id="confirmPassword" error={!(confirmPassword === password)}>Passwords must match</FormHelperText>
+                            }
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Button
+                                name="submit"
+                                label="Submit"
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                disabled={!(confirmPassword === password)}
+                                >
+                                Sign Up
+                            </Button>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Grid item>
+                                <Link href="/login" variant="body2">
+                                    Already have an account? Log in
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </form>
+            </div>
+        </Layout>
+    );
 }
 
 export default Signup
