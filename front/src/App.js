@@ -6,6 +6,7 @@ import DetailView from './views/DetailView'
 
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
+import { PrivateRoute } from './components/PrivateRoute';
 
 class App extends Component {
     render() {
@@ -13,7 +14,7 @@ class App extends Component {
             <Router>
                 <div>
                     <Switch>
-                        <Route exact path="/" component={HomeView} />
+                        <PrivateRoute exact path="/" component={HomeView} />
                         <Route exact path="/artefacts/create/" component={CreateView} />
                         <Route exact path="/artefacts/:id/" component={DetailView} />
                         <Route exact path="/login/" component={Login} />

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -10,6 +10,8 @@ import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import { AUTH_TOKEN } from '../constants'
+import { Redirect}  from 'react-router-dom';
 
 
 const LOGIN_MUTATION = gql`
@@ -48,7 +50,6 @@ class Login extends Component {
     }
 
     render() {
-
         const classes = useStyles();
 
         const { username, password } = this.state
@@ -132,6 +133,7 @@ _confirm = async data => {
     console.log("getting token first in confirm mutation");
     console.log(token);
     this.context.handleAuthentication(token);
+    localStorage.setItem(AUTH_TOKEN, token);
     // this._saveUserData(token)
     this.props.history.push(`/`)
 }
