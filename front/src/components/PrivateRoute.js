@@ -1,49 +1,58 @@
 import React, { Component, useContext } from 'react';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import authContext from '../authContext';
 import { AUTH_TOKEN } from '../constants';
+import Loading from './Loading';
 
-// export default (props) => {
-//     const context = useContext(authContext);
-//     const thisComp = <Route to={props.path} component={props.component} />;
-//     // check if the authenticated flag already set
-//     if (context.authenticated) {
-//         return thisComp;
-//     }
+class WaitWraper extends Component {
+    state = { checkAuthenticated: false }
+    static contextType = authContext;
     
-//     const authHandler = () => {
-//         if (context.authenticated) {
-//             return (thisComp);
-//         } else {
-//             return (<Redirect to='/login' />);
-//         }
-//     }
+    componentDidMount() {
+        console.log("did I mount?");
+        if (this.context.authenticated) {
+            this.setState({checkAuthenticated: true})
+        }
+        const localToken = localStorage.getItem(AUTH_TOKEN);
+        console.log(localToken)
+        
+        // If there's no token, then they can't have been logged in i.e. checkauthenticated complete
+        if (!this.context.authenticated && localToken) {
+            this.context.handleAuthentication(localToken, () => {
+                console.log("Setting state");
+                this.setState({checkAuthenticated: true})
+            });
+        } else {
+            this.setState({ checkAuthenticated: true })
+        }
+    }
 
-//     context.handleAuthentication("", authHandler);
-// }
+    render() {
+        // Render the children with a function using state as the argument
+        return this.props.children(this.state.checkAuthenticated);
+    }
+}
 
 export const PrivateRoute = ({component: Component, ...rest}) => {
     console.log("Begin private route");
     const context = useContext(authContext);
     const authenticated = context.authenticated;
-    const localToken = localStorage.getItem(AUTH_TOKEN);
-
-    if (!authenticated && localToken) {
-        console.log("Begin handle auth in private route")
-        context.handleAuthentication(localToken);
-        console.log("end handle auth in private route")
-    }
 
     return (
-        <Route {...rest} render={
-            (props) => {
-                if (authenticated) {
-                    return <Component {...props} />;
-                } else {
-                    return <Redirect to='/login' />
-                }
-
+        <WaitWraper>
+            {checkAuthenticated => checkAuthenticated === false
+            ? <Loading />
+            : <Route {...rest}
+                render={props => {
+                    if (authenticated) {
+                        return <Component {...props} />
+                    } else {
+                        return (
+                            <Redirect to='/login' />
+                        )
+                    }
+                }} />
             }
-        } />
+        </WaitWraper>
     )
 }

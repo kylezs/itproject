@@ -19,7 +19,7 @@ export default function Auth(props) {
     const [authenticated, setAuthenticated] = useState(false)
     const [user, setUser] = useState({})
     const [authToken, setAuthToken] = useState("");
-    const [VerifyToken, { data, error, loading }] = useMutation(VERIFY_TOKEN_MUTATION,
+    const [VerifyToken, {error, loading }] = useMutation(VERIFY_TOKEN_MUTATION,
         {
             onCompleted({ verifyToken }) {
                 console.log("On completed called");
@@ -28,7 +28,7 @@ export default function Auth(props) {
             }
         });
 
-    const handleAuthentication = async (authToken) => {
+    const handleAuthentication = async (authToken, _callback) => {
         // if (!authToken) {
         //     authToken = localStorage.getItem(AUTH_TOKEN)
         // }
@@ -37,11 +37,13 @@ export default function Auth(props) {
         await VerifyToken({ variables: { token: authToken } }).then((data) => {
             console.log("Set session to be called inside the Verifytoken");
             setSession(data)
+            if (_callback) {
+                _callback();
+            }
+            
         }
 
         );
-
-        console.log("Just called VerifyToken");
         if (error) {
             console.log("[Error] handleAuthentication()")
             return;
