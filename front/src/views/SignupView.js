@@ -12,6 +12,7 @@ import Layout from '../components/Layout';
 
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import { USERNAME_TAKEN_ERR_MSG } from "../constants.js"
 
 
 const SIGNUP_MUTATION = gql`
@@ -59,7 +60,6 @@ class Signup extends Component {
         email: '',
         password: '',
         confirmPassword: '',
-        showPassword: false,
         usernameIsTaken: false,
         emailIsTaken: false,
     }
@@ -67,16 +67,8 @@ class Signup extends Component {
     render() {
         const classes = useStyles();
 
-        const handleClickShowPassword = () => {
-            this.setState({ showPassword: !this.state.showPassword })
-        };
-
-        const handleMouseDownPassword = event => {
-            event.preventDefault();
-        };
-
         const { username, email, password, confirmPassword } = this.state
-        const { showPassword, usernameIsTaken, emailIsTaken } = this.state
+        const { usernameIsTaken, emailIsTaken } = this.state
 
         return (
             <Layout>
@@ -100,6 +92,7 @@ class Signup extends Component {
                                     id="username"
                                     label="Username"
                                     autoFocus
+                                    error={usernameIsTaken}
                                     onChange={e => this.setState({ username: e.target.value })}
                                     />
 
@@ -158,11 +151,12 @@ class Signup extends Component {
 
                             <Grid item xs={12}>
                                 {
-                                    confirmPassword == password ?
+                                    confirmPassword === password ?
                                     <Mutation
                                         mutation={SIGNUP_MUTATION}
                                         variables={{ username, email, password }}
                                         onCompleted={this._confirm}
+                                        onError={this._handleError}
                                         >
                                         {mutation => (
                                             <Button
@@ -204,6 +198,13 @@ class Signup extends Component {
         // handle signup errors and potentially login
         console.log(data)
         this.props.history.push(`/login`)
+    }
+
+    _handleError = async error => {
+        console.log(error.graphQLErrors)
+        if (error === USERNAME_TAKEN_ERR_MSG){
+            console.log("username taken")
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { AuthProvider } from "../authContext";
@@ -30,7 +30,7 @@ export default function Auth(props) {
     const handleAuthentication = (authToken) => {
         console.log("Handle authenication called with token");
         console.log(authToken);
-        
+
 
         VerifyToken({ variables: { token: authToken } })
 
@@ -55,7 +55,7 @@ export default function Auth(props) {
         setAuthenticated(true);
         setAuthToken(verifyToken);
         setUser(user);
-        
+
     }
 
     const initiateLogin = () => {

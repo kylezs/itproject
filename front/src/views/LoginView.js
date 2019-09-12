@@ -45,22 +45,13 @@ class Login extends Component {
     state = {
         username: '',
         password: '',
-        showPassword: false
     }
 
     render() {
 
         const classes = useStyles();
 
-        const handleClickShowPassword = () => {
-            this.setState({ showPassword: !this.state.showPassword })
-        };
-
-        const handleMouseDownPassword = event => {
-            event.preventDefault();
-        };
-
-        const { username, password, showPassword } = this.state
+        const { username, password } = this.state
         return (
             <Layout>
                 <CssBaseline />
@@ -107,6 +98,7 @@ class Login extends Component {
                                     mutation={LOGIN_MUTATION}
                                     variables={{ username, password }}
                                     onCompleted={data => this._confirm(data)}
+                                    onError={errors => this._handleError(errors)}
                                     >
                                     {mutation => (
                                         <Button
@@ -142,6 +134,10 @@ _confirm = async data => {
     this.context.handleAuthentication(token);
     // this._saveUserData(token)
     this.props.history.push(`/`)
+}
+
+_handleError = async errors => {
+    console.log(errors);
 }
 
 // _saveUserData = token => {
