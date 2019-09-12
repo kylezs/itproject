@@ -3,7 +3,9 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
@@ -11,7 +13,7 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Layout from '../components/Layout';
+import Container from '@material-ui/core/Container';
 
 import { AUTH_TOKEN } from '../constants'
 import { Mutation } from 'react-apollo'
@@ -64,6 +66,8 @@ class Signup extends Component {
         password: '',
         confirmPassword: '',
         showPassword: false,
+        usernameIsTaken: false,
+        emailIsTaken: false,
     }
 
     render() {
@@ -77,9 +81,11 @@ class Signup extends Component {
             event.preventDefault();
         };
 
-        const { username, email, password, confirmPassword, showPassword } = this.state
+        const { username, email, password, confirmPassword } = this.state
+        const { showPassword, usernameIsTaken, emailIsTaken } = this.state
+
         return (
-            <Layout>
+            <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <div className={classes.paper}>
                     <form className={classes.form} noValidate>
@@ -102,6 +108,13 @@ class Signup extends Component {
                                     autoFocus
                                     onChange={e => this.setState({ username: e.target.value })}
                                     />
+
+                                {
+                                    usernameIsTaken &&
+                                    <FormControl className={classes.form} error>
+                                        <FormHelperText id="username">Username is taken</FormHelperText>
+                                    </FormControl>
+                                }
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -114,6 +127,13 @@ class Signup extends Component {
                                     autoComplete="email"
                                     onChange={e => this.setState({ email: e.target.value })}
                                     />
+
+                                {
+                                    emailIsTaken &&
+                                    <FormControl className={classes.form} error>
+                                        <FormHelperText id="email">Email is taken</FormHelperText>
+                                    </FormControl>
+                                }
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -148,7 +168,7 @@ class Signup extends Component {
                                     <Mutation
                                         mutation={SIGNUP_MUTATION}
                                         variables={{ username, email, password }}
-                                        onCompleted={data => this._confirm(data)}
+                                        onCompleted={this._confirm}
                                         >
                                         {mutation => (
                                             <Button
@@ -182,13 +202,13 @@ class Signup extends Component {
                         </Grid>
                     </form>
                 </div>
-            </Layout>
+            </Container>
         );
     }
 
     _confirm = async data => {
         // handle signup errors and potentially login
-        console.log("user created")
+        console.log(data)
         this.props.history.push(`/login`)
     }
 }
