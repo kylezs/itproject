@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -12,8 +12,8 @@ import NotLoggedInBar from './NotLoggedInBar';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link }  from '@material-ui/core';
 
-import { AUTH_TOKEN } from '../constants'
 import gql from 'graphql-tag'
+import authContext from '../authContext';
 
 const VERIFY_TOKEN_MUTATION = gql`
 mutation VerifyToken($token: String!) {
@@ -37,22 +37,22 @@ const useStyles = makeStyles(theme => ({
 
 export default function MenuAppBar() {
     const classes = useStyles();
-    let loggedIn = false;
+    const context = useContext(authContext);
+    let loggedIn = context.authenticated;
     let username = null;
-    const authToken = localStorage.getItem(AUTH_TOKEN);
+    // const authToken = localStorage.getItem(AUTH_TOKEN);
     
-    const [VerifyToken, { data }] = useMutation(VERIFY_TOKEN_MUTATION);
-
-    if (authToken) {
-        VerifyToken({ variables: { token: authToken } })
-    }
+    // const [VerifyToken, { data }] = useMutation(VERIFY_TOKEN_MUTATION);
+    // if (authToken) {
+    //     VerifyToken({ variables: { token: authToken } })
+    // }
     
 
-    if (data && data.verifyToken) {
-        console.log("token verified")
-        loggedIn = true
-        username = data.verifyToken.payload.username
-    }
+    // if (data && data.verifyToken) {
+    //     console.log("token verified")
+    //     loggedIn = true
+    //     username = data.verifyToken.payload.username
+    // }
 
     return (
         <div className={classes.root}>

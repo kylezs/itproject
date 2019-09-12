@@ -12,8 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Layout from '../components/Layout';
-
-import { AUTH_TOKEN } from '../constants'
+import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -46,6 +45,8 @@ function useStyles(){
 }
 
 class Login extends Component {
+
+    static contextType = authContext;
     state = {
         username: '',
         password: '',
@@ -53,6 +54,7 @@ class Login extends Component {
     }
 
     render() {
+
         const classes = useStyles();
 
         const handleClickShowPassword = () => {
@@ -77,7 +79,6 @@ class Login extends Component {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
-                                    autoComplete="username"
                                     name="username"
                                     variant="outlined"
                                     required
@@ -103,7 +104,6 @@ class Login extends Component {
                                     label="Password"
                                     type="password"
                                     id="password"
-                                    autoComplete="current-password"
                                     onInput={e => {
                                         e.preventDefault();
                                         this.setState({ password: e.target.value });
@@ -146,13 +146,19 @@ class Login extends Component {
 
 _confirm = async data => {
     const { token } = data.tokenAuth
-    this._saveUserData(token)
+    console.log("getting token first in confirm mutation");
+    console.log(token);
+    this.context.handleAuthentication(token);
+    // this._saveUserData(token)
     this.props.history.push(`/`)
 }
 
-_saveUserData = token => {
-    localStorage.setItem(AUTH_TOKEN, token)
-}
+// _saveUserData = token => {
+//     console.log("Save user data being called, but nothing being done");
+//     authContext.handle
+//     console.log(this.context);
+//     // localStorage.setItem(AUTH_TOKEN, token)
+// }
 }
 
 export default Login
