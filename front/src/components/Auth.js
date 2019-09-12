@@ -19,20 +19,12 @@ export default function Auth(props) {
     const [authenticated, setAuthenticated] = useState(false)
     const [user, setUser] = useState({})
     const [authToken, setAuthToken] = useState("");
-    const [VerifyToken, {error, loading }] = useMutation(VERIFY_TOKEN_MUTATION,
-        {
-            onCompleted({ verifyToken }) {
-                console.log("On completed called");
-                // console.log(verifyToken);
-                // setSession(verifyToken);
-            }
-        });
+    const [VerifyToken, {error, loading }] = useMutation(VERIFY_TOKEN_MUTATION)
 
     const handleAuthentication = async (authToken, _callback) => {
-        // if (!authToken) {
-        //     authToken = localStorage.getItem(AUTH_TOKEN)
-        // }
-
+        if (!authToken) {
+            authToken = localStorage.getItem(AUTH_TOKEN)
+        }
         console.log("Wait for verifyToken");
         await VerifyToken({ variables: { token: authToken } }).then((data) => {
             console.log("Set session to be called inside the Verifytoken");
@@ -40,7 +32,6 @@ export default function Auth(props) {
             if (_callback) {
                 _callback();
             }
-            
         }
 
         );
@@ -55,8 +46,6 @@ export default function Auth(props) {
     };
 
     const setSession = (data) => {
-        console.log("Set session being called")
-        console.log(data);
         
         if (error) {
             console.log("Invalid data, please sign in again");
@@ -74,7 +63,6 @@ export default function Auth(props) {
     }
 
     const initiateLogin = () => {
-        console.log("initiate login called");
         this.history.pushState(null, 'login');
     };
 
