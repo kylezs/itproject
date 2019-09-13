@@ -12,6 +12,7 @@ import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks';
+import { AUTH_TOKEN } from "../constants.js"
 
 
 const LOGIN_MUTATION = gql`
@@ -54,8 +55,8 @@ function Login(props) {
     const _confirm = async data => {
         const { token } = data.tokenAuth
         console.log("getting token first in confirm mutation");
-        console.log(token);
         context.handleAuthentication(token);
+        localStorage.setItem(AUTH_TOKEN, token);
         // this._saveUserData(token)
         props.history.push(`/`)
     }
@@ -73,7 +74,6 @@ function Login(props) {
     );
 
     const submitForm = async (event) => {
-        console.log("form submitted")
         login({ variables: {username: username, password: password} })
         event.preventDefault();
     }

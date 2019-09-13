@@ -27,7 +27,6 @@ export default function Auth(props) {
         }
 
         await VerifyToken({ variables: { token: authToken } }).then((data) => {
-            console.log(data);
             setSession(data)
             if (_callback) {
                 _callback();
@@ -39,7 +38,7 @@ export default function Auth(props) {
                 _callback();
             }
         }
-            
+
         );
         if (error) {
             console.log("[Error] handleAuthentication()")
@@ -53,14 +52,13 @@ export default function Auth(props) {
     };
 
     const setSession = (data) => {
-        
+
         if (error) {
             console.log("Invalid data, please sign in again");
             return;
         }
-        
+
         const username = data.data.verifyToken.payload.username
-        console.log(username);
         const user = {
             username: username,
         };

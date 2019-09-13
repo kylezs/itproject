@@ -7,15 +7,14 @@ import Loading from './Loading';
 class WaitWraper extends Component {
     state = { checkAuthenticated: false }
     static contextType = authContext;
-    
+
     componentDidMount() {
         console.log("did I mount?");
         if (this.context.authenticated) {
             this.setState({checkAuthenticated: true})
         }
         const localToken = localStorage.getItem(AUTH_TOKEN);
-        console.log(localToken)
-        
+
         // If there's no token, then they can't have been logged in i.e. checkauthenticated complete
         if (!this.context.authenticated && localToken) {
             this.context.handleAuthentication(localToken, () => {

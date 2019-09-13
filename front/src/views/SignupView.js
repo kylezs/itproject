@@ -60,8 +60,6 @@ function Signup(props) {
     const classes = useStyles();
     const _confirm = async data => {
         // handle signup errors and potentially login
-        console.log(data)
-        console.log("_confirm run")
         props.history.push(`/login`)
     }
 
