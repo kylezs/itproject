@@ -66,7 +66,7 @@ function Signup(props) {
     const _handleError = async errors => {
         console.log("_handleError run")
         if (errors.graphQLErrors){
-            const subMessage = errors.graphQLErrors[0].message.substring(0, 15)
+            const subMessage = errors.graphQLErrors[0].message.substring(0, 10)
             if (USERNAME_TAKEN_ERR_MSG.startsWith(subMessage)){
                 setUsernameIsTaken(true)
             } else {
