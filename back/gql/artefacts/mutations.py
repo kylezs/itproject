@@ -11,12 +11,19 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'description',
+            'test', # test
+            'date',
+            'LostOrDamaged',
+            'isPublic',
         )
 
 
 class ArtefactInputType(InputObjectType):
     name = String()
     description = String()
+    artefact_input_type = String()
+    is_public = Boolean()
+    information_on_handling = String() # test
 
 
 class ArtefactCreate(Mutation):
@@ -30,6 +37,15 @@ class ArtefactCreate(Mutation):
         serializer = ArtefactSerializer(data=data.get('input'))
         serializer.is_valid(raise_exception=True)
 
+        user = info.context.user
+        input = data.get('input')
+        artefact = Artefact(
+            artefact_admin=user
+        )
+        
+        #family.save()
+        artefact.save()
+        #return FamilyCreate(family=family)
         return ArtefactCreate(artefact=serializer.save())
 
 
