@@ -1,9 +1,11 @@
-import React from 'react';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import React, { useContext } from 'react';
+import { IconButton, Menu, MenuItem, Button } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import authContext from '../authContext';
 
 export default props => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const context = useContext(authContext);
     const open = Boolean(anchorEl);
 
     function handleMenu(event) {
@@ -14,8 +16,15 @@ export default props => {
         setAnchorEl(null);
     }
 
+    function handleLogout() {
+        context.logout();
+    }
+
     return (
         <div>
+            <Button color="inherit">
+                Manage Artefacts
+            </Button>
             <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
@@ -42,6 +51,7 @@ export default props => {
             >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>Settings</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
     );
