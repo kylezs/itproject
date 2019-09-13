@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { IconButton, Menu, MenuItem, Button } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import authContext from '../authContext';
 
@@ -22,6 +22,9 @@ export default props => {
 
     return (
         <div>
+            <Button color="inherit">
+                Manage Artefacts
+            </Button>
             <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
