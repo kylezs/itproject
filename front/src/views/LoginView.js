@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
@@ -12,7 +14,7 @@ import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks';
-import { AUTH_TOKEN } from "../constants.js"
+import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from "../constants.js"
 
 
 const LOGIN_MUTATION = gql`
@@ -51,6 +53,7 @@ function Login(props) {
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [invalidCred, setInvalidCred] = useState(false)
 
     const _confirm = async data => {
         const { token } = data.tokenAuth
@@ -62,7 +65,17 @@ function Login(props) {
     }
 
     const _handleError = async errors => {
-        console.log(errors);
+        console.log("_handleError run")
+        if (errors.graphQLErrors){
+            const subMessage = errors.graphQLErrors[0].message.substring(0, 15)
+            if (INVALID_CRED_ERR_MSG.startsWith(subMessage)){
+                setInvalidCred(true)
+                console.log("invalid credentials")
+            } else {
+                console.log("unexpect error(s):")
+                console.log(errors)
+            }
+        }
     }
 
     const [login, { data }] = useMutation(
@@ -98,6 +111,7 @@ function Login(props) {
                                 label="Username"
                                 autoFocus
                                 onChange={e => setUsername(e.target.value)}
+                                error={invalidCred}
                                 />
                         </Grid>
 
@@ -110,9 +124,14 @@ function Login(props) {
                                 type="password"
                                 id="password"
                                 onChange={e => setPassword(e.target.value)}
+                                error={invalidCred}
                                 />
+                            {
+                                invalidCred &&
+                                <FormHelperText id="password" error={invalidCred}>Please enter valid credentials</FormHelperText>
+                            }
                         </Grid>
-
+                        
                         <Grid item xs={12}>
                             <Button
                                 name="submit"
