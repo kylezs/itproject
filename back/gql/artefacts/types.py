@@ -10,7 +10,6 @@ class ArtefactType(DjangoObjectType):
             'name',
             'description',
             'added_at',
-            
             'date',
             'artifact_flag_choices',
             'is_public',

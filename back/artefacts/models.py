@@ -9,28 +9,25 @@ class Artefact(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
 
-    
-
     # test field now: later, override __init__ to update this whenever a field changes.
     # also, used timezone.now() for migration when prompted default value.. change later
     date = models.DateTimeField(auto_now=True) 
 
     artifact_flag_choices = [
-        ('okay', 'No Problem'),
-        ('lost', 'Lost'),
-        ('damaged', 'Damaged'),
-        ('destroyed', 'Destroyed'),
+        ('OKY', 'No Problem'),
+        ('LST', 'Lost'),
+        ('DMG', 'Damaged'),
+        ('DST', 'Destroyed'),
     ]
     artifact_flag_choices = models.CharField(
         max_length=9,
-        choices = artifact_flag_choices,
-        default = 'okay'
+        choices=artifact_flag_choices,
+        default='OKY'
     )
     is_public = models.BooleanField(default=False)
     # test variable
     information_on_handling = models.TextField(default='')
 
-    
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
