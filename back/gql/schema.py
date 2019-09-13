@@ -17,6 +17,12 @@ from django.contrib.auth import get_user_model
 from .profiles.types import ProfileType
 from .profiles.mutations import UpdateProfile
 
+# Family
+from family.models import Family
+from .family.types import FamilyType
+from .family.mutations import FamilyCreate
+
+
 
 class Query(ObjectType):
 
@@ -47,6 +53,17 @@ class Query(ObjectType):
 
         return user
 
+    # ==== Family queries and resolvers ====
+    # get all families
+    family = Field(FamilyType)
+
+    families = List(FamilyType)
+
+    def resolve_families(self, info, **kwargs):
+        user = info.context.user
+        print("requesting user: " + user.username)
+        return Family.objects.all()
+
 
 class Mutation(ObjectType):
     # ==== Artefact mutations ====
@@ -61,6 +78,11 @@ class Mutation(ObjectType):
 
     # ==== User Profile mutation ====
     update_profile = UpdateProfile.Field()
+
+    # ==== Family mutation ====
+    # Update and create
+    family_create = FamilyCreate.Field()
+
 
 
 schema = Schema(query=Query, mutation=Mutation)
