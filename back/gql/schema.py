@@ -35,14 +35,13 @@ class Query(ObjectType):
     # ==== User queries and resolvers ====
     users = List(UserType)
 
-    user = Field(UserType)
+    user = Field(UserType, id=Argument(ID, required=True))
 
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
 
     def resolve_user(self, info, **kwargs):
         user = info.context.user
-        print("hello, this is the user: " + user.username)
         if user.is_anonymous:
             raise Exception("Not Logged in!")
 
