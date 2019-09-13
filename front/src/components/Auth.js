@@ -25,20 +25,27 @@ export default function Auth(props) {
         if (!authToken) {
             authToken = localStorage.getItem(AUTH_TOKEN)
         }
-        console.log("Wait for verifyToken");
+
         await VerifyToken({ variables: { token: authToken } }).then((data) => {
-            console.log("Set session to be called inside the Verifytoken");
+            console.log(data);
             setSession(data)
             if (_callback) {
                 _callback();
             }
+        }).catch((errors) => {
+            // If could not validate it, remove it to stop unnecessary requests
+            localStorage[AUTH_TOKEN] = ""
+            if (_callback) {
+                _callback();
+            }
         }
-
+            
         );
         if (error) {
             console.log("[Error] handleAuthentication()")
             return;
         }
+
         if (loading) {
             console.log("Thing is loading");
         }
