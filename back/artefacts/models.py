@@ -31,6 +31,10 @@ class Artefact(models.Model):
         default='OKY'
     )
     is_public = models.BooleanField(default=False)
+
+    # upload image file to AWS S3 bucket
+    upload = models.FileField(default=False)
+
     # test variable
     information_on_handling = models.TextField(default='')
 
