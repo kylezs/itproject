@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
 
-function HomeView(props) {
+export default HomeView = (props) => {
 
     const context = useContext(authContext);
     const loggedIn = context.authenticated;
@@ -13,8 +13,6 @@ function HomeView(props) {
                 <p>Hello user: {username}</p>
             )}
         </Layout>
-        
+
     );
 }
-
-export default HomeView

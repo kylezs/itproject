@@ -14,9 +14,10 @@ class App extends Component {
             <Router>
                 <div>
                     <Switch>
+                        {/* We may want to change this later, to have a separate / display if not logged in */}
                         <PrivateRoute exact path="/" component={HomeView} />
-                        <Route exact path="/artefacts/create/" component={CreateView} />
-                        <Route exact path="/artefacts/:id/" component={DetailView} />
+                        <PrivateRoute exact path="/artefacts/create/" component={CreateView} />
+                        <PrivateRoute exact path="/artefacts/:id/" component={DetailView} />
                         <Route exact path="/login/" component={Login} />
                         <Route exact path="/signup/" component={Signup} />
                     </Switch>
