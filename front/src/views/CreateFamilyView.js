@@ -134,7 +134,7 @@ export default function CreateFamilyView (props) {
     return (
         <Layout>
             <h1>Create a Family</h1>
-            <p>Families are how you manage your artefact. We recognise there is often complex overlap between families.
+            <p>Families are how you manage your artefacts. We recognise there is often complex overlap between families.
                 That's why you can create and be a part of several families, so you can separate which of the artefacts
                 you manage belong to which family.</p>
             
