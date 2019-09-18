@@ -4,6 +4,8 @@ from rest_framework import serializers
 from family.models import Family
 from .types import FamilyType
 
+from gql.errors import *
+
 
 class FamilyInputType(InputObjectType):
     family_name = String()
@@ -19,6 +21,8 @@ class FamilyCreate(Mutation):
     @classmethod
     def mutate(cls, root, info, **data):
         user = info.context.user
+        if user.is_anonymous:
+            raise Exception(AUTH_EXCEPTION)
         input = data.get('input')
         family = Family(
             family_name=input.family_name,

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { IconButton, Menu, MenuItem, Button } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import authContext from '../authContext';
+import { Link as RouterLink } from 'react-router-dom'
 
 export default props => {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -22,6 +23,9 @@ export default props => {
 
     return (
         <div>
+            <Button component={RouterLink} to='/family/create' color="inherit">
+                Create Family
+            </Button>
             <Button color="inherit">
                 Manage Artefacts
             </Button>
