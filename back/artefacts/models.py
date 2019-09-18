@@ -36,7 +36,7 @@ class Artefact(models.Model):
     upload = models.FileField(default=False)
 
     # test variable
-    # information_on_handling = models.TextField(default='')
+    information_on_handling = models.TextField(default='')
 
     added_at = models.DateTimeField(auto_now_add=True)
 
