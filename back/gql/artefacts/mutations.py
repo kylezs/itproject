@@ -8,22 +8,18 @@ class ArtefactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artefact
         fields = (
-            'id',
             'name',
             'description',
-            'test', # test
-            'date',
-            'LostOrDamaged',
-            'isPublic',
+            'is_public',
+            'state',
         )
 
 
 class ArtefactInputType(InputObjectType):
     name = String()
     description = String()
-    artefact_input_type = String()
+    state = String()
     is_public = Boolean()
-    information_on_handling = String() # test
 
 
 class ArtefactCreate(Mutation):
@@ -42,7 +38,7 @@ class ArtefactCreate(Mutation):
         artefact = Artefact(
             artefact_admin=user
         )
-        
+
         #family.save()
         artefact.save()
         #return FamilyCreate(family=family)
