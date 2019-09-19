@@ -29,6 +29,9 @@ export default props => {
             <Button color="inherit">
                 Manage Artefacts
             </Button>
+            <Button component={RouterLink} to='/artefacts/create' color="inherit">
+                Create Artefact
+            </Button>
             <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
