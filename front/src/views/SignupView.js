@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
@@ -11,10 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Layout from '../components/Layout';
 
-import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks';
-import { USERNAME_TAKEN_ERR_MSG } from "../constants.js"
+import { USERNAME_TAKEN_ERR_MSG, MIN_PASSWORD_LEN } from "../constants.js"
 
 const SIGNUP_MUTATION = gql`
 mutation SignupMutation($email: String!, $password: String!, $username: String!){
@@ -56,6 +54,7 @@ function Signup(props) {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [usernameIsTaken, setUsernameIsTaken] = useState(false)
     const [emailIsTaken, setEmailIsTaken] = useState(false)
+    const [validPassword, setValidPassword] = useState(false)
 
     const classes = useStyles();
     const _confirm = async data => {
@@ -75,7 +74,7 @@ function Signup(props) {
         }
     }
 
-    const [signup, { data }] = useMutation(
+    const [signup] = useMutation(
         SIGNUP_MUTATION,
         {
             onCompleted: _confirm,
@@ -84,10 +83,22 @@ function Signup(props) {
     );
 
     const submitForm = async (event) => {
+        event.preventDefault();
         console.log("form submitted")
         signup({ variables: {username: username, email: email, password: password} })
-        event.preventDefault();
     }
+
+    const changePassword = async (pass) => {
+        setPassword(pass)
+
+        // TO DO: password validation
+        if (pass.length >= MIN_PASSWORD_LEN){
+            setValidPassword(true)
+        }
+    }
+
+    const errorPassword = !!password && !validPassword
+    const errorConfirmPassword = !!confirmPassword && !(confirmPassword === password)
 
     return (
         <Layout>
@@ -149,8 +160,13 @@ function Signup(props) {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                                onChange={ e => setPassword(e.target.value)}
+                                onChange={ e => changePassword( e.target.value )}
+                                error={errorPassword}
                                 />
+                            {
+                                errorPassword &&
+                                <FormHelperText id="password" error={errorPassword}>Passwords must be at least {MIN_PASSWORD_LEN} characters</FormHelperText>
+                            }
                         </Grid>
 
                         <Grid item xs={12}>
@@ -163,12 +179,12 @@ function Signup(props) {
                                 type="password"
                                 id="confirmPassword"
                                 autoComplete="current-password"
-                                onChange={ e => setConfirmPassword(e.target.value)}
-                                error={!(confirmPassword === password)}
+                                onChange={ e => setConfirmPassword( e.target.value )}
+                                error={errorConfirmPassword}
                                 />
                             {
-                                !(confirmPassword === password) &&
-                                <FormHelperText id="confirmPassword" error={!(confirmPassword === password)}>Passwords must match</FormHelperText>
+                                errorConfirmPassword &&
+                                <FormHelperText id="confirmPassword" error={errorConfirmPassword}>Passwords must match</FormHelperText>
                             }
                         </Grid>
 
@@ -180,7 +196,10 @@ function Signup(props) {
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                disabled={!(confirmPassword === password)}
+                                disabled={
+                                    !(confirmPassword === password)
+                                    || !username || !email || !validPassword
+                                }
                                 >
                                 Sign Up
                             </Button>

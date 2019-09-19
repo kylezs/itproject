@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
@@ -11,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
-import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks';
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from "../constants.js"
@@ -78,7 +76,7 @@ function Login(props) {
         }
     }
 
-    const [login, { data }] = useMutation(
+    const [login] = useMutation(
         LOGIN_MUTATION,
         {
             onCompleted: _confirm,
@@ -131,7 +129,7 @@ function Login(props) {
                                 <FormHelperText id="password" error={invalidCred}>Please enter valid credentials</FormHelperText>
                             }
                         </Grid>
-                        
+
                         <Grid item xs={12}>
                             <Button
                                 name="submit"
