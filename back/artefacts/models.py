@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from datetime import datetime
+from family.models import Family
 
 
 # NB: You may need to update the graphql logic if you are updating this
@@ -32,11 +33,11 @@ class Artefact(models.Model):
     )
     is_public = models.BooleanField(default=False)
 
+    # belong to multiply families
+    belong_to_family = models.ForeignKey(Family, on_delete=models.CASCADE, null=True)
+
     # upload image file to AWS S3 bucket
     upload = models.FileField(default=False)
-
-    # test variable
-    information_on_handling = models.TextField(default='')
 
     added_at = models.DateTimeField(auto_now_add=True)
 
