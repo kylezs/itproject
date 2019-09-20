@@ -32,9 +32,12 @@
 
 ### Working With Multiple Settings Modules
 ## setting.py has been replaced by folder called settings which contain several setting file for different purpose.
-1. move your .env file into folder named settings
+1. move your `.env` file into folder named settings
 
 ## now python manage.py runserver won't work since setting.py is replaced by folder named settings
 ## you need to run the command below instead
 ## you can replace the last attribute of the command 'development' by, for example, 'production' depend on ## your purpose
-2. python manage.py runserver --settings=mysite.settings.development
+2. `python manage.py runserver --settings=family_artefacts_register.settings.development`
+
+OR if in production (i.e. heroku)
+`python manage.py runserver --settings=family_artefacts_register.settings.production`
