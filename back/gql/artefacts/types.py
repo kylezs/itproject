@@ -11,7 +11,7 @@ class ArtefactType(DjangoObjectType):
             'description',
             'added_at',
             'date',
-            'artifact_flag_choices',
+            'artefact_flag_choices',
             'is_public',
             'information_on_handling', # test
         )

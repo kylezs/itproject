@@ -19,15 +19,15 @@ class Artefact(models.Model):
     # also, used timezone.now() for migration when prompted default value.. change later
     date = models.DateTimeField(auto_now=True) 
 
-    artifact_flag_choices = [
+    artefact_flag_choices = [
         ('OKY', 'No Problem'),
         ('LST', 'Lost'),
         ('DMG', 'Damaged'),
         ('DST', 'Destroyed'),
     ]
-    artifact_flag_choices = models.CharField(
+    artefact_flag_choices = models.CharField(
         max_length=9,
-        choices=artifact_flag_choices,
+        choices=artefact_flag_choices,
         default='OKY'
     )
     is_public = models.BooleanField(default=False)
