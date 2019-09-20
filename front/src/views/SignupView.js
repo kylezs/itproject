@@ -56,6 +56,8 @@ function Signup(props) {
     const [emailIsTaken, setEmailIsTaken] = useState(false)
     const [validPassword, setValidPassword] = useState(false)
 
+    var validator = require("email-validator");
+
     const classes = useStyles();
     const _confirm = async data => {
         // handle signup errors and potentially login
@@ -141,9 +143,13 @@ function Signup(props) {
                                 name="email"
                                 autoComplete="email"
                                 type="email"
-                                error={emailIsTaken}
+                                error={emailIsTaken || (email && !validator.validate(email))}
                                 onChange={e => setEmail(e.target.value)}
                                 />
+                            {
+                                email && !validator.validate(email) &&
+                                <FormHelperText id="email" error={!validator.validate(email)}>Email is invalid</FormHelperText>
+                            }
                             {
                                 emailIsTaken &&
                                 <FormHelperText id="email" error={emailIsTaken}>Email is taken</FormHelperText>
@@ -199,6 +205,7 @@ function Signup(props) {
                                 disabled={
                                     !(confirmPassword === password)
                                     || !username || !email || !validPassword
+                                    || !validator.validate(email)
                                 }
                                 >
                                 Sign Up
