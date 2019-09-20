@@ -12,10 +12,8 @@ function HomeView(props) {
             {loggedIn && (
                 <p>Hello user: {username}</p>
             )}
-            {!loggedIn && (
-                <p>Hello non-signed in user</p>
-            )}
         </Layout>
+        
     );
 }
 

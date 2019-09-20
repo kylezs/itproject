@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
+import React, { useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Link from '@material-ui/core/Link';
+import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +13,8 @@ import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import { useMutation } from '@apollo/react-hooks';
+import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from "../constants.js"
 
 
 const LOGIN_MUTATION = gql`
@@ -20,136 +25,138 @@ mutation TokenAuth($username: String!, $password: String!) {
 }
 `
 
-function useStyles(){
-    return makeStyles(theme => ({
-        container: {
-            display: 'flex',
-            flexWrap: 'wrap',
+const useStyles = makeStyles(theme => ({
+    '@global': {
+        body: {
+            backgroundColor: theme.palette.common.white,
         },
-        textField: {
-            marginLeft: theme.spacing(1),
-            marginRight: theme.spacing(1),
-        },
-        dense: {
-            marginTop: theme.spacing(2),
-        },
-        menu: {
-            width: 200,
-        },
-    }));
-}
+    },
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    form: {
+        width: '50%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}));
 
-class Login extends Component {
+function Login(props) {
 
-    static contextType = authContext;
-    state = {
-        username: '',
-        password: '',
-        showPassword: false
+    const context = useContext(authContext);
+    const classes = useStyles();
+
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+    const [invalidCred, setInvalidCred] = useState(false)
+
+    const _confirm = async data => {
+        const { token } = data.tokenAuth
+        console.log("getting token first in confirm mutation");
+        context.handleAuthentication(token);
+        localStorage.setItem(AUTH_TOKEN, token);
+        // this._saveUserData(token)
+        props.history.push(`/`)
     }
 
-    render() {
+    const _handleError = async errors => {
+        console.log("_handleError run")
+        if (errors.graphQLErrors){
+            const subMessage = errors.graphQLErrors[0].message.substring(0, 15)
+            if (INVALID_CRED_ERR_MSG.startsWith(subMessage)){
+                setInvalidCred(true)
+                console.log("invalid credentials")
+            } else {
+                console.log("unexpect error(s):")
+                console.log(errors)
+            }
+        }
+    }
 
-        const classes = useStyles();
+    const [login, { data }] = useMutation(
+        LOGIN_MUTATION,
+        {
+            onCompleted: _confirm,
+            onError: _handleError,
+        }
+    );
 
-        const handleClickShowPassword = () => {
-            this.setState({ showPassword: !this.state.showPassword })
-        };
+    const submitForm = async (event) => {
+        login({ variables: {username: username, password: password} })
+        event.preventDefault();
+    }
 
-        const handleMouseDownPassword = event => {
-            event.preventDefault();
-        };
+    return (
+        <Layout>
+            <CssBaseline />
+            <div className={classes.paper}>
+                <form className={classes.form} onSubmit={submitForm}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Typography component="h1" variant="h5">
+                                Log In
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="username"
+                                label="Username"
+                                autoFocus
+                                onChange={e => setUsername(e.target.value)}
+                                error={invalidCred}
+                                />
+                        </Grid>
 
-        const { username, password, showPassword } = this.state
-        return (
-            <Layout>
-                <CssBaseline />
-                <div className={classes.paper}>
-                    <form className={classes.form} noValidate>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Typography component="h1" variant="h5">
-                                    Log In
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    name="username"
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="username"
-                                    label="Username"
-                                    autoFocus
-                                    onChange={e => this.setState({ username: e.target.value })}
-                                    />
-                            </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                label="Password"
+                                type="password"
+                                id="password"
+                                onChange={e => setPassword(e.target.value)}
+                                error={invalidCred}
+                                />
+                            {
+                                invalidCred &&
+                                <FormHelperText id="password" error={invalidCred}>Please enter valid credentials</FormHelperText>
+                            }
+                        </Grid>
+                        
+                        <Grid item xs={12}>
+                            <Button
+                                name="submit"
+                                label="Submit"
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                >
+                                Log In
+                            </Button>
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    onInput={e => {
-                                        e.preventDefault();
-                                        this.setState({ password: e.target.value });
-                                    }}
-
-                                    />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Mutation
-                                    mutation={LOGIN_MUTATION}
-                                    variables={{ username, password }}
-                                    onCompleted={data => this._confirm(data)}
-                                    >
-                                    {mutation => (
-                                        <Button
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={mutation}
-                                            >
-                                            Login
-                                        </Button>
-                                    )}
-                                </Mutation>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Grid item>
-                                    <Link href="/signup" variant="body2">
-                                        Need an account? Sign up
-                                    </Link>
-                                </Grid>
+                        <Grid item xs={12}>
+                            <Grid item>
+                                <Link component={RouterLink} to="/signup">
+                                    Need an account? Sign up
+                                </Link>
                             </Grid>
                         </Grid>
+                    </Grid>
                 </form>
             </div>
-            </Layout>
+        </Layout>
     );
-}
-
-_confirm = async data => {
-    const { token } = data.tokenAuth
-    console.log("getting token first in confirm mutation");
-    console.log(token);
-    this.context.handleAuthentication(token);
-    // this._saveUserData(token)
-    this.props.history.push(`/`)
-}
-
-// _saveUserData = token => {
-//     console.log("Save user data being called, but nothing being done");
-//     authContext.handle
-//     console.log(this.context);
-//     // localStorage.setItem(AUTH_TOKEN, token)
-// }
 }
 
 export default Login

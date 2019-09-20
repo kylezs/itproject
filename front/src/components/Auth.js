@@ -1,7 +1,8 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { AuthProvider } from "../authContext";
+import { AUTH_TOKEN } from '../constants'
 
 
 const VERIFY_TOKEN_MUTATION = gql`
@@ -18,48 +19,55 @@ export default function Auth(props) {
     const [authenticated, setAuthenticated] = useState(false)
     const [user, setUser] = useState({})
     const [authToken, setAuthToken] = useState("");
-    const [VerifyToken, { data, error }] = useMutation(VERIFY_TOKEN_MUTATION,
-        {
-            onCompleted({ verifyToken }) {
-                console.log("On completed called");
-                console.log(verifyToken);
-                setSession(verifyToken);
+    const [VerifyToken, {error, loading }] = useMutation(VERIFY_TOKEN_MUTATION)
+
+    const handleAuthentication = async (authToken, _callback) => {
+        if (!authToken) {
+            authToken = localStorage.getItem(AUTH_TOKEN)
+        }
+
+        await VerifyToken({ variables: { token: authToken } }).then((data) => {
+            setSession(data)
+            if (_callback) {
+                _callback();
             }
-        });
+        }).catch((errors) => {
+            // If could not validate it, remove it to stop unnecessary requests
+            localStorage[AUTH_TOKEN] = ""
+            if (_callback) {
+                _callback();
+            }
+        }
 
-    const handleAuthentication = (authToken) => {
-        console.log("Handle authenication called with token");
-        console.log(authToken);
-        
-
-        VerifyToken({ variables: { token: authToken } })
-
+        );
         if (error) {
             console.log("[Error] handleAuthentication()")
             return;
         }
+
+        if (loading) {
+            console.log("Thing is loading");
+        }
+
     };
 
+    const setSession = (data) => {
 
-    const setSession = (verifyToken) => {
-        console.log("Set session being called")
-        console.log(verifyToken);
-        if (!verifyToken) {
+        if (error) {
             console.log("Invalid data, please sign in again");
             return;
         }
-        const username = verifyToken.payload.username
+
+        const username = data.data.verifyToken.payload.username
         const user = {
             username: username,
         };
         setAuthenticated(true);
-        setAuthToken(verifyToken);
+        setAuthToken(data.verifyToken);
         setUser(user);
-        
     }
 
     const initiateLogin = () => {
-        console.log("initiate login called");
         this.history.pushState(null, 'login');
     };
 
@@ -68,6 +76,7 @@ export default function Auth(props) {
         setAuthenticated(false);
         setUser({});
         setAuthToken("");
+        localStorage[AUTH_TOKEN] = "";
     };
 
     const authProviderValue = {
