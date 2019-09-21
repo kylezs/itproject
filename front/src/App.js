@@ -11,7 +11,6 @@ import Logout from './components/Logout'
 // Family views
 import CreateFamilyView from './views/CreateFamilyView'
 import UserHomeView from './views/UserHomeView';
-import LandingPage from './views/LandingPage';
 
 class App extends Component {
     render() {
