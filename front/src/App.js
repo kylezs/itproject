@@ -6,6 +6,7 @@ import { PrivateRoute } from './components/PrivateRoute';
 import HomeView from './views/HomeView'
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
+import Logout from './components/Logout'
 // Family views
 import CreateFamilyView from './views/CreateFamilyView'
 // Artefact Views
@@ -24,6 +25,7 @@ class App extends Component {
                         {/* User auth routes */}
                         <Route exact path="/login/" component={Login} />
                         <Route exact path="/signup/" component={Signup} />
+                        <Route exact path="/logout/" component={Logout} />
 
                         {/* Artefact routes */}
                         <PrivateRoute exact path="/artefacts/create/" component={CreateArtefactView} />
@@ -31,6 +33,7 @@ class App extends Component {
 
                         {/* Family routes */}
                         <PrivateRoute exact path="/family/create" component={CreateFamilyView} />
+                        
                     </Switch>
                 </div>
             </Router>
