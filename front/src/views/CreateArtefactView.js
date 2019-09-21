@@ -15,10 +15,8 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import { IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
+import { DropzoneArea } from 'material-ui-dropzone'
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -116,11 +114,7 @@ export default function CreateArtefactView (props) {
     const [open, setOpen] = useState(false)
     const [artefactStates, setArtefactStates] = useState({})
     const [artefactCondition, setArtefactCondition] = useState("")
-
-    const submitImage = async (data) => {
-        console.log("submitting image");
-        console.log(data);
-    }
+    const [files, setFiles] = useState([])
 
     const _completed = async (data) => {
         console.log(data);
@@ -176,6 +170,8 @@ export default function CreateArtefactView (props) {
         setOpen(false);
     }
 
+    const validInputs = !artefactName || !artefactCondition;
+    
     return (
         <Layout>
             <h1>Create an Artefact</h1>
@@ -274,20 +270,7 @@ export default function CreateArtefactView (props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <input
-                                accept="image/*"
-                                className={classes.input}
-                                style={{ display: 'none' }}
-                                id="raised-button-file"
-                                multiple
-                                type="file"
-                                onChange={e => submitImage(e.target.value)}
-                                />
-                            <label htmlFor="raised-button-file">
-                                <Button variant="outlined" component="span" className={classes.button}>
-                                    Upload Photos
-                                </Button>
-                            </label>
+                            <DropzoneArea onChange={file => setFiles(files.concat(file))}/>
                         </Grid>
 
                         <Grid item xs={12}>
@@ -298,9 +281,7 @@ export default function CreateArtefactView (props) {
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                disabled={
-                                    !artefactName || !artefactCondition
-                                }
+                                disabled={validInputs}
                                 >
                                 Create
                             </Button>
@@ -310,7 +291,7 @@ export default function CreateArtefactView (props) {
                 </form>
 
                 {data && (
-                    <Dialog open={open} onClose={handleClose}>
+                    <Dialog open={false} onClose={handleClose}>
                         <DialogTitle onClose={handleClose}>
                             Here's your artefact
                         </DialogTitle>
