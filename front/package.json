@@ -11,6 +11,7 @@
     "apollo-client": "^2.6.4",
     "apollo-link-context": "^1.0.18",
     "apollo-link-http": "^1.5.15",
+    "eslint": "^6.4.0",
     "graphql": "^14.4.2",
     "material-ui-dropzone": "^2.4.1",
     "react": "^16.9.0",
