@@ -31,13 +31,14 @@ class Artefact(models.Model):
         choices=artefact_state_options,
         default='OKY'
     )
+
     is_public = models.BooleanField(default=False)
 
     # belong to multiply families
-    belong_to_family = models.ForeignKey(Family, on_delete=models.CASCADE, null=True)
+    belong_to_family = models.ForeignKey(Family, on_delete=models.CASCADE, null=True, blank=True)
 
     # upload image file to AWS S3 bucket
-    upload = models.FileField(default=False)
+    upload = models.FileField(default=False, blank=True)
 
     added_at = models.DateTimeField(auto_now_add=True)
 

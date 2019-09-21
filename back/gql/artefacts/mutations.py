@@ -12,6 +12,7 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'description',
             'is_public',
             'state',
+            'belong_to_family',
         )
 
 
