@@ -1,9 +1,20 @@
 from .base import *
-
 DEBUG = False
 
-# Just for testing, need to be replaced by heroku url
-ALLOWED_HOSTS = ['*']
+# Deploy backend to heroku
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+STATIC_TMP = os.path.join(BASE_DIR, 'static')
+os.makedirs(STATIC_TMP, exist_ok=True)
+
+# Just for testing, replaced by heroku url
+ALLOWED_HOSTS = ['https://family-artefacts-register.herokuapp.com', ".herokuapp.com"]
+
+
 
 INSTALLED_APPS += [
     # Amazon AWS
@@ -11,7 +22,7 @@ INSTALLED_APPS += [
 ]
 
 # Artefacts Picture (AWS S3)
-
+"""
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'family_artefacts_register/static'),
 ]
@@ -30,3 +41,4 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 DEFAULT_FILE_STORAGE = 'family_artefacts_register.storage_backends.MediaStorage'
+"""

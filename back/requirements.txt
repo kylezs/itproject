@@ -29,3 +29,5 @@ typed-ast==1.4.0
 wrapt==1.11.2
 boto3==1.9.228
 django-storages==1.7.2
+gunicorn==19.7.1
+whitenoise==3.3.1
