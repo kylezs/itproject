@@ -12,7 +12,8 @@ STATIC_TMP = os.path.join(BASE_DIR, 'static')
 os.makedirs(STATIC_TMP, exist_ok=True)
 
 # Just for testing, replaced by heroku url
-ALLOWED_HOSTS = ['https://family-artefacts-register.herokuapp.com', ".herokuapp.com"]
+ALLOWED_HOSTS = ['https://family-artefacts-register.herokuapp.com',
+                 "*.herokuapp.com", "127.0.0.1:8000"]
 
 
 
