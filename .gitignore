@@ -2,6 +2,10 @@
 myvenv
 
 
+# static files, should be built on deploy
+staticfiles/
+
+
 # Created by https://www.gitignore.io
 
 ### OSX ###

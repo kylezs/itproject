@@ -4,12 +4,13 @@ DEBUG = False
 # Deploy backend to heroku
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-STATIC_TMP = os.path.join(BASE_DIR, 'static')
-os.makedirs(STATIC_TMP, exist_ok=True)
+# STATIC_TMP = os.path.join(BASE_DIR, 'static')
+# os.makedirs(STATIC_TMP, exist_ok=True)
 
 # Just for testing, replaced by heroku url
 ALLOWED_HOSTS = ['https://family-artefacts-register.herokuapp.com',
@@ -22,9 +23,10 @@ INSTALLED_APPS += [
 
 # Artefacts Picture (AWS S3)
 # """
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'family_artefacts_register/static'),
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'family_artefacts_register/static'),
+    os.path.join(IT_PROJ_DIR, 'front/build/static')
+]
 
 # AWS_ACCESS_KEY_ID = 'AKIARVLDMTEQV22SWEWB'
 # AWS_SECRET_ACCESS_KEY = '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'
