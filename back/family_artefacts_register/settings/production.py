@@ -5,6 +5,8 @@ DEBUG = True
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACK_DIR = os.path.dirname(BASE_DIR)
 
+# NEEDS TO BE STORED AS ENV VAR
+SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
