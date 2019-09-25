@@ -111,17 +111,7 @@ WSGI_APPLICATION = 'family_artefacts_register.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# NB: THIS IS NOT SUITABLE FOR PRODUCTION.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': '5432'
-    }
-}
+
 
 
 # Password validation
