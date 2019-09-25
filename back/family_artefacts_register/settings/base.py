@@ -35,7 +35,7 @@ SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,6 +85,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'family_artefacts_register.urls'
 
+
+# THE DIRS HERE IS WHAT IS SERVED BY THE TEMPLATEVIEW IN URLS
+# index.html is a file inside the front/build which is the control centre of the react app
+# This should be built into the django app
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
