@@ -1,12 +1,10 @@
 from .base import *
 import dj_database_url
-DEBUG = True
+DEBUG = False
 
 
 # NEEDS TO BE STORED AS ENV VAR
 SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
@@ -28,10 +26,6 @@ DATABASES = {}
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 # Artefacts Picture (AWS S3)
-
-STATICFILES_DIRS = [
-   os.path.join(BACK_DIR, 'build/static')
-]
 
 # AWS_ACCESS_KEY_ID = 'AKIARVLDMTEQV22SWEWB'
 # AWS_SECRET_ACCESS_KEY = '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'
