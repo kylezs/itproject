@@ -17,7 +17,7 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # os.makedirs(STATIC_TMP, exist_ok=True)
 
 # Just for testing, replaced by heroku url
-ALLOWED_HOSTS = ['https://family-artefacts-register.herokuapp.com',
+ALLOWED_HOSTS = ["glacial-caverns-32653.herokuapp.com",
                  "*.herokuapp.com", "127.0.0.1:8000",
                  "http://0.0.0.0:5000",
                  "localhost"]
