@@ -2,9 +2,6 @@ from .base import *
 import dj_database_url
 DEBUG = True
 
-# Deploy backend to heroku
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BACK_DIR = os.path.dirname(BASE_DIR)
 
 # NEEDS TO BE STORED AS ENV VAR
 SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
