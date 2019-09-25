@@ -35,7 +35,7 @@ SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', "http://0.0.0.0:5000"]
 
 
 # Application definition
@@ -92,7 +92,7 @@ ROOT_URLCONF = 'family_artefacts_register.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(IT_PROJ_DIR, 'front/build')],
+        'DIRS': [os.path.join(IT_PROJ_DIR, 'back/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -43,7 +43,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+front/build/
 develop-eggs/
 dist/
 downloads/
