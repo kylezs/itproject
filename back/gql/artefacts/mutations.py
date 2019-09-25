@@ -1,7 +1,8 @@
-from graphene import Boolean, Field, ID, InputObjectType, Mutation, String
+from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List
 from rest_framework import serializers
 from artefacts.models import Artefact
 from .types import ArtefactType
+from ..family.types import Family
 
 
 class ArtefactSerializer(serializers.ModelSerializer):
@@ -11,8 +12,7 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'is_public',
-            'state',
-            'belong_to_family',
+            'state'
         )
 
 
@@ -37,12 +37,11 @@ class ArtefactCreate(Mutation):
         user = info.context.user
         input = data.get('input')
         artefact = Artefact(
-            artefact_admin=user
+            admin=user,
         )
 
-        #family.save()
         artefact.save()
-        #return FamilyCreate(family=family)
+
         return ArtefactCreate(artefact=serializer.save())
 
 

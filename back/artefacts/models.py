@@ -12,7 +12,7 @@ class Artefact(models.Model):
     description = models.TextField()
 
     # adapted from family models.py.
-    artefact_admin = models.ForeignKey(get_user_model(),
+    admin = models.ForeignKey(get_user_model(),
                                     on_delete=models.SET_NULL, null=True,
                                     related_name="artefact_administrator_of")
 
@@ -20,7 +20,7 @@ class Artefact(models.Model):
     # also, used timezone.now() for migration when prompted default value.. change later
     date = models.DateTimeField(auto_now=True)
 
-    artefact_state_options = [
+    state_options = [
         ('OKY', 'No Problem'),
         ('LST', 'Lost'),
         ('DMG', 'Damaged'),
@@ -28,14 +28,11 @@ class Artefact(models.Model):
     ]
     state = models.CharField(
         max_length=9,
-        choices=artefact_state_options,
+        choices=state_options,
         default='OKY'
     )
 
     is_public = models.BooleanField(default=False)
-
-    # belong to multiply families
-    belong_to_family = models.ForeignKey(Family, on_delete=models.CASCADE, null=True, blank=True)
 
     # upload image file to AWS S3 bucket
     upload = models.FileField(default=False, blank=True)
