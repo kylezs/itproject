@@ -56,6 +56,9 @@ INSTALLED_APPS = [
     'artefacts',
     'userprofile',
     'family',
+
+    # Mapbox
+    'mapbox_location_field',
 ]
 
 GRAPHENE = {
@@ -158,4 +161,5 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
+# Location Info
+MAPBOX_KEY = 'pk.eyJ1Ijoiemh1b3BpbmdtIiwiYSI6ImNrMHowaXN1YzA0MmQzY29kbTdlbXJzOWIifQ.eEx-9GUiucpOMEYVVh7Ztg'

@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from family.models import Family
+from mapbox_location_field.models import LocationField
 
 
 # NB: You may need to update the graphql logic if you are updating this
@@ -40,6 +41,9 @@ class Artefact(models.Model):
     upload = models.FileField(default=False)
 
     added_at = models.DateTimeField(auto_now_add=True)
+
+    # location service provided by mapbox
+    location = LocationField(null=True)
 
     class Meta:
         verbose_name = _('artefact')
