@@ -65,11 +65,13 @@ Do this according to the production settings. As above (settings for production)
     1. Navigate to /front
     2. Run `npm run build` This will build the react app and put the build in back/build
 4. Run `python manage.py collectstatic`
-        
+
+5. Commit changes to local branch. No need to push to origin.
+
     This will put the static files on AWS.
-5. Push the branch to heroku. `--force` because fuck whatever else is in there. Am I right?
+6. Push the branch to heroku. `--force` because fuck whatever else is in there. Am I right?
 This needs to be run from the root directory (where back/ and front/ are located)
 
         git push heroku `git subtree split --prefix back/ BRANCH`:master --force
 
-6. Open the app and have some fun adding artefacts to a register.
+7. Open the app and have some fun adding artefacts to a register.

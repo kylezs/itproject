@@ -12,16 +12,9 @@ import Auth from './components/Auth';
 import App from './App';
 import { AUTH_TOKEN } from './constants'
 
-// Dev
 const httpLink = createHttpLink({
     uri: '/graphql/',
-    // credentials: 'same-origin',
 })
-
-// TODO: Prod (test), fix this later
-// const httpLink = createHttpLink({
-//   uri: 'https://glacial-caverns-32653.herokuapp.com/graphql/'
-// })
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
@@ -39,11 +32,6 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 });
-
-// const client = new ApolloClient({
-//     cache,
-//     link
-// })
 
 ReactDOM.render(
     <ApolloProvider client={client}>

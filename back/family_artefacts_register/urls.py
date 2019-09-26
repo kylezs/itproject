@@ -14,14 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
 from django.views.generic import TemplateView
+import os
+
+
+# Enable graphiql if debug is true
+GRAPHIQL = settings.DEBUG
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=False))),
+    path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=GRAPHIQL))),
     re_path('.*', TemplateView.as_view(template_name='index.html')),
 ]
