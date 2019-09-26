@@ -1,15 +1,11 @@
 from .base import *
 import dj_database_url
-DEBUG = False
-
+DEBUG = True
 
 # NEEDS TO BE STORED AS ENV VAR
 SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
-# STATIC_TMP = os.path.join(BASE_DIR, 'static')
-# os.makedirs(STATIC_TMP, exist_ok=True)
 
 # Just for testing, replaced by heroku url
 ALLOWED_HOSTS = ["glacial-caverns-32653.herokuapp.com",
