@@ -5,7 +5,7 @@ DEBUG = True
 # NEEDS TO BE STORED AS ENV VAR
 SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 
-# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 
 # Just for testing, replaced by heroku url
 ALLOWED_HOSTS = ["glacial-caverns-32653.herokuapp.com",
@@ -35,5 +35,9 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_LOCATION = 'static'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+STATICFILES_DIRS = [
+    os.path.join(BACK_DIR, 'build/static'),
+]
 
 DEFAULT_FILE_STORAGE = 'family_artefacts_register.storage_backends.MediaStorage'
