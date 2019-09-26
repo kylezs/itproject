@@ -14,8 +14,8 @@ import { AUTH_TOKEN } from './constants'
 
 // Dev
 const httpLink = createHttpLink({
-    uri: 'http://127.0.0.1:8000/graphql/',
-    credentials: 'same-origin',
+    uri: '/graphql/',
+    // credentials: 'same-origin',
 })
 
 // TODO: Prod (test), fix this later
