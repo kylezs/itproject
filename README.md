@@ -68,7 +68,8 @@ Do this according to the production settings. As above (settings for production)
         
     This will put the static files on AWS.
 5. Push the branch to heroku. `--force` because fuck whatever else is in there. Am I right?
+This needs to be run from the root directory (where back/ and front/ are located)
 
-        git push heroku `git subtree split --prefix back/ BRANCH`:master --force`
+        git push heroku `git subtree split --prefix back/ BRANCH`:master --force
 
 6. Open the app and have some fun adding artefacts to a register.

@@ -9,6 +9,7 @@ SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 
 # Just for testing, replaced by heroku url
 ALLOWED_HOSTS = ["glacial-caverns-32653.herokuapp.com",
+                 "glacial-caverns-32653.herokuapp.com/graphql/",
                  "*.herokuapp.com", "127.0.0.1:8000",
                  "http://0.0.0.0:5000",
                  "localhost"]
@@ -35,9 +36,5 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_LOCATION = 'static'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-
-STATICFILES_DIRS = [
-    os.path.join(BACK_DIR, 'build/static'),
-]
 
 DEFAULT_FILE_STORAGE = 'family_artefacts_register.storage_backends.MediaStorage'
