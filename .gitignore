@@ -1,6 +1,9 @@
 .venv
 myvenv
 
+.vscode
+.vscode/settings.json
+
 
 # static files, should be built on deploy
 staticfiles/
