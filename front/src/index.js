@@ -12,8 +12,14 @@ import Auth from './components/Auth';
 import App from './App';
 import { AUTH_TOKEN } from './constants'
 
+// Dev
+// const httpLink = createHttpLink({
+//     uri: 'http://127.0.0.1:8000/graphql/'
+// })
+
+// TODO: Prod (test), fix this later
 const httpLink = createHttpLink({
-    uri: 'http://127.0.0.1:8000/graphql/'
+  uri: 'https://glacial-caverns-32653.herokuapp.com/graphql/'
 })
 
 const authLink = setContext((_, { headers }) => {
