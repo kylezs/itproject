@@ -3,13 +3,14 @@ import { Route, Redirect } from 'react-router-dom';
 import authContext from '../authContext';
 import { AUTH_TOKEN } from '../constants';
 import Loading from './Loading';
+import LandingPage from '../views/LandingPage';
+
 
 class WaitWraper extends Component {
     state = { checkAuthenticated: false }
     static contextType = authContext;
 
     componentDidMount() {
-        console.log("did I mount?");
         if (this.context.authenticated) {
             this.setState({checkAuthenticated: true})
         }
@@ -32,11 +33,15 @@ class WaitWraper extends Component {
     }
 }
 
-export const PrivateRoute = ({component: Component, ...rest}) => {
-    console.log("Begin private route");
+export const PrivateRoute = ({loggedIn: LoggedIn, loggedOut, path, landingPage, ...rest}) => {
     const context = useContext(authContext);
     const authenticated = context.authenticated;
 
+    if (!loggedOut) {
+        loggedOut = "/login"
+    }
+
+    console.log("Authenticated: ", authenticated)
     return (
         <WaitWraper>
             {checkAuthenticated => checkAuthenticated === false
@@ -44,10 +49,12 @@ export const PrivateRoute = ({component: Component, ...rest}) => {
             : <Route {...rest}
                 render={props => {
                     if (authenticated) {
-                        return <Component {...props} />
+                        return <LoggedIn {...props} />
+                    } else if (!authenticated && landingPage) {
+                        return <LandingPage />;
                     } else {
                         return (
-                            <Redirect to='/login' />
+                            <Redirect to={loggedOut} />
                         )
                     }
                 }} />

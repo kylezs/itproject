@@ -2,6 +2,8 @@ from graphene import Argument, Field, ID, ObjectType, Schema, List
 import graphql_jwt
 from graphene_django import DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
+from .errors import *
+
 # Artefacts
 from artefacts.models import Artefact
 from .artefacts.types import ArtefactType
@@ -22,8 +24,6 @@ from family.models import Family
 from .family.types import FamilyType
 from .family.mutations import FamilyCreate
 
-
-
 class Query(ObjectType):
 
     # ==== Artefact queries and resolvers ====
@@ -43,21 +43,38 @@ class Query(ObjectType):
 
     user = Field(UserType, id=Argument(ID, required=True))
 
+    me = Field(UserType)
+
     def resolve_users(self, info, **kwargs):
         return get_user_model().objects.all()
 
+    ## NEEDS TO BE FIXED FOR USER PROFILES, QUERY BY ID
     def resolve_user(self, info, **kwargs):
         user = info.context.user
         if user.is_anonymous:
-            raise Exception("Not Logged in!")
+            raise Exception(AUTH_EXCEPTION)
+
+        return user
+
+    def resolve_me(self, info, **kwargs):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception(AUTH_EXCEPTION)
 
         return user
 
     # ==== Family queries and resolvers ====
     # get all families
-    family = Field(FamilyType)
+    family = Field(FamilyType, id=Argument(ID, required=True))
 
     families = List(FamilyType)
+
+    def resolve_family(self, info, **kwargs):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception(AUTH_EXCEPTION)
+
+        return Family.objects.get(id=kwargs.get('id'))
 
     def resolve_families(self, info, **kwargs):
         user = info.context.user

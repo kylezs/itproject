@@ -13,8 +13,6 @@ mutation VerifyToken($token: String!) {
 }
 `
 
-
-
 export default function Auth(props) {
     const [authenticated, setAuthenticated] = useState(false)
     const [user, setUser] = useState({})
@@ -59,6 +57,7 @@ export default function Auth(props) {
         }
 
         const username = data.data.verifyToken.payload.username
+        console.log("Here's the user id: ", data.data.verifyToken.payload.id);
         const user = {
             username: username,
         };
