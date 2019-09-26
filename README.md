@@ -57,3 +57,18 @@ the React SPA can be deployed with django, and not as a separate application. Th
 between API calls. 
 
 ## How to Deploy
+1. Be sure you know which branch you want to deploy. In 99% of cases this branch is master. For generalisability the branch you are deploying will be referred to as BRANCH.
+2. Change the default settings in `manage.py` and `wsgi.py`
+Do this according to the production settings. As above (settings for production).
+3. Build the front end.
+    
+    1. Navigate to /front
+    2. Run `npm run build` This will build the react app and put the build in back/build
+4. Run `python manage.py collectstatic`
+        
+    This will put the static files on AWS.
+5. Push the branch to heroku. `--force` because fuck whatever else is in there. Am I right?
+
+        git push heroku `git subtree split --prefix back/ BRANCH`:master --force`
+
+6. Open the app and have some fun adding artefacts to a register.
