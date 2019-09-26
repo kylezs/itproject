@@ -13,14 +13,15 @@ import App from './App';
 import { AUTH_TOKEN } from './constants'
 
 // Dev
-// const httpLink = createHttpLink({
-//     uri: 'http://127.0.0.1:8000/graphql/'
-// })
+const httpLink = createHttpLink({
+    uri: 'http://127.0.0.1:8000/graphql/',
+    credentials: 'same-origin',
+})
 
 // TODO: Prod (test), fix this later
-const httpLink = createHttpLink({
-  uri: 'https://glacial-caverns-32653.herokuapp.com/graphql/'
-})
+// const httpLink = createHttpLink({
+//   uri: 'https://glacial-caverns-32653.herokuapp.com/graphql/'
+// })
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
