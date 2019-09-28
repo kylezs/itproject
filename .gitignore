@@ -1,6 +1,13 @@
 .venv
 .vscode
 
+.vscode
+.vscode/settings.json
+
+
+# static files, should be built on deploy
+staticfiles/
+
 
 # Created by https://www.gitignore.io
 
@@ -39,7 +46,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+front/build/
 develop-eggs/
 dist/
 downloads/

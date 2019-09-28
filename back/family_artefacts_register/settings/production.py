@@ -1,20 +1,28 @@
 from .base import *
+import dj_database_url
+DEBUG = True
 
-DEBUG = False
+# NEEDS TO BE STORED AS ENV VAR
+SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 
-# Just for testing, need to be replaced by heroku url
-ALLOWED_HOSTS = ['*']
+
+
+# Just for testing, replaced by heroku url
+ALLOWED_HOSTS = ["glacial-caverns-32653.herokuapp.com",
+                 "glacial-caverns-32653.herokuapp.com/graphql/",
+                 "*.herokuapp.com", "127.0.0.1:8000",
+                 "http://0.0.0.0:5000",
+                 "localhost"]
 
 INSTALLED_APPS += [
     # Amazon AWS
     'storages',
 ]
 
-# Artefacts Picture (AWS S3)
+DATABASES = {}
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'family_artefacts_register/static'),
-]
+# Artefacts Picture (AWS S3)
 
 AWS_ACCESS_KEY_ID = 'AKIARVLDMTEQV22SWEWB'
 AWS_SECRET_ACCESS_KEY = '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'

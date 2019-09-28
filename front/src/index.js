@@ -10,10 +10,11 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import Auth from './components/Auth';
 
 import App from './App';
-import { AUTH_TOKEN } from './constants'
+import { AUTH_TOKEN, config } from './constants'
 
+// Depending on prod or dev, set the appropriate uri for the graphql queries
 const httpLink = createHttpLink({
-    uri: 'http://127.0.0.1:8000/graphql/'
+    uri: config.uri,
 })
 
 const authLink = setContext((_, { headers }) => {
@@ -32,11 +33,6 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 });
-
-// const client = new ApolloClient({
-//     cache,
-//     link
-// })
 
 ReactDOM.render(
     <ApolloProvider client={client}>

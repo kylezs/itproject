@@ -1,0 +1,2 @@
+release: python manage.py migrate
+web: gunicorn family_artefacts_register.wsgi --log-file -

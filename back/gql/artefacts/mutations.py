@@ -13,6 +13,8 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'description',
             'is_public',
             'state'
+            'added_at',
+            'date',
         )
 
 
@@ -35,7 +37,7 @@ class ArtefactCreate(Mutation):
         serializer.is_valid(raise_exception=True)
 
         user = info.context.user
-        input = data.get('input')
+        #input = data.get('input')
         artefact = Artefact(
             admin=user,
         )

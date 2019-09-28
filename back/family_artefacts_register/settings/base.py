@@ -23,6 +23,7 @@ environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BACK_DIR = os.path.dirname(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -34,7 +35,7 @@ SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', "http://0.0.0.0:5000"]
 
 
 # Application definition
@@ -84,10 +85,14 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'family_artefacts_register.urls'
 
+
+# THE DIRS HERE IS WHAT IS SERVED BY THE TEMPLATEVIEW IN URLS
+# index.html is a file inside the front/build which is the control centre of the react app
+# This should be built into the django app
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BACK_DIR, 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,17 +111,7 @@ WSGI_APPLICATION = 'family_artefacts_register.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# NB: THIS IS NOT SUITABLE FOR PRODUCTION.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432'
-    }
-}
+
 
 
 # Password validation
@@ -156,3 +151,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BACK_DIR, 'build/static'),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
