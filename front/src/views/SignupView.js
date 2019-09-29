@@ -12,7 +12,8 @@ import Layout from '../components/Layout';
 
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks';
-import { USERNAME_TAKEN_ERR_MSG, MIN_PASSWORD_LEN } from "../constants.js"
+import { USERNAME_TAKEN_ERR_MSG } from "../constants.js"
+import { PASSWORD_SCHEMA, parseFailedRules } from "../components/passwordValidator.js"
 
 const SIGNUP_MUTATION = gql`
 mutation SignupMutation($email: String!, $password: String!, $username: String!){
@@ -55,9 +56,11 @@ function Signup(props) {
     const [usernameIsTaken, setUsernameIsTaken] = useState(false)
     const [emailIsTaken, setEmailIsTaken] = useState(false)
     const [validPassword, setValidPassword] = useState(false)
+    const [failedPassRules, setFailedPassRules] = useState([])
     const [unknownError, setUnknownError] = useState(false)
 
-    var validator = require("email-validator");
+    var emailValidator = require("email-validator");
+    
 
     const classes = useStyles();
     const _confirm = async data => {
@@ -96,8 +99,11 @@ function Signup(props) {
     const changePassword = async (pass) => {
         setPassword(pass)
 
-        // TO DO: password validation
-        if (pass.length >= MIN_PASSWORD_LEN){
+        // password validation
+        setFailedPassRules(PASSWORD_SCHEMA.validate(pass, { list: true }))
+        if (failedPassRules){
+            setValidPassword(false)
+        } else {
             setValidPassword(true)
         }
     }
@@ -146,12 +152,12 @@ function Signup(props) {
                                 name="email"
                                 autoComplete="email"
                                 type="email"
-                                error={emailIsTaken || (email && !validator.validate(email))}
+                                error={emailIsTaken || (!!email && !emailValidator.validate(email))}
                                 onChange={e => setEmail(e.target.value)}
                                 />
                             {
-                                email && !validator.validate(email) &&
-                                <FormHelperText id="email" error={!validator.validate(email)}>Email is invalid</FormHelperText>
+                                !!email && !emailValidator.validate(email) &&
+                                <FormHelperText id="email" error={!emailValidator.validate(email)}>Email is invalid</FormHelperText>
                             }
                             {
                                 emailIsTaken &&
@@ -174,7 +180,7 @@ function Signup(props) {
                                 />
                             {
                                 errorPassword &&
-                                <FormHelperText id="password" error={errorPassword}>Passwords must be at least {MIN_PASSWORD_LEN} characters</FormHelperText>
+                                <FormHelperText id="password" error={errorPassword}>{parseFailedRules(failedPassRules)}</FormHelperText>
                             }
                         </Grid>
 
@@ -208,7 +214,7 @@ function Signup(props) {
                                 disabled={
                                     !(confirmPassword === password)
                                     || !username || !email || !validPassword
-                                    || !validator.validate(email)
+                                    || !emailValidator.validate(email)
                                 }
                                 >
                                 Sign Up
