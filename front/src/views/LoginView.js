@@ -52,6 +52,7 @@ function Login(props) {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [invalidCred, setInvalidCred] = useState(false)
+    const [unknownError, setUnknownError] = useState(false)
 
     const _confirm = async data => {
         const { token } = data.tokenAuth
@@ -72,6 +73,7 @@ function Login(props) {
             } else {
                 console.log("unexpect error(s):")
                 console.log(errors)
+                setUnknownError(true)
             }
         }
     }
@@ -109,7 +111,7 @@ function Login(props) {
                                 label="Username"
                                 autoFocus
                                 onChange={e => setUsername(e.target.value)}
-                                error={invalidCred}
+                                error={invalidCred || unknownError}
                                 />
                         </Grid>
 
@@ -122,11 +124,15 @@ function Login(props) {
                                 type="password"
                                 id="password"
                                 onChange={e => setPassword(e.target.value)}
-                                error={invalidCred}
+                                error={invalidCred || unknownError}
                                 />
                             {
                                 invalidCred &&
                                 <FormHelperText id="password" error={invalidCred}>Please enter valid credentials</FormHelperText>
+                            }
+                            {
+                                unknownError &&
+                                <FormHelperText id="password" error={unknownError}>Unknown Error Occurred</FormHelperText>
                             }
                         </Grid>
 
