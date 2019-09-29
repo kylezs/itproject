@@ -111,7 +111,7 @@ function Login(props) {
                                 label="Username"
                                 autoFocus
                                 onChange={e => setUsername(e.target.value)}
-                                error={invalidCred || unknownError}
+                                error={invalidCred}
                                 />
                         </Grid>
 
@@ -124,15 +124,11 @@ function Login(props) {
                                 type="password"
                                 id="password"
                                 onChange={e => setPassword(e.target.value)}
-                                error={invalidCred || unknownError}
+                                error={invalidCred}
                                 />
                             {
                                 invalidCred &&
                                 <FormHelperText id="password" error={invalidCred}>Please enter valid credentials</FormHelperText>
-                            }
-                            {
-                                unknownError &&
-                                <FormHelperText id="password" error={unknownError}>Unknown Error Occurred</FormHelperText>
                             }
                         </Grid>
 
@@ -147,6 +143,10 @@ function Login(props) {
                                 >
                                 Log In
                             </Button>
+                            {
+                                unknownError &&
+                                <FormHelperText id="password" error={unknownError}>Unknown Error Occurred</FormHelperText>
+                            }
                         </Grid>
 
                         <Grid item xs={12}>

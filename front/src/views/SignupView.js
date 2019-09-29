@@ -55,6 +55,7 @@ function Signup(props) {
     const [usernameIsTaken, setUsernameIsTaken] = useState(false)
     const [emailIsTaken, setEmailIsTaken] = useState(false)
     const [validPassword, setValidPassword] = useState(false)
+    const [unknownError, setUnknownError] = useState(false)
 
     var validator = require("email-validator");
 
@@ -71,7 +72,9 @@ function Signup(props) {
             if (USERNAME_TAKEN_ERR_MSG.startsWith(subMessage)){
                 setUsernameIsTaken(true)
             } else {
+                console.log("unexpect error(s):")
                 console.log(errors)
+                setUnknownError(true)
             }
         }
     }
@@ -210,6 +213,10 @@ function Signup(props) {
                                 >
                                 Sign Up
                             </Button>
+                            {
+                                unknownError &&
+                                <FormHelperText error={unknownError}>Unknown Error Occurred</FormHelperText>
+                            }
                         </Grid>
 
                         <Grid item xs={12}>
