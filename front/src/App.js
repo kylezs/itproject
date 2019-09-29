@@ -3,12 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRoute';
 
 // Views
-<<<<<<< HEAD
-import HomeView from './views/HomeView'
-=======
 import CreateView from './views/CreateView'
-import DetailView from './views/DetailView'
->>>>>>> dev
+
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
 import Logout from './components/Logout'
