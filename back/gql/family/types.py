@@ -12,4 +12,5 @@ class FamilyType(DjangoObjectType):
             'about',
             'join_code',
             'family_members',
+            'has_artefacts'
         )
