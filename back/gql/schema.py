@@ -24,6 +24,7 @@ from family.models import Family
 from .family.types import FamilyType
 from .family.mutations import FamilyCreate
 
+
 class Query(ObjectType):
 
     # ==== Artefact queries and resolvers ====
