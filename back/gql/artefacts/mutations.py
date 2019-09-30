@@ -3,19 +3,7 @@ from rest_framework import serializers
 from artefacts.models import Artefact
 from .types import ArtefactType
 from ..family.types import Family
-
-
-class ArtefactSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Artefact
-        fields = (
-            'name',
-            'description',
-            'is_public',
-            'state'
-            'added_at',
-            'date',
-        )
+from gql.errors import *
 
 
 class ArtefactInputType(InputObjectType):
@@ -33,18 +21,23 @@ class ArtefactCreate(Mutation):
 
     @classmethod
     def mutate(cls, root, info, **data):
-        serializer = ArtefactSerializer(data=data.get('input'))
-        serializer.is_valid(raise_exception=True)
-
         user = info.context.user
-        #input = data.get('input')
+        if user.is_anonymous:
+            raise Exception(AUTH_EXCEPTION)
+
+        input = data.get('input')
+        
         artefact = Artefact(
-            admin=user,
+            name=input.name,
+            description=input.description,
+            state=input.state,
+            is_public=input.is_public,
+            admin=user
         )
 
         artefact.save()
 
-        return ArtefactCreate(artefact=serializer.save())
+        return ArtefactCreate(artefact=artefact)
 
 
 class ArtefactDelete(Mutation):
