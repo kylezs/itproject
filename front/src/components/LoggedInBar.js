@@ -26,7 +26,7 @@ export default props => {
             <Button component={RouterLink} to='/family/create' color="inherit">
                 Create Family
             </Button>
-            <Button color="inherit">
+            <Button component={RouterLink} to='/artefacts/manage' color="inherit">
                 Manage Artefacts
             </Button>
             <Button component={RouterLink} to='/artefacts/create' color="inherit">

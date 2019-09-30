@@ -67,6 +67,23 @@ query ArtefactStatesQuery($name: String!){
 }
 `
 
+const LIST_OF_ARTEFACTS = gql`
+query artefactsQuery($first: Int!){
+  me {
+    artefactAdministratorOf(first: $first){
+      edges {
+        node {
+          id
+          name
+          description
+          upload
+        }
+      }
+    }
+  }
+}
+`
+
 const styles = theme => ({
     root: {
         margin: 0,
@@ -100,7 +117,7 @@ const DialogContent = withStyles(theme => ({
     },
 }))(MuiDialogContent);
 
-export default function CreateArtefactView (props) {
+export default function ArtefactEditCreate({ artefactId }) {
 
     const classes = useStyles();
 
@@ -115,6 +132,20 @@ export default function CreateArtefactView (props) {
     const [artefactStates, setArtefactStates] = useState({})
     const [artefactCondition, setArtefactCondition] = useState("")
     const [files, setFiles] = useState([])
+    const [edit, setEdit] = useState(false)
+
+    let { data, loading } = useQuery(
+        LIST_OF_ARTEFACTS,
+        {
+            variables: {
+                first: numArtefactsFetched
+            }
+        }
+    )
+    
+    if (artefactId){
+        
+    }
 
     const _completed = async (data) => {
         console.log(data);
@@ -129,16 +160,16 @@ export default function CreateArtefactView (props) {
 
     const [createArtefact, { data }] = useMutation(
         CREATE_ARTEFACT_MUTATION, {
-            onCompleted: _completed,
-            onError: _handleError,
-        }
+        onCompleted: _completed,
+        onError: _handleError,
+    }
     );
 
     const _saveArtefactStates = async statesData => {
         var temp = {}
         var desc
         var state
-        for (var i in statesData.__type.enumValues){
+        for (var i in statesData.__type.enumValues) {
             state = statesData.__type.enumValues[i]
             desc = state.description
             temp[desc] = state.name
@@ -146,23 +177,25 @@ export default function CreateArtefactView (props) {
         setArtefactStates(temp)
     }
 
-    const {loading, error, data: statesData} = useQuery(
+    const { loading, error, data: statesData } = useQuery(
         GET_ARTEFACT_STATES_QUERY, {
-            variables: {"name": "ArtefactState"},
-            onCompleted: _saveArtefactStates
-        }
+        variables: { "name": "ArtefactState" },
+        onCompleted: _saveArtefactStates
+    }
     )
 
     const submitForm = async (event) => {
         event.preventDefault();
         console.log("Artefact name: " + artefactName)
         console.log("About: " + about)
-        createArtefact({variables: {
-            name: artefactName,
-            description: about,
-            state: artefactCondition,
-            isPublic: isPublic
-        }})
+        createArtefact({
+            variables: {
+                name: artefactName,
+                description: about,
+                state: artefactCondition,
+                isPublic: isPublic
+            }
+        })
     }
 
     const handleClose = (event) => {
@@ -171,7 +204,7 @@ export default function CreateArtefactView (props) {
     }
 
     const validInputs = !artefactName || !artefactCondition;
-    
+
     return (
         <Layout>
             <h1>Create an Artefact</h1>
@@ -195,7 +228,7 @@ export default function CreateArtefactView (props) {
                                 label="Artefact name"
                                 autoFocus
                                 onChange={e => setArtefactName(e.target.value)}
-                                />
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -213,7 +246,7 @@ export default function CreateArtefactView (props) {
                                         className: classes.menu,
                                     },
                                 }}
-                                >
+                            >
                                 {
                                     Object.keys(artefactStates).map((value, index) => {
                                         return <MenuItem value={artefactStates[value]} key={value}>{value}</MenuItem>
@@ -237,7 +270,7 @@ export default function CreateArtefactView (props) {
                                         className: classes.menu,
                                     },
                                 }}
-                                >
+                            >
                                 {
                                     [true, false].map((value, index) => {
                                         return <MenuItem value={value} key={value}>{value ? "Public" : "Not Public"}</MenuItem>
@@ -255,7 +288,7 @@ export default function CreateArtefactView (props) {
                                 id="about"
                                 label="Tell people about your artefact"
                                 onChange={e => setAbout(e.target.value)}
-                                />
+                            />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -266,11 +299,11 @@ export default function CreateArtefactView (props) {
                                 id="artefact-admin"
                                 label="Artefact Admin"
                                 onChange={e => console.log("hello")}
-                                />
+                            />
                         </Grid>
 
                         <Grid item xs={12}>
-                            <DropzoneArea onChange={files => setFiles(files)}/>
+                            <DropzoneArea onChange={files => setFiles(files)} />
                         </Grid>
 
                         <Grid item xs={12}>
@@ -282,27 +315,13 @@ export default function CreateArtefactView (props) {
                                 variant="contained"
                                 color="primary"
                                 disabled={validInputs}
-                                >
+                            >
                                 Create
                             </Button>
                         </Grid>
 
                     </Grid>
                 </form>
-
-                {data && (
-                    <Dialog open={false} onClose={handleClose}>
-                        <DialogTitle onClose={handleClose}>
-                            Here's your artefact
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography align='center'>
-                                {artefactId}
-                            </Typography>
-
-                        </DialogContent>
-                    </Dialog>
-                )}
             </div>
         </Layout>
 

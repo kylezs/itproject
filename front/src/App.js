@@ -13,6 +13,7 @@ import CreateFamilyView from './views/CreateFamilyView'
 // Artefact Views
 import CreateArtefactView from './views/CreateArtefactView'
 import DetailView from './views/DetailView'
+import ManageArtefactsView from './views/ManageArtefactsView'
 
 import UserHomeView from './views/UserHomeView';
 
@@ -32,6 +33,7 @@ class App extends Component {
 
                         {/* Artefact routes */}
                         <PrivateRoute exact path="/artefacts/create/" component={CreateArtefactView} />
+                        <PrivateRoute exact path="/artefacts/manage/" component={ManageArtefactsView} />
                         <PrivateRoute exact path="/artefacts/:id/" component={DetailView} />
 
                         {/* Family routes */}
