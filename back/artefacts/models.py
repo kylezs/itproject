@@ -13,8 +13,8 @@ class Artefact(models.Model):
 
     # adapted from family models.py.
     admin = models.ForeignKey(get_user_model(),
-                                    on_delete=models.SET_NULL, null=True,
-                                    related_name="artefact_administrator_of")
+                              on_delete=models.SET_NULL, null=True,
+                              related_name="artefact_administrator_of")
 
     # test field now: later, override __init__ to update this whenever a field changes.
     # also, used timezone.now() for migration when prompted default value.. change later
@@ -38,6 +38,9 @@ class Artefact(models.Model):
     upload = models.FileField(default=False, blank=True)
 
     added_at = models.DateTimeField(auto_now_add=True)
+
+    belongs_to_families = models.ManyToManyField(Family,
+                                                 related_name='has_artefacts')
 
     class Meta:
         verbose_name = _('artefact')
