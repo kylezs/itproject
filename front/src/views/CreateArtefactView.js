@@ -15,8 +15,17 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import { IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import MenuItem from '@material-ui/core/MenuItem';
 import { DropzoneArea } from 'material-ui-dropzone'
+import MenuItem from '@material-ui/core/MenuItem';
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import CommentIcon from '@material-ui/icons/Comment';
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -41,12 +50,13 @@ const useStyles = makeStyles(theme => ({
 
 // Get the id back to allow for querying for the artefact later
 const CREATE_ARTEFACT_MUTATION = gql`
-mutation CreateArtefactMutation($name: String!, $state: String!, $isPublic: Boolean!, $description: String,){
+mutation CreateArtefactMutation($name: String!, $state: String!, $isPublic: Boolean!, $description: String!, $families: [ID]){
     artefactCreate(input: {
         name: $name
         state: $state
         description: $description
         isPublic: $isPublic
+        belongsToFamily: $families
     })
     {
         artefact {
@@ -67,10 +77,22 @@ query ArtefactStatesQuery($name: String!){
 }
 `
 
+const LIST_OF_FAMILIES = gql`
+query artefactsQuery{
+  me {
+    isMemberOf {
+      familyName
+      id
+    }
+  }
+}
+`
+
 const styles = theme => ({
     root: {
         margin: 0,
         padding: theme.spacing(2),
+        backgroundColor: theme.palette.background.paper
     },
     closeButton: {
         position: 'absolute',
@@ -106,20 +128,25 @@ export default function CreateArtefactView (props) {
 
     const context = useContext(authContext);
     const username = context.user.username;
-
+    
+    const [artefactStates, setArtefactStates] = useState({})
+    const [families, setFamilies] = useState([])
+    
     const [artefactName, setArtefactName] = useState("")
     const [about, setAbout] = useState("")
     const [isPublic, setIsPublic] = useState(false)
-    const [artefactId, setArtefactId] = useState(false)
-    const [open, setOpen] = useState(false)
-    const [artefactStates, setArtefactStates] = useState({})
     const [artefactCondition, setArtefactCondition] = useState("")
     const [files, setFiles] = useState([])
+    const [belongFamilyIds, setBelongFamilyIds] = useState([])
+    
+    const [artefactId, setArtefactId] = useState(-1)
+    
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
     const _completed = async (data) => {
-        console.log(data);
-        const { id } = data.artefactCreate.artefact.id
+        const id = data.artefactCreate.artefact.id
         setArtefactId(id)
+        props.history.push(`/artefacts/${id}`)
     }
 
     const _handleError = async (errors) => {
@@ -134,6 +161,29 @@ export default function CreateArtefactView (props) {
         }
     );
 
+    const _saveFamilies = async familyData => {
+        setFamilies(familyData.me.isMemberOf)
+    }
+
+    const { loading: familyLoading, error: familyError, data: familyData } = useQuery(
+        LIST_OF_FAMILIES,
+        {
+            onCompleted: _saveFamilies
+        }
+    )
+
+
+    const handleToggle = id => () => {
+        var ids = [...belongFamilyIds]
+        if (ids.includes(id)){
+            var index = ids.indexOf(id)
+            ids.splice(index, 1)
+            setBelongFamilyIds(ids)
+        } else {
+            setBelongFamilyIds([...belongFamilyIds, id])
+        }
+    };
+
     const _saveArtefactStates = async statesData => {
         var temp = {}
         var desc
@@ -146,8 +196,9 @@ export default function CreateArtefactView (props) {
         setArtefactStates(temp)
     }
 
-    const {loading, error, data: statesData} = useQuery(
-        GET_ARTEFACT_STATES_QUERY, {
+    const {loading: artefactsLoading, error: artefactsError, data: statesData} = useQuery(
+        GET_ARTEFACT_STATES_QUERY, 
+        {
             variables: {"name": "ArtefactState"},
             onCompleted: _saveArtefactStates
         }
@@ -161,13 +212,9 @@ export default function CreateArtefactView (props) {
             name: artefactName,
             description: about,
             state: artefactCondition,
-            isPublic: isPublic
+            isPublic: isPublic,
+            families: belongFamilyIds
         }})
-    }
-
-    const handleClose = (event) => {
-        event.preventDefault();
-        setOpen(false);
     }
 
     const validInputs = !artefactName || !artefactCondition;
@@ -245,6 +292,34 @@ export default function CreateArtefactView (props) {
                                 }
                             </TextField>
                         </Grid>
+                        
+                        <Grid item xs={12}>
+                            <List 
+                                className={classes.root}
+                                subheader={<ListSubheader>Select families for the artefact to belong to</ListSubheader>}
+                            >
+                                {families.map(family => {
+                                    const labelId = `checkbox-list-label-${family.id}`;
+                                    const isChecked = [...belongFamilyIds].includes(family.id)
+
+                                    return (
+                                        <ListItem key={family.id} role={undefined} dense button onClick={handleToggle(family.id)}>
+                                            <ListItemIcon>
+                                                <Checkbox
+                                                    edge="start"
+                                                    checked={isChecked}
+                                                    tabIndex={-1}
+                                                    disableRipple
+                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText id={labelId} primary={family.familyName} />
+                                        </ListItem>
+                                    );
+                                })}
+                            </List>
+                        </Grid>
+
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
@@ -289,20 +364,6 @@ export default function CreateArtefactView (props) {
 
                     </Grid>
                 </form>
-
-                {data && (
-                    <Dialog open={false} onClose={handleClose}>
-                        <DialogTitle onClose={handleClose}>
-                            Here's your artefact
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography align='center'>
-                                {artefactId}
-                            </Typography>
-
-                        </DialogContent>
-                    </Dialog>
-                )}
             </div>
         </Layout>
 
