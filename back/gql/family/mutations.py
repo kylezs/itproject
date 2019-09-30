@@ -24,10 +24,15 @@ class FamilyCreate(Mutation):
         if user.is_anonymous:
             raise Exception(AUTH_EXCEPTION)
         input = data.get('input')
+
         family = Family(
             family_name=input.family_name,
             about=input.about,
             family_admin=user
         )
+
         family.save()
+
+        family.family_members.set([user])
+        
         return FamilyCreate(family=family)
