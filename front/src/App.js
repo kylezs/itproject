@@ -14,6 +14,7 @@ import CreateFamilyView from './views/CreateFamilyView'
 import CreateArtefactView from './views/CreateArtefactView'
 import DetailView from './views/DetailView'
 import ManageArtefactsView from './views/ManageArtefactsView'
+import EditArtefactView from './views/EditArtefactView'
 
 import UserHomeView from './views/UserHomeView';
 
@@ -32,12 +33,13 @@ class App extends Component {
                         <Route exact path="/logout/" component={Logout} />
 
                         {/* Artefact routes */}
-                        <PrivateRoute exact path="/artefacts/create/" component={CreateArtefactView} />
-                        <PrivateRoute exact path="/artefacts/manage/" component={ManageArtefactsView} />
-                        <PrivateRoute exact path="/artefacts/:id/" component={DetailView} />
+                        <PrivateRoute exact path="/artefacts/create/" loggedIn={CreateArtefactView} landingPage />
+                        <PrivateRoute exact path="/artefacts/manage/" loggedIn={ManageArtefactsView} landingPage />
+                        <PrivateRoute exact path="/artefacts/:id/" loggedIn={DetailView} landingPage/>
+                        <PrivateRoute exact path="/artefacts/edit/:id/" loggedIn={EditArtefactView} landingPage />
 
                         {/* Family routes */}
-                        <PrivateRoute exact path="/family/create" loggedIn={CreateFamilyView} />
+                        <PrivateRoute exact path="/family/create" loggedIn={CreateFamilyView} landingPage />
                         
                     </Switch>
                 </div>

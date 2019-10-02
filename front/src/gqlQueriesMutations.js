@@ -39,3 +39,23 @@ query artefactsQuery{
   }
 }
 `
+
+export const ARTEFACT_DETAIL = gql`
+query DetailView($id: ID!) {
+  artefact(id: $id) {
+    id,
+    name,
+    description,
+    admin {
+      id
+      username
+    },
+    state,
+    isPublic,
+    upload,
+    belongsToFamilies {
+      id
+    },
+    addedAt
+  }
+}`
