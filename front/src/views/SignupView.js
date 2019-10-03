@@ -100,8 +100,9 @@ function Signup(props) {
         setPassword(pass)
 
         // password validation
-        setFailedPassRules(PASSWORD_SCHEMA.validate(pass, { list: true }))
-        if (failedPassRules){
+        var failedRules = PASSWORD_SCHEMA.validate(pass, { list: true })
+        setFailedPassRules(failedRules)
+        if (failedRules.length !== 0){
             setValidPassword(false)
         } else {
             setValidPassword(true)

@@ -1,10 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import Layout from '../components/Layout';
-import authContext from '../authContext';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import gql from "graphql-tag";
 import { useQuery } from '@apollo/react-hooks';
 import ArtefactCard from './ArtefactCard';
@@ -49,11 +46,7 @@ function ManageArtefactsView(props) {
 
     const tempImgURI = "https://assets.pernod-ricard.com/nz/media_images/test.jpg?hUV74FvXQrWUBk1P2.fBvzoBUmjZ1wct"
 
-
     const classes = useStyles();
-
-    const context = useContext(authContext);
-    const username = context.user.username;
     const numArtefactsFetched = 10
 
     let { data, loading } = useQuery(

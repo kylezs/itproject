@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ArtefactView from './ArtefactView'
 import { useQuery } from '@apollo/react-hooks';
 import { ARTEFACT_DETAIL } from '../gqlQueriesMutations'
+import Loading from '../components/Loading'
 
 export default function EditArtefactView(props) {
     const [artefact, setArtefact] = useState({})
@@ -16,7 +17,7 @@ export default function EditArtefactView(props) {
         console.log("Artefact:", data.artefact)
     }
 
-    const { loading: artefactLoading, error: artefactErrors, data: artefactData } = useQuery(
+    const { loading: artefactLoading } = useQuery(
         ARTEFACT_DETAIL,
         {
             variables: { id: props.match.params.id },
@@ -24,6 +25,10 @@ export default function EditArtefactView(props) {
             onError: _genericHandleError
         }
     )
-
-    return <ArtefactView artefact={artefact} mode={'edit'} />
+    
+    if (artefactLoading){
+        return <Loading />
+    } else {
+        return <ArtefactView artefact={artefact} mode={'edit'} />
+    }
 }

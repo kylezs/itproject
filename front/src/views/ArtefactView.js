@@ -1,12 +1,13 @@
-import React, { useContext, useState } from 'react';
-import { Container, Button, CssBaseline, TextField, Grid, Typography, makeStyles, MenuItem } from '@material-ui/core';
-import { List, ListItem, ListItemIcon, ListSubheader, ListItemText, Checkbox, Paper, FormHelperText, Switch } from '@material-ui/core';
+import React, { useContext, useState, Fragment } from 'react';
+import { withRouter } from 'react-router-dom';
+import { Container, Button, CssBaseline, TextField, Grid, Typography, makeStyles, MenuItem, CircularProgress } from '@material-ui/core';
+import { List, ListItem, ListItemIcon, ListSubheader, ListItemText, Checkbox, Paper, FormHelperText } from '@material-ui/core';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { DropzoneArea } from 'material-ui-dropzone'
 
-import { CREATE_ARTEFACT_MUTATION, GET_ARTEFACT_STATES_QUERY, GET_FAMILIES_QUERY, ARTEFACT_DETAIL } from '../gqlQueriesMutations'
+import { CREATE_ARTEFACT_MUTATION, GET_ARTEFACT_STATES_QUERY, GET_FAMILIES_QUERY } from '../gqlQueriesMutations'
 
 
 const useStyles = makeStyles(theme => ({
@@ -64,23 +65,25 @@ const useStyles = makeStyles(theme => ({
     list: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
-    }
+    },
+    button: {
+        margin: theme.spacing(1),
+    },
 }));
 
 
-export default function ArtefactView({ mode, artefact, history }) {
+function ArtefactView(props) {
     var create = true, edit = false
-    if (mode === "edit") {
+    if (props.mode === "edit") {
         create = false
         edit = true
-    } else if (mode !== "create") {
+    } else if (props.mode !== "create") {
         console.log("unknown mode provided, defaulted to create")
     }
 
     const classes = useStyles();
 
     const context = useContext(authContext);
-    const userId = context.user.id;
 
     const [artefactStates, setArtefactStates] = useState({})
     const [families, setFamilies] = useState([])
@@ -103,29 +106,33 @@ export default function ArtefactView({ mode, artefact, history }) {
     const [initialised, setInitialised] = useState(false)
 
     const _setArtefactVars = () => {
-        setArtefactName(artefact.name)
-        setAbout(artefact.description)
-        setIsPublic(artefact.isPublic)
-        setArtefactCondition(artefact.state)
-        setFiles(artefact.upload)
+        setArtefactName(props.artefact.name)
+        setAbout(props.artefact.description)
+        setIsPublic(props.artefact.isPublic)
+        setArtefactCondition(props.artefact.state)
+        setFiles(props.artefact.upload)
 
         var belong = {}
-        artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        props.artefact.belongsToFamilies.map(val => (belong[val.id] = true))
         setBelongFamilyIds(belong)
 
-        setAdmin(artefact.admin)
+        setAdmin(props.artefact.admin)
 
         setInitialised(true)
     }
 
     // if in edit mode (but not in create mode) load in data for the artefact
-    if (!initialised && !create && edit && artefact && Object.keys(artefact).length !== 0) {
+    if (!initialised && !create && edit && props.artefact && Object.keys(props.artefact).length !== 0) {
         _setArtefactVars()
     }
 
     const _creationCompleted = async (data) => {
         const id = data.artefactCreate.artefact.id
-        history.push(`/artefacts/${id}`)
+
+        const { history } = props;
+        if (history) {
+            history.push(`/artefacts/${id}`)
+        }
     }
 
     const _handleCreationError = async (errors) => {
@@ -165,7 +172,7 @@ export default function ArtefactView({ mode, artefact, history }) {
         setArtefactStates(temp)
     }
 
-    const { loading: artefactsLoading } = useQuery(
+    const { loading: statesLoading } = useQuery(
         GET_ARTEFACT_STATES_QUERY,
         {
             variables: { "name": "ArtefactState" },
@@ -179,7 +186,6 @@ export default function ArtefactView({ mode, artefact, history }) {
         if (fieldName === "name") {
             prev = artefactName
             setArtefactName(event.target.value)
-            console.log("set:", event.target.value)
         } else if (fieldName === "condition") {
             prev = artefactCondition
             setArtefactCondition(event.target.value)
@@ -189,19 +195,19 @@ export default function ArtefactView({ mode, artefact, history }) {
         } else if (fieldName === "about") {
             prev = about
             setAbout(event.target.value)
-        } else if (fieldName === "families"){
+        } else if (fieldName === "families") {
             prev = belongFamilyIds
             // setting new value is handled separately
         } else {
             console.log("unknown field was changed and not handled")
         }
-        
-        if (beingEdited !== fieldName){
+
+        if (edit && beingEdited !== fieldName) {
             setBeingEdited(fieldName)
             setPrevValue(prev)
         }
     }
-    
+
     const handleFamiliesToggle = id => event => {
         setBelongFamilyIds({ ...belongFamilyIds, [id]: event.target.checked })
         handleSetField("families", event)
@@ -242,41 +248,70 @@ export default function ArtefactView({ mode, artefact, history }) {
 
     const invalidInputs = !artefactName || !artefactCondition || !about
     const noErrors = !familyErrors && !creationErrors
+    const dataLoading = familyLoading || statesLoading
 
+    function SaveButton() {
+        return (
+            <Button
+                variant="contained"
+                color="primary"
+                className={classes.button}
+            >
+                Save (WIP)
+        </Button>
+        )
+    }
 
-    const adminUsername = admin.username
+    function CancelButton() {
+        return (
+            <Button
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                onClick={cancelEditing}
+            >
+                Cancel
+        </Button>
+        )
+    }
+
+    if (edit && dataLoading){
+        return (
+            <Layout>
+                <CircularProgress/>
+            </Layout>
+        )
+    }
 
     return (
         <Layout>
             <CssBaseline />
             <form onSubmit={submitForm}>
                 <Container maxWidth={'md'}>
-                    <Grid 
-                        container 
+                    <Grid
+                        container
                         spacing={1}
                         direction="row"
                         alignItems="center"
                         justify="center"
                     >
-                        <Grid item xs={12} fullWidth>
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <Typography variant="h4">
                                     {create ? "Create" : "Edit"} Artefact
                                 </Typography>
+                                <Typography variant="subtitle1">
+                                    {
+                                        create ?
+                                            "Artefacts are belongings of the family, enter as much or as little detail as you like"
+                                            :
+                                            "Click to start editing"
+                                    }
+                                </Typography>
                             </Paper>
                         </Grid>
-                        {
-                            create &&
-                            <Grid item xs={12} fullWidth>
-                                <Paper className={classes.root}>
-                                    <Typography variant="subtitle1">
-                                        Artefacts are belongings of the family, enter as much or as little detail as you like
-                                    </Typography>
-                                </Paper>
-                            </Grid>
-                        }
 
-                        <Grid item xs={12} fullWidth>
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <TextField
                                     className={classes.root}
@@ -292,16 +327,20 @@ export default function ArtefactView({ mode, artefact, history }) {
                                 />
                             </Paper>
                         </Grid>
-                        
-                        <Grid item xs={6} justify="center">
-                            <Button onClick={cancelEditing}>Cancel</Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button>Save (WIP)</Button>
-                        </Grid>
 
+                        {
+                            edit && beingEdited === "name" &&
+                            <Fragment>
+                                <Grid item xs={3}>
+                                    <SaveButton />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <CancelButton />
+                                </Grid>
+                            </Fragment>
+                        }
 
-                        <Grid item xs={12} fullWidth>
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <TextField
                                     className={classes.root}
@@ -318,7 +357,7 @@ export default function ArtefactView({ mode, artefact, history }) {
                                             className: classes.menu,
                                         },
                                     }}
-                                    disabled={artefactsLoading || edit && !!beingEdited && beingEdited !== "condition"}
+                                    disabled={edit && !!beingEdited && beingEdited !== "condition"}
                                 >
                                     {
                                         Object.keys(artefactStates).map((value, index) => {
@@ -329,7 +368,19 @@ export default function ArtefactView({ mode, artefact, history }) {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12} fullWidth>
+                        {
+                            edit && beingEdited === "condition" &&
+                            <Fragment>
+                                <Grid item xs={3}>
+                                    <SaveButton />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <CancelButton />
+                                </Grid>
+                            </Fragment>
+                        }
+
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <List
                                     subheader={<ListSubheader component='div'>Select privacy of artefact</ListSubheader>}
@@ -355,42 +406,68 @@ export default function ArtefactView({ mode, artefact, history }) {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12} fullWidth>
+                        {
+                            edit && beingEdited === "isPublic" &&
+                            <Fragment>
+                                <Grid item xs={3}>
+                                    <SaveButton />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <CancelButton />
+                                </Grid>
+                            </Fragment>
+                        }
+
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <List
                                     subheader={<ListSubheader component='div'>Select which of your families the artefact belongs to</ListSubheader>}
                                 >
-                                    {families.map(family => {
-                                        if (!belongFamilyIds[family.id]) {
-                                            belongFamilyIds[family.id] = false
-                                        }
-
-                                        return (
-                                            <ListItem
-                                                key={family.id}
-                                                role={undefined}
-                                                dense
-                                                button
-                                                onClick={handleFamiliesToggle(family.id)}
-                                                disabled={edit && !!beingEdited && beingEdited !== "families"}
-                                            >
-                                                <ListItemIcon>
-                                                    <Checkbox
-                                                        edge="start"
-                                                        checked={belongFamilyIds[family.id]}
-                                                        tabIndex={-1}
-                                                        disableRipple
-                                                    />
-                                                </ListItemIcon>
-                                                <ListItemText primary={family.familyName} />
-                                            </ListItem>
-                                        );
-                                    })}
+                                    {
+                                        families.map(family => {
+                                            if (!belongFamilyIds[family.id]) {
+                                                belongFamilyIds[family.id] = false
+                                            }
+    
+                                            return (
+                                                <ListItem
+                                                    key={family.id}
+                                                    role={undefined}
+                                                    dense
+                                                    button
+                                                    onClick={handleFamiliesToggle(family.id)}
+                                                    disabled={edit && !!beingEdited && beingEdited !== "families"}
+                                                >
+                                                    <ListItemIcon>
+                                                        <Checkbox
+                                                            edge="start"
+                                                            checked={belongFamilyIds[family.id]}
+                                                            tabIndex={-1}
+                                                            disableRipple
+                                                        />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={family.familyName} />
+                                                </ListItem>
+                                            );
+                                        })
+                                    }
                                 </List>
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12} fullWidth>
+                        {
+                            edit && beingEdited === "families" &&
+                            <Fragment>
+                                <Grid item xs={3}>
+                                    <SaveButton />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <CancelButton />
+                                </Grid>
+                            </Fragment>
+                        }
+
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <TextField
                                     className={classes.root}
@@ -407,8 +484,21 @@ export default function ArtefactView({ mode, artefact, history }) {
                                 />
                             </Paper>
                         </Grid>
-                        <Grid item xs={12} fullWidth>
-                            <Paper className={classes.root}>                        
+
+                        {
+                            edit && beingEdited === "about" &&
+                            <Fragment>
+                                <Grid item xs={3}>
+                                    <SaveButton />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <CancelButton />
+                                </Grid>
+                            </Fragment>
+                        }
+
+                        <Grid item xs={12}>
+                            <Paper className={classes.root}>
                                 <TextField
                                     className={classes.root}
                                     id="artefact-admin"
@@ -416,14 +506,14 @@ export default function ArtefactView({ mode, artefact, history }) {
                                     variant="outlined"
                                     required
                                     fullWidth
-                                    defaultValue={adminUsername}
+                                    value={Object.keys(admin).length !== 0 ? admin.username : context.user.username}
                                     onChange={e => console.log("admin field was changed")}
                                     disabled
                                 />
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12} fullWidth>
+                        <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <DropzoneArea onChange={files => setFiles(files)} />
                             </Paper>
@@ -431,24 +521,26 @@ export default function ArtefactView({ mode, artefact, history }) {
 
                         {
                             create &&
-                            <Grid item xs={12} fullWidth>
-                                <Paper className={classes.root}>                            
-                                    <Button
-                                        name="create"
-                                        label="Create"
-                                        type="submit"
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={invalidInputs}
-                                    >
-                                        Create
-                                    </Button>
-                                    {
-                                        !noErrors &&
-                                        <FormHelperText error={!noErrors}>Unknown Error Occurred</FormHelperText>
-                                    }
-                                </Paper>
+                            <Grid item xs={12}>
+                                <Button
+                                    name="create"
+                                    label="Create"
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={invalidInputs || creationLoading}
+                                >
+                                    Create
+                                </Button>
+                                {
+                                    !noErrors &&
+                                    <FormHelperText error={!noErrors}>Unknown Error Occurred</FormHelperText>
+                                }
+                                {
+                                    creationLoading &&
+                                    <CircularProgress />
+                                }
                             </Grid>
                         }
 
@@ -459,3 +551,5 @@ export default function ArtefactView({ mode, artefact, history }) {
 
     );
 }
+
+export default withRouter(ArtefactView)

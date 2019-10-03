@@ -47,7 +47,7 @@ function ArtefactCard({ mediaURI, title, description, id }) {
                 <Button size="small" color="primary" component={RouterLink} to={`/artefacts/${id}`}>
                     View
                  </Button>
-                <Button size="small" color="primary">
+                <Button size="small" color="primary" component={RouterLink} to={`/artefacts/edit/${id}`}>
                     Edit
                 </Button>
             </CardActions>
