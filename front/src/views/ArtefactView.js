@@ -8,8 +8,7 @@ import {
     Grid,
     Typography,
     makeStyles,
-    MenuItem,
-    CircularProgress
+    MenuItem
 } from '@material-ui/core'
 import {
     List,
@@ -22,6 +21,7 @@ import {
     FormHelperText
 } from '@material-ui/core'
 import Layout from '../components/Layout'
+import Loading from '../components/Loading'
 import authContext from '../authContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
@@ -201,11 +201,14 @@ function ArtefactView(props) {
         setArtefactStates(temp)
     }
 
-    const { loading: statesLoading } = useQuery(GET_ARTEFACT_STATES_QUERY, {
-        variables: { name: 'ArtefactState' },
-        onCompleted: _saveArtefactStates,
-        onError: _genericHandleError
-    })
+    const { loading: statesLoading, error: statesErrors } = useQuery(
+        GET_ARTEFACT_STATES_QUERY,
+        {
+            variables: { name: 'ArtefactState' },
+            onCompleted: _saveArtefactStates,
+            onError: _genericHandleError
+        }
+    )
 
     const handleSetField = (fieldName, event) => {
         var prev
@@ -241,7 +244,6 @@ function ArtefactView(props) {
 
     const cancelEditing = () => {
         if (beingEdited === 'name') {
-            console.log('reset:', prevValue)
             setArtefactName(prevValue)
         } else if (beingEdited === 'condition') {
             setArtefactCondition(prevValue)
@@ -251,16 +253,12 @@ function ArtefactView(props) {
             setAbout(prevValue)
         } else if (beingEdited === 'families') {
             setBelongFamilyIds(prevValue)
-        } else {
-            console.log('unknown field was changed and not handled')
         }
         setBeingEdited('')
     }
 
     const submitForm = async event => {
         event.preventDefault()
-        console.log('Artefact name: ' + artefactName)
-        console.log('About: ' + about)
         createArtefact({
             variables: {
                 name: artefactName,
@@ -273,7 +271,7 @@ function ArtefactView(props) {
     }
 
     const invalidInputs = !artefactName || !artefactCondition || !about
-    const noErrors = !familyErrors && !creationErrors
+    const noErrors = !familyErrors && !creationErrors && !statesErrors
     const dataLoading = familyLoading || statesLoading
 
     function SaveButton() {
@@ -301,12 +299,21 @@ function ArtefactView(props) {
         )
     }
 
-    if (edit && dataLoading) {
+    function EditButtons() {
         return (
-            <Layout>
-                <CircularProgress />
-            </Layout>
+            <Fragment>
+                <Grid item xs={3}>
+                    <SaveButton />
+                </Grid>
+                <Grid item xs={3}>
+                    <CancelButton />
+                </Grid>
+            </Fragment>
         )
+    }
+
+    if (edit && dataLoading) {
+        return <Loading />
     }
 
     return (
@@ -355,16 +362,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'name' && (
-                            <Fragment>
-                                <Grid item xs={3}>
-                                    <SaveButton />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <CancelButton />
-                                </Grid>
-                            </Fragment>
-                        )}
+                        {edit && beingEdited === 'name' && <EditButtons />}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -391,34 +389,21 @@ function ArtefactView(props) {
                                         beingEdited !== 'condition'
                                     }
                                 >
-                                    {Object.keys(artefactStates).map(
-                                        (value, index) => {
-                                            return (
-                                                <MenuItem
-                                                    value={
-                                                        artefactStates[value]
-                                                    }
-                                                    key={value}
-                                                >
-                                                    {value}
-                                                </MenuItem>
-                                            )
-                                        }
-                                    )}
+                                    {Object.keys(artefactStates).map(value => {
+                                        return (
+                                            <MenuItem
+                                                value={artefactStates[value]}
+                                                key={value}
+                                            >
+                                                {value}
+                                            </MenuItem>
+                                        )
+                                    })}
                                 </TextField>
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'condition' && (
-                            <Fragment>
-                                <Grid item xs={3}>
-                                    <SaveButton />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <CancelButton />
-                                </Grid>
-                            </Fragment>
-                        )}
+                        {edit && beingEdited === 'condition' && <EditButtons />}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -456,16 +441,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'isPublic' && (
-                            <Fragment>
-                                <Grid item xs={3}>
-                                    <SaveButton />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <CancelButton />
-                                </Grid>
-                            </Fragment>
-                        )}
+                        {edit && beingEdited === 'isPublic' && <EditButtons />}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -519,16 +495,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'families' && (
-                            <Fragment>
-                                <Grid item xs={3}>
-                                    <SaveButton />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <CancelButton />
-                                </Grid>
-                            </Fragment>
-                        )}
+                        {edit && beingEdited === 'families' && <EditButtons />}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -552,16 +519,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'about' && (
-                            <Fragment>
-                                <Grid item xs={3}>
-                                    <SaveButton />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <CancelButton />
-                                </Grid>
-                            </Fragment>
-                        )}
+                        {edit && beingEdited === 'about' && <EditButtons />}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -611,7 +569,6 @@ function ArtefactView(props) {
                                         Unknown Error Occurred
                                     </FormHelperText>
                                 )}
-                                {creationLoading && <CircularProgress />}
                             </Grid>
                         )}
                     </Grid>
