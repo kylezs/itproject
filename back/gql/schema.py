@@ -8,7 +8,7 @@ from .errors import *
 from artefacts.models import Artefact
 from .artefacts.types import ArtefactType
 from .artefacts.filters import ArtefactFilter
-from .artefacts.mutations import ArtefactCreate, ArtefactDelete
+from .artefacts.mutations import ArtefactCreate, ArtefactUpdate, ArtefactDelete
 
 # UserAuth
 from .userAuth.types import UserType
@@ -86,6 +86,7 @@ class Query(ObjectType):
 class Mutation(ObjectType):
     # ==== Artefact mutations ====
     artefact_create = ArtefactCreate.Field()
+    artefact_update = ArtefactUpdate.Field()
     artefact_delete = ArtefactDelete.Field()
 
     # ==== UserAuth mutations ====
