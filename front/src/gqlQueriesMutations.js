@@ -67,3 +67,16 @@ export const ARTEFACT_DETAIL = gql`
         }
     }
 `
+
+export const UPDATE_ARTEFACT_MUTATION = gql`
+    mutation UpdateArtefactMutation(
+        $id: ID!
+        $artefactInput: ArtefactInputType!
+    ) {
+        artefactUpdate(id: $id, input: $artefactInput) {
+            artefact {
+                id
+            }
+        }
+    }
+`

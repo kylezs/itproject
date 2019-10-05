@@ -8,8 +8,11 @@ import {
     Grid,
     Typography,
     makeStyles,
-    MenuItem
+    MenuItem,
+    Snackbar,
+    IconButton
 } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 import {
     List,
     ListItem,
@@ -29,7 +32,8 @@ import { DropzoneArea } from 'material-ui-dropzone'
 import {
     CREATE_ARTEFACT_MUTATION,
     GET_ARTEFACT_STATES_QUERY,
-    GET_FAMILIES_QUERY
+    GET_FAMILIES_QUERY,
+    UPDATE_ARTEFACT_MUTATION
 } from '../gqlQueriesMutations'
 
 const useStyles = makeStyles(theme => ({
@@ -120,6 +124,8 @@ function ArtefactView(props) {
 
     const [beingEdited, setBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
+    const [currValue, setCurrValue] = useState({})
+    const [snackbarOpen, setSnackbarOpen] = useState(false)
 
     const _genericHandleError = async errors => {
         console.log(errors)
@@ -155,7 +161,7 @@ function ArtefactView(props) {
     }
 
     const _creationCompleted = async data => {
-        const id = data.artefactCreate.artefact.id
+        var id = data.artefactCreate.artefact.id
 
         const { history } = props
         if (history) {
@@ -173,6 +179,19 @@ function ArtefactView(props) {
         { error: creationErrors, loading: creationLoading }
     ] = useMutation(CREATE_ARTEFACT_MUTATION, {
         onCompleted: _creationCompleted,
+        onError: _handleCreationError
+    })
+
+    const _updateCompleted = async data => {
+        setBeingEdited('')
+        setSnackbarOpen(true)
+    }
+
+    const [
+        updateArtefact,
+        { error: updateErrors, loading: updateLoading }
+    ] = useMutation(UPDATE_ARTEFACT_MUTATION, {
+        onCompleted: _updateCompleted,
         onError: _handleCreationError
     })
 
@@ -209,27 +228,34 @@ function ArtefactView(props) {
         }
     )
 
-    const handleSetField = (fieldName, event) => {
+    const handleSetField = (fieldName, event, famId) => {
         var prev
+        var curr = event.target.value
         if (fieldName === 'name') {
             prev = artefactName
-            setArtefactName(event.target.value)
-        } else if (fieldName === 'condition') {
+            setArtefactName(curr)
+        } else if (fieldName === 'state') {
             prev = artefactCondition
-            setArtefactCondition(event.target.value)
+            setArtefactCondition(curr)
         } else if (fieldName === 'isPublic') {
             prev = isPublic
-            setIsPublic(event.target.checked)
-        } else if (fieldName === 'about') {
+            curr = event.target.checked
+            setIsPublic(curr)
+        } else if (fieldName === 'description') {
             prev = about
-            setAbout(event.target.value)
-        } else if (fieldName === 'families') {
+            setAbout(curr)
+        } else if (fieldName === 'belongsToFamily') {
             prev = belongFamilyIds
-            // setting new value is handled separately
+            curr = {
+                ...belongFamilyIds,
+                [famId]: event.target.checked
+            }
+            setBelongFamilyIds(curr)
         } else {
             console.log('unknown field was changed and not handled')
         }
 
+        setCurrValue(curr)
         if (edit && beingEdited !== fieldName) {
             setBeingEdited(fieldName)
             setPrevValue(prev)
@@ -237,39 +263,63 @@ function ArtefactView(props) {
     }
 
     const handleFamiliesToggle = id => event => {
-        setBelongFamilyIds({ ...belongFamilyIds, [id]: event.target.checked })
-        handleSetField('families', event)
+        // must be called in this order
+        handleSetField('belongsToFamily', event, id)
+        // setBelongFamilyIds({ ...belongFamilyIds, [id]: event.target.checked })
     }
 
     const cancelEditing = () => {
         if (beingEdited === 'name') {
             setArtefactName(prevValue)
-        } else if (beingEdited === 'condition') {
+        } else if (beingEdited === 'state') {
             setArtefactCondition(prevValue)
         } else if (beingEdited === 'isPublic') {
             setIsPublic(prevValue)
-        } else if (beingEdited === 'about') {
+        } else if (beingEdited === 'description') {
             setAbout(prevValue)
-        } else if (beingEdited === 'families') {
+        } else if (beingEdited === 'belongsToFamily') {
             setBelongFamilyIds(prevValue)
         }
         setBeingEdited('')
     }
 
     const submitForm = async event => {
+        var famIDs = Object.keys(belongFamilyIds).filter(
+            id => belongFamilyIds[id]
+        )
         createArtefact({
             variables: {
                 name: artefactName,
-                description: about,
                 state: artefactCondition,
                 isPublic: isPublic,
-                families: belongFamilyIds
+                description: about,
+                families: famIDs
             }
         })
     }
 
     const saveChange = async event => {
-        console.log('save change not implemented yet')
+        if (edit) {
+            var input = {}
+            input[beingEdited] = currValue
+
+            if (beingEdited === 'belongsToFamily') {
+                input[beingEdited] = Object.keys(belongFamilyIds).filter(
+                    id => belongFamilyIds[id]
+                )
+            }
+            console.log({
+                id: props.artefact.id,
+                artefactInput: input
+            })
+
+            updateArtefact({
+                variables: {
+                    id: props.artefact.id,
+                    artefactInput: input
+                }
+            })
+        }
     }
 
     function SaveButton() {
@@ -311,6 +361,14 @@ function ArtefactView(props) {
         )
     }
 
+    function handleCloseSnackbar(event, reason) {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setSnackbarOpen(false)
+    }
+
     const invalidInputs = !artefactName || !artefactCondition || !about
     const noErrors = !familyErrors && !creationErrors && !statesErrors
     const dataLoading = familyLoading || statesLoading
@@ -322,7 +380,7 @@ function ArtefactView(props) {
     return (
         <Layout>
             <CssBaseline />
-            <form onSubmit={submitForm}>
+            <form>
                 <Container maxWidth={'md'}>
                     <Grid
                         container
@@ -377,9 +435,7 @@ function ArtefactView(props) {
                                     required
                                     fullWidth
                                     value={artefactCondition}
-                                    onChange={e =>
-                                        handleSetField('condition', e)
-                                    }
+                                    onChange={e => handleSetField('state', e)}
                                     select
                                     SelectProps={{
                                         MenuProps: {
@@ -389,7 +445,7 @@ function ArtefactView(props) {
                                     disabled={
                                         edit &&
                                         !!beingEdited &&
-                                        beingEdited !== 'condition'
+                                        beingEdited !== 'state'
                                     }
                                 >
                                     {Object.keys(artefactStates).map(value => {
@@ -406,7 +462,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'condition' && <EditButtons />}
+                        {edit && beingEdited === 'state' && <EditButtons />}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -473,7 +529,8 @@ function ArtefactView(props) {
                                                 disabled={
                                                     edit &&
                                                     !!beingEdited &&
-                                                    beingEdited !== 'families'
+                                                    beingEdited !==
+                                                        'belongsToFamily'
                                                 }
                                             >
                                                 <ListItemIcon>
@@ -498,13 +555,15 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'families' && <EditButtons />}
+                        {edit && beingEdited === 'belongsToFamily' && (
+                            <EditButtons />
+                        )}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <TextField
                                     className={classes.root}
-                                    id='about'
+                                    id='description'
                                     label='Tell people about your artefact'
                                     variant='outlined'
                                     required
@@ -512,17 +571,21 @@ function ArtefactView(props) {
                                     multiline
                                     rows={6}
                                     value={about}
-                                    onChange={e => handleSetField('about', e)}
+                                    onChange={e =>
+                                        handleSetField('description', e)
+                                    }
                                     disabled={
                                         edit &&
                                         !!beingEdited &&
-                                        beingEdited !== 'about'
+                                        beingEdited !== 'description'
                                     }
                                 />
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'about' && <EditButtons />}
+                        {edit && beingEdited === 'description' && (
+                            <EditButtons />
+                        )}
 
                         <Grid item xs={12}>
                             <Paper className={classes.root}>
@@ -559,11 +622,11 @@ function ArtefactView(props) {
                                 <Button
                                     name='create'
                                     label='Create'
-                                    type='submit'
                                     fullWidth
                                     variant='contained'
                                     color='primary'
                                     disabled={invalidInputs || creationLoading}
+                                    onClick={submitForm}
                                 >
                                     Create
                                 </Button>
@@ -575,6 +638,34 @@ function ArtefactView(props) {
                             </Grid>
                         )}
                     </Grid>
+
+                    <Snackbar
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left'
+                        }}
+                        open={snackbarOpen}
+                        autoHideDuration={2000}
+                        onClose={handleCloseSnackbar}
+                        ContentProps={{
+                            'aria-describedby': 'message-id'
+                        }}
+                        message={<span id='message-id'>Edit successful</span>}
+                        action={[
+                            <Button key='undo' color='secondary' size='small'>
+                                UNDO
+                            </Button>,
+                            <IconButton
+                                key='close'
+                                aria-label='close'
+                                color='inherit'
+                                onClick={handleCloseSnackbar}
+                                className={classes.close}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        ]}
+                    />
                 </Container>
             </form>
         </Layout>
