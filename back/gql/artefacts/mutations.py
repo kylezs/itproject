@@ -15,7 +15,10 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'date',
             'artefact_flag_choices',
             'is_public',
-            'information_on_handling', 
+            'belong_to_family', 
+            'upload',
+            'added_at',
+            'location',
         )
 
 
@@ -24,7 +27,8 @@ class ArtefactInputType(InputObjectType):
     description = String()
     artefact_flag_choices = String()
     is_public = Boolean()
-    information_on_handling = String() # test
+    upload = String()
+    location = String()
 
 
 class ArtefactCreate(Mutation):
