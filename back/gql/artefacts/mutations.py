@@ -89,9 +89,6 @@ class ArtefactUpdate(Mutation):
             return ArtefactUpdate(artefact=serializer.save())
         else:
             raise Exception(AUTH_EXCEPTION)
-            
-
-        
 
 
 class ArtefactDelete(Mutation):
