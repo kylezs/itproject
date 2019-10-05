@@ -28,7 +28,7 @@ class ArtefactInputType(InputObjectType):
     description = String()
     state = String()
     is_public = Boolean()
-    belongs_to_family = List(ID)
+    belongs_to_families = List(ID)
 
 
 class ArtefactCreate(Mutation):
@@ -45,7 +45,7 @@ class ArtefactCreate(Mutation):
 
         input = data.get('input')
 
-        family_ids = input.belongs_to_family
+        family_ids = input.belongs_to_families
         families = Family.objects.filter(id__in=family_ids)
 
         artefact = Artefact(
