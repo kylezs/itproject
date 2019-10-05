@@ -1,1 +1,1 @@
-AUTH_EXCEPTION = "Authentication credentials were not provided"
+AUTH_EXCEPTION = "You are not authorised to do this. Lol."
