@@ -180,14 +180,13 @@ function ArtefactView(props) {
         setFamilies(data.me.isMemberOf)
     }
 
-    const {
-        loading: familyLoading,
-        error: familyErrors,
-        data: familyData
-    } = useQuery(GET_FAMILIES_QUERY, {
-        onCompleted: _saveFamilies,
-        onError: _genericHandleError
-    })
+    const { loading: familyLoading, error: familyErrors } = useQuery(
+        GET_FAMILIES_QUERY,
+        {
+            onCompleted: _saveFamilies,
+            onError: _genericHandleError
+        }
+    )
 
     const _saveArtefactStates = async statesData => {
         var temp = {}
@@ -258,7 +257,6 @@ function ArtefactView(props) {
     }
 
     const submitForm = async event => {
-        event.preventDefault()
         createArtefact({
             variables: {
                 name: artefactName,
@@ -270,9 +268,9 @@ function ArtefactView(props) {
         })
     }
 
-    const invalidInputs = !artefactName || !artefactCondition || !about
-    const noErrors = !familyErrors && !creationErrors && !statesErrors
-    const dataLoading = familyLoading || statesLoading
+    const saveChange = async event => {
+        console.log('save change not implemented yet')
+    }
 
     function SaveButton() {
         return (
@@ -280,6 +278,7 @@ function ArtefactView(props) {
                 variant='contained'
                 color='primary'
                 className={classes.button}
+                onClick={saveChange}
             >
                 Save (WIP)
             </Button>
@@ -311,6 +310,10 @@ function ArtefactView(props) {
             </Fragment>
         )
     }
+
+    const invalidInputs = !artefactName || !artefactCondition || !about
+    const noErrors = !familyErrors && !creationErrors && !statesErrors
+    const dataLoading = familyLoading || statesLoading
 
     if (edit && dataLoading) {
         return <Loading />
