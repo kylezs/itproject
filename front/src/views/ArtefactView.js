@@ -123,6 +123,7 @@ function ArtefactView(props) {
     const [admin, setAdmin] = useState({})
 
     const [beingEdited, setBeingEdited] = useState('')
+    const [prevBeingEdited, setPrevBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
     const [currValue, setCurrValue] = useState({})
     const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -183,6 +184,7 @@ function ArtefactView(props) {
     })
 
     const _updateCompleted = async data => {
+        setPrevBeingEdited(beingEdited)
         setBeingEdited('')
         setSnackbarOpen(true)
     }
@@ -308,10 +310,29 @@ function ArtefactView(props) {
                     id => belongFamilyIds[id]
                 )
             }
-            console.log({
-                id: props.artefact.id,
-                artefactInput: input
+
+            updateArtefact({
+                variables: {
+                    id: props.artefact.id,
+                    artefactInput: input
+                }
             })
+        }
+    }
+
+    const undoChanges = async event => {
+        if (edit) {
+            var input = {}
+            input[prevBeingEdited] = prevValue
+
+            if (prevBeingEdited === 'belongsToFamilies') {
+                input[prevBeingEdited] = Object.keys(prevValue).filter(
+                    id => prevValue[id]
+                )
+                setBelongFamilyIds(prevValue)
+            } else {
+                handleSetField(prevBeingEdited, event)
+            }
 
             updateArtefact({
                 variables: {
@@ -652,7 +673,7 @@ function ArtefactView(props) {
                         }}
                         message={<span id='message-id'>Edit successful</span>}
                         action={[
-                            <Button key='undo' color='secondary' size='small'>
+                            <Button key='undo' color='secondary' size='small' onClick={undoChanges}>
                                 UNDO
                             </Button>,
                             <IconButton
