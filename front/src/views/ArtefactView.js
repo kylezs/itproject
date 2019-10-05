@@ -244,7 +244,7 @@ function ArtefactView(props) {
         } else if (fieldName === 'description') {
             prev = about
             setAbout(curr)
-        } else if (fieldName === 'belongsToFamily') {
+        } else if (fieldName === 'belongsToFamilies') {
             prev = belongFamilyIds
             curr = {
                 ...belongFamilyIds,
@@ -264,7 +264,7 @@ function ArtefactView(props) {
 
     const handleFamiliesToggle = id => event => {
         // must be called in this order
-        handleSetField('belongsToFamily', event, id)
+        handleSetField('belongsToFamilies', event, id)
         // setBelongFamilyIds({ ...belongFamilyIds, [id]: event.target.checked })
     }
 
@@ -277,7 +277,7 @@ function ArtefactView(props) {
             setIsPublic(prevValue)
         } else if (beingEdited === 'description') {
             setAbout(prevValue)
-        } else if (beingEdited === 'belongsToFamily') {
+        } else if (beingEdited === 'belongsToFamilies') {
             setBelongFamilyIds(prevValue)
         }
         setBeingEdited('')
@@ -303,7 +303,7 @@ function ArtefactView(props) {
             var input = {}
             input[beingEdited] = currValue
 
-            if (beingEdited === 'belongsToFamily') {
+            if (beingEdited === 'belongsToFamilies') {
                 input[beingEdited] = Object.keys(belongFamilyIds).filter(
                     id => belongFamilyIds[id]
                 )
@@ -530,7 +530,7 @@ function ArtefactView(props) {
                                                     edit &&
                                                     !!beingEdited &&
                                                     beingEdited !==
-                                                        'belongsToFamily'
+                                                        'belongsToFamilies'
                                                 }
                                             >
                                                 <ListItemIcon>
@@ -555,7 +555,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'belongsToFamily' && (
+                        {edit && beingEdited === 'belongsToFamilies' && (
                             <EditButtons />
                         )}
 
