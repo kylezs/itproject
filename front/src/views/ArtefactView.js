@@ -56,7 +56,9 @@ const useStyles = makeStyles(theme => ({
     },
     form: {
         width: '60%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3)
+        marginTop: theme.spacing(3),
+        backgrounColor: theme.palette.common.dark,
+        justify: 'center'
     },
     container: {
         width: '60%', // Fix IE 11 issue.
@@ -279,6 +281,7 @@ function ArtefactView(props) {
     }
 
     const saveChange = async event => {
+        event.preventDefault()
         if (edit) {
             var input = {}
 
@@ -331,11 +334,15 @@ function ArtefactView(props) {
     function EditButtons() {
         return (
             <Grid container justify='space-evenly'>
-                <Grid item>
-                    <SaveButton />
+                <Grid item xs={6}>
+                    <Grid container>
+                        <SaveButton />
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <CancelButton />
+                <Grid item xs={6}>
+                    <Grid container>
+                        <CancelButton />
+                    </Grid>
                 </Grid>
             </Grid>
         )
@@ -635,6 +642,11 @@ function ArtefactView(props) {
                                     <DropzoneArea
                                         onChange={e =>
                                             handleSetField('upload', e)
+                                        }
+                                        disabled={
+                                            edit &&
+                                            !!beingEdited &&
+                                            beingEdited !== 'upload'
                                         }
                                     />
                                 </Paper>
