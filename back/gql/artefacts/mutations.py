@@ -78,11 +78,9 @@ class ArtefactUpdate(Mutation):
             raise Exception(AUTH_EXCEPTION)
         id = data.get("id")
         input = data.get("input")
-        print(input)
         # returns a list of at most one item, since query by pk
         instance = Artefact.objects.filter(pk=id, admin=user).first()
         if instance:
-            print(instance)
             serializer = ArtefactSerializer(instance=instance, data=input,
                                             partial=True)
             serializer.is_valid(raise_exception=True)
