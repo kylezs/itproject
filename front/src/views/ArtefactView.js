@@ -21,7 +21,8 @@ import {
     ListItemText,
     Checkbox,
     Paper,
-    FormHelperText
+    FormHelperText,
+    ClickAwayListener
 } from '@material-ui/core'
 import Layout from '../components/Layout'
 import Loading from '../components/Loading'
@@ -230,37 +231,46 @@ function ArtefactView(props) {
         }
     )
 
-    const handleSetField = (fieldName, event, famId) => {
+    const setField = (fieldName, value) => {
         var prev
-        var curr = event.target.value
         if (fieldName === 'name') {
             prev = artefactName
-            setArtefactName(curr)
+            setArtefactName(value)
         } else if (fieldName === 'state') {
             prev = artefactCondition
-            setArtefactCondition(curr)
+            setArtefactCondition(value)
         } else if (fieldName === 'isPublic') {
             prev = isPublic
-            curr = event.target.checked
-            setIsPublic(curr)
+            setIsPublic(value)
         } else if (fieldName === 'description') {
             prev = about
-            setAbout(curr)
+            setAbout(value)
         } else if (fieldName === 'belongsToFamilies') {
             prev = belongFamilyIds
-            curr = {
-                ...belongFamilyIds,
-                [famId]: event.target.checked
-            }
-            setBelongFamilyIds(curr)
+            setBelongFamilyIds(value)
         } else {
             console.log('unknown field was changed and not handled')
         }
 
-        setCurrValue(curr)
+        if (edit && beingEdited !== fieldName) {
+            setPrevValue(prev)
+        }
+    }
+    
+    const handleSetField = (fieldName, event, famId) => {
+        var value = event.target.value
+        if (fieldName === 'isPublic') {
+            value = event.target.checked
+        } else if (fieldName === 'belongsToFamilies') {
+            value = {
+                ...belongFamilyIds,
+                [famId]: event.target.checked
+            }
+        }
+        setField(fieldName, value)
+        setCurrValue(value)
         if (edit && beingEdited !== fieldName) {
             setBeingEdited(fieldName)
-            setPrevValue(prev)
         }
     }
 
@@ -271,17 +281,7 @@ function ArtefactView(props) {
     }
 
     const cancelEditing = () => {
-        if (beingEdited === 'name') {
-            setArtefactName(prevValue)
-        } else if (beingEdited === 'state') {
-            setArtefactCondition(prevValue)
-        } else if (beingEdited === 'isPublic') {
-            setIsPublic(prevValue)
-        } else if (beingEdited === 'description') {
-            setAbout(prevValue)
-        } else if (beingEdited === 'belongsToFamilies') {
-            setBelongFamilyIds(prevValue)
-        }
+        setField(beingEdited, prevValue)
         setBeingEdited('')
     }
 
@@ -329,9 +329,6 @@ function ArtefactView(props) {
                 input[prevBeingEdited] = Object.keys(prevValue).filter(
                     id => prevValue[id]
                 )
-                setBelongFamilyIds(prevValue)
-            } else {
-                handleSetField(prevBeingEdited, event)
             }
 
             updateArtefact({
@@ -340,6 +337,8 @@ function ArtefactView(props) {
                     artefactInput: input
                 }
             })
+
+            setField(prevBeingEdited, prevValue)
         }
     }
 
@@ -351,7 +350,7 @@ function ArtefactView(props) {
                 className={classes.button}
                 onClick={saveChange}
             >
-                Save (WIP)
+                Save
             </Button>
         )
     }
@@ -660,33 +659,40 @@ function ArtefactView(props) {
                         )}
                     </Grid>
 
-                    <Snackbar
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left'
-                        }}
-                        open={snackbarOpen}
-                        autoHideDuration={2000}
-                        onClose={handleCloseSnackbar}
-                        ContentProps={{
-                            'aria-describedby': 'message-id'
-                        }}
-                        message={<span id='message-id'>Edit successful</span>}
-                        action={[
-                            <Button key='undo' color='secondary' size='small' onClick={undoChanges}>
-                                UNDO
-                            </Button>,
-                            <IconButton
-                                key='close'
-                                aria-label='close'
-                                color='inherit'
-                                onClick={handleCloseSnackbar}
-                                className={classes.close}
-                            >
-                                <CloseIcon />
-                            </IconButton>
-                        ]}
-                    />
+                    <ClickAwayListener onClickAway={handleCloseSnackbar}>
+                        <Snackbar
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left'
+                            }}
+                            open={snackbarOpen}
+                            autoHideDuration={2000}
+                            onClose={handleCloseSnackbar}
+                            ContentProps={{
+                                'aria-describedby': 'message-id'
+                            }}
+                            message={<span id='message-id'>Edit successful</span>}
+                            action={[
+                                <Button
+                                    key='undo'
+                                    color='secondary'
+                                    size='small'
+                                    onClick={e => {undoChanges(e) && handleCloseSnackbar(e)}}
+                                >
+                                    UNDO
+                                </Button>,
+                                <IconButton
+                                    key='close'
+                                    aria-label='close'
+                                    color='inherit'
+                                    onClick={handleCloseSnackbar}
+                                    className={classes.close}
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            ]}
+                        />
+                    </ClickAwayListener>
                 </Container>
             </form>
         </Layout>
