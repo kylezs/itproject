@@ -7,7 +7,7 @@ export const CREATE_ARTEFACT_MUTATION = gql`
         $state: String!
         $isPublic: Boolean!
         $description: String!
-        $families: [ID]
+        $belongsToFamilies: [ID]
     ) {
         artefactCreate(
             input: {
@@ -15,7 +15,7 @@ export const CREATE_ARTEFACT_MUTATION = gql`
                 state: $state
                 description: $description
                 isPublic: $isPublic
-                belongsToFamily: $families
+                belongsToFamilies: $belongsToFamilies
             }
         ) {
             artefact {

@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
         // marginRight: theme.spacing(1),
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
-        textAlign: 'left',
+        textAlign: 'center',
         marginTop: theme.spacing(1)
     },
     '@global': {
@@ -115,16 +115,18 @@ function ArtefactView(props) {
     const [artefactStates, setArtefactStates] = useState({})
     const [families, setFamilies] = useState([])
 
-    const [artefactName, setArtefactName] = useState('')
-    const [about, setAbout] = useState('')
-    const [isPublic, setIsPublic] = useState(false)
-    const [artefactCondition, setArtefactCondition] = useState('')
-    const [files, setFiles] = useState([])
-    const [belongFamilyIds, setBelongFamilyIds] = useState({})
-    const [admin, setAdmin] = useState({})
+    const [state, setState] = useState({
+        name: '',
+        description: '',
+        isPublic: false,
+        state: '',
+        upload: [],
+        admin: '',
+        belongsToFamiliesBools: {}
+    })
+    const [initialised, setInitialised] = useState(false)
 
     const [beingEdited, setBeingEdited] = useState('')
-    const [prevBeingEdited, setPrevBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
     const [currValue, setCurrValue] = useState({})
     const [snackbarOpen, setSnackbarOpen] = useState(false)
@@ -133,21 +135,12 @@ function ArtefactView(props) {
         console.log(errors)
     }
 
-    const [initialised, setInitialised] = useState(false)
 
-    const _setArtefactVars = () => {
-        setArtefactName(props.artefact.name)
-        setAbout(props.artefact.description)
-        setIsPublic(props.artefact.isPublic)
-        setArtefactCondition(props.artefact.state)
-        setFiles(props.artefact.upload)
-
+    const _setArtefactVars = artefact => {
         var belong = {}
-        props.artefact.belongsToFamilies.map(val => (belong[val.id] = true))
-        setBelongFamilyIds(belong)
+        artefact.belongsToFamilies.map(val => (belong[val.id] = true))
 
-        setAdmin(props.artefact.admin)
-
+        setState({ ...artefact, belongsToFamiliesBools: belong })
         setInitialised(true)
     }
 
@@ -159,21 +152,24 @@ function ArtefactView(props) {
         props.artefact &&
         Object.keys(props.artefact).length !== 0
     ) {
-        _setArtefactVars()
+        _setArtefactVars(props.artefact)
     }
 
-    const _creationCompleted = async data => {
-        var id = data.artefactCreate.artefact.id
-
+    const _pushViewArtefactURL = id => {
         const { history } = props
         if (history) {
             history.push(`/artefacts/${id}`)
         }
     }
 
+    const _creationCompleted = async data => {
+        var id = data.artefactCreate.artefact.id
+        _pushViewArtefactURL(id)
+    }
+
     const _handleCreationError = async errors => {
         // TO DO
-        console.log(errors)
+        console.log("Creation errors occurred:", errors)
     }
 
     const [
@@ -185,7 +181,6 @@ function ArtefactView(props) {
     })
 
     const _updateCompleted = async data => {
-        setPrevBeingEdited(beingEdited)
         setBeingEdited('')
         setSnackbarOpen(true)
     }
@@ -232,38 +227,24 @@ function ArtefactView(props) {
     )
 
     const setField = (fieldName, value) => {
-        var prev
-        if (fieldName === 'name') {
-            prev = artefactName
-            setArtefactName(value)
-        } else if (fieldName === 'state') {
-            prev = artefactCondition
-            setArtefactCondition(value)
-        } else if (fieldName === 'isPublic') {
-            prev = isPublic
-            setIsPublic(value)
-        } else if (fieldName === 'description') {
-            prev = about
-            setAbout(value)
-        } else if (fieldName === 'belongsToFamilies') {
-            prev = belongFamilyIds
-            setBelongFamilyIds(value)
-        } else {
-            console.log('unknown field was changed and not handled')
-        }
+        var prev = state[fieldName]
+        setState({
+            ...state,
+            [fieldName]: value
+        })
 
         if (edit && beingEdited !== fieldName) {
             setPrevValue(prev)
         }
     }
-    
+
     const handleSetField = (fieldName, event, famId) => {
         var value = event.target.value
         if (fieldName === 'isPublic') {
             value = event.target.checked
-        } else if (fieldName === 'belongsToFamilies') {
+        } else if (fieldName === 'belongsToFamiliesBools') {
             value = {
-                ...belongFamilyIds,
+                ...state.belongsToFamiliesBools,
                 [famId]: event.target.checked
             }
         }
@@ -274,41 +255,38 @@ function ArtefactView(props) {
         }
     }
 
-    const handleFamiliesToggle = id => event => {
-        // must be called in this order
-        handleSetField('belongsToFamilies', event, id)
-        // setBelongFamilyIds({ ...belongFamilyIds, [id]: event.target.checked })
-    }
-
     const cancelEditing = () => {
         setField(beingEdited, prevValue)
         setBeingEdited('')
     }
 
     const submitForm = async event => {
-        var famIDs = Object.keys(belongFamilyIds).filter(
-            id => belongFamilyIds[id]
+        var famIDs = Object.keys(state.belongsToFamiliesBools).filter(
+            id => state.belongsToFamiliesBools[id]
         )
+        var input = {
+            name: state.name,
+            description: state.description,
+            state: state.state,
+            isPublic: state.isPublic,
+            belongsToFamilies: famIDs
+        }
+        
         createArtefact({
-            variables: {
-                name: artefactName,
-                state: artefactCondition,
-                isPublic: isPublic,
-                description: about,
-                families: famIDs
-            }
+            variables: input
         })
     }
 
     const saveChange = async event => {
         if (edit) {
             var input = {}
-            input[beingEdited] = currValue
 
-            if (beingEdited === 'belongsToFamilies') {
-                input[beingEdited] = Object.keys(belongFamilyIds).filter(
-                    id => belongFamilyIds[id]
-                )
+            if (beingEdited === 'belongsToFamiliesBools') {
+                input['belongsToFamilies'] = Object.keys(
+                    state.belongsToFamiliesBools
+                ).filter(id => state.belongsToFamiliesBools[id])
+            } else {
+                input[beingEdited] = currValue
             }
 
             updateArtefact({
@@ -317,28 +295,6 @@ function ArtefactView(props) {
                     artefactInput: input
                 }
             })
-        }
-    }
-
-    const undoChanges = async event => {
-        if (edit) {
-            var input = {}
-            input[prevBeingEdited] = prevValue
-
-            if (prevBeingEdited === 'belongsToFamilies') {
-                input[prevBeingEdited] = Object.keys(prevValue).filter(
-                    id => prevValue[id]
-                )
-            }
-
-            updateArtefact({
-                variables: {
-                    id: props.artefact.id,
-                    artefactInput: input
-                }
-            })
-
-            setField(prevBeingEdited, prevValue)
         }
     }
 
@@ -359,7 +315,7 @@ function ArtefactView(props) {
         return (
             <Button
                 variant='contained'
-                color='primary'
+                color='default'
                 className={classes.button}
                 onClick={cancelEditing}
             >
@@ -389,7 +345,7 @@ function ArtefactView(props) {
         setSnackbarOpen(false)
     }
 
-    const invalidInputs = !artefactName || !artefactCondition || !about
+    const invalidInputs = !state.name || !state.state || !state.description
     const noErrors = !familyErrors && !creationErrors && !statesErrors
     const dataLoading = familyLoading || statesLoading
 
@@ -432,7 +388,7 @@ function ArtefactView(props) {
                                     required
                                     fullWidth
                                     autoFocus
-                                    value={artefactName}
+                                    value={state.name}
                                     onChange={e => handleSetField('name', e)}
                                     disabled={
                                         edit &&
@@ -454,7 +410,7 @@ function ArtefactView(props) {
                                     variant='outlined'
                                     required
                                     fullWidth
-                                    value={artefactCondition}
+                                    value={state.state}
                                     onChange={e => handleSetField('state', e)}
                                     select
                                     SelectProps={{
@@ -509,7 +465,7 @@ function ArtefactView(props) {
                                         <ListItemIcon>
                                             <Checkbox
                                                 edge='start'
-                                                checked={isPublic}
+                                                checked={state.isPublic}
                                                 tabIndex={-1}
                                                 disableRipple
                                             />
@@ -533,8 +489,14 @@ function ArtefactView(props) {
                                     }
                                 >
                                     {families.map(family => {
-                                        if (!belongFamilyIds[family.id]) {
-                                            belongFamilyIds[family.id] = false
+                                        if (
+                                            !state.belongsToFamiliesBools[
+                                                family.id
+                                            ]
+                                        ) {
+                                            state.belongsToFamiliesBools[
+                                                family.id
+                                            ] = false
                                         }
 
                                         return (
@@ -543,21 +505,26 @@ function ArtefactView(props) {
                                                 role={undefined}
                                                 dense
                                                 button
-                                                onClick={handleFamiliesToggle(
-                                                    family.id
-                                                )}
+                                                onClick={e =>
+                                                    handleSetField(
+                                                        'belongsToFamiliesBools',
+                                                        e,
+                                                        family.id
+                                                    )
+                                                }
                                                 disabled={
                                                     edit &&
                                                     !!beingEdited &&
                                                     beingEdited !==
-                                                        'belongsToFamilies'
+                                                        'belongsToFamiliesBools'
                                                 }
                                             >
                                                 <ListItemIcon>
                                                     <Checkbox
                                                         edge='start'
                                                         checked={
-                                                            belongFamilyIds[
+                                                            state
+                                                                .belongsToFamiliesBools[
                                                                 family.id
                                                             ]
                                                         }
@@ -575,7 +542,7 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        {edit && beingEdited === 'belongsToFamilies' && (
+                        {edit && beingEdited === 'belongsToFamiliesBools' && (
                             <EditButtons />
                         )}
 
@@ -590,7 +557,7 @@ function ArtefactView(props) {
                                     fullWidth
                                     multiline
                                     rows={6}
-                                    value={about}
+                                    value={state.description}
                                     onChange={e =>
                                         handleSetField('description', e)
                                     }
@@ -617,8 +584,8 @@ function ArtefactView(props) {
                                     required
                                     fullWidth
                                     value={
-                                        Object.keys(admin).length !== 0
-                                            ? admin.username
+                                        Object.keys(state.admin).length !== 0
+                                            ? state.admin.username
                                             : context.user.username
                                     }
                                     onChange={e =>
@@ -629,16 +596,16 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12}>
+                        {/* <Grid item xs={12}>
                             <Paper className={classes.root}>
                                 <DropzoneArea
                                     onChange={files => setFiles(files)}
                                 />
                             </Paper>
-                        </Grid>
+                        </Grid> */}
 
                         {create && (
-                            <Grid item xs={12}>
+                            <Grid item xs={6}>
                                 <Button
                                     name='create'
                                     label='Create'
@@ -671,15 +638,21 @@ function ArtefactView(props) {
                             ContentProps={{
                                 'aria-describedby': 'message-id'
                             }}
-                            message={<span id='message-id'>Edit successful</span>}
+                            message={
+                                <span id='message-id'>Edit successful</span>
+                            }
                             action={[
                                 <Button
-                                    key='undo'
+                                    key='view'
                                     color='secondary'
                                     size='small'
-                                    onClick={e => {undoChanges(e) && handleCloseSnackbar(e)}}
+                                    onClick={e => {
+                                        _pushViewArtefactURL(
+                                            props.artefact.id
+                                        ) && handleCloseSnackbar(e)
+                                    }}
                                 >
-                                    UNDO
+                                    VIEW
                                 </Button>,
                                 <IconButton
                                     key='close'
