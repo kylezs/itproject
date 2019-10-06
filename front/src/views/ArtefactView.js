@@ -135,7 +135,6 @@ function ArtefactView(props) {
         console.log(errors)
     }
 
-
     const _setArtefactVars = artefact => {
         var belong = {}
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
@@ -169,7 +168,7 @@ function ArtefactView(props) {
 
     const _handleCreationError = async errors => {
         // TO DO
-        console.log("Creation errors occurred:", errors)
+        console.log('Creation errors occurred:', errors)
     }
 
     const [
@@ -261,6 +260,7 @@ function ArtefactView(props) {
     }
 
     const submitForm = async event => {
+        event.preventDefault()
         var famIDs = Object.keys(state.belongsToFamiliesBools).filter(
             id => state.belongsToFamiliesBools[id]
         )
@@ -271,7 +271,8 @@ function ArtefactView(props) {
             isPublic: state.isPublic,
             belongsToFamilies: famIDs
         }
-        
+        console.log(input)
+
         createArtefact({
             variables: input
         })
@@ -303,8 +304,10 @@ function ArtefactView(props) {
             <Button
                 variant='contained'
                 color='primary'
+                type='submit'
                 className={classes.button}
                 onClick={saveChange}
+                fullWidth
             >
                 Save
             </Button>
@@ -318,6 +321,7 @@ function ArtefactView(props) {
                 color='default'
                 className={classes.button}
                 onClick={cancelEditing}
+                fullWidth
             >
                 Cancel
             </Button>
@@ -326,14 +330,14 @@ function ArtefactView(props) {
 
     function EditButtons() {
         return (
-            <Fragment>
-                <Grid item xs={3}>
+            <Grid container justify='space-evenly'>
+                <Grid item>
                     <SaveButton />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item>
                     <CancelButton />
                 </Grid>
-            </Fragment>
+            </Grid>
         )
     }
 
@@ -356,317 +360,347 @@ function ArtefactView(props) {
     return (
         <Layout>
             <CssBaseline />
-            <form>
-                <Container maxWidth={'md'}>
-                    <Grid
-                        container
-                        spacing={1}
-                        direction='row'
-                        alignItems='center'
-                        justify='center'
-                    >
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <Typography variant='h4'>
-                                    {create ? 'Create' : 'Edit'} Artefact
-                                </Typography>
-                                <Typography variant='subtitle1'>
-                                    {create
-                                        ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
-                                        : 'Click to start editing'}
-                                </Typography>
-                            </Paper>
-                        </Grid>
+            <form onSubmit={create ? submitForm : saveChange}>
+                <Grid
+                    container
+                    spacing={2}
+                    direction='row'
+                    alignItems='stretch'
+                    alignContent='stretch'
+                    justify='space-evenly'
+                >
+                    <Grid item xs={12}>
+                        <Paper className={classes.root}>
+                            <Typography variant='h4'>
+                                {create ? 'Create' : 'Edit'} Artefact
+                            </Typography>
+                            <Typography variant='subtitle1'>
+                                {create
+                                    ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
+                                    : 'Click to start editing'}
+                            </Typography>
+                        </Paper>
+                    </Grid>
 
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <TextField
-                                    className={classes.root}
-                                    id='artefact-name'
-                                    label='Artefact name'
-                                    variant='outlined'
-                                    required
-                                    fullWidth
-                                    autoFocus
-                                    value={state.name}
-                                    onChange={e => handleSetField('name', e)}
-                                    disabled={
-                                        edit &&
-                                        !!beingEdited &&
-                                        beingEdited !== 'name'
-                                    }
-                                />
-                            </Paper>
-                        </Grid>
-
-                        {edit && beingEdited === 'name' && <EditButtons />}
-
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <TextField
-                                    className={classes.root}
-                                    id='state'
-                                    label='Please select the state of the artefact'
-                                    variant='outlined'
-                                    required
-                                    fullWidth
-                                    value={state.state}
-                                    onChange={e => handleSetField('state', e)}
-                                    select
-                                    SelectProps={{
-                                        MenuProps: {
-                                            className: classes.menu
-                                        }
-                                    }}
-                                    disabled={
-                                        edit &&
-                                        !!beingEdited &&
-                                        beingEdited !== 'state'
-                                    }
-                                >
-                                    {Object.keys(artefactStates).map(value => {
-                                        return (
-                                            <MenuItem
-                                                value={artefactStates[value]}
-                                                key={value}
-                                            >
-                                                {value}
-                                            </MenuItem>
-                                        )
-                                    })}
-                                </TextField>
-                            </Paper>
-                        </Grid>
-
-                        {edit && beingEdited === 'state' && <EditButtons />}
-
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <List
-                                    subheader={
-                                        <ListSubheader component='div'>
-                                            Select privacy of artefact
-                                        </ListSubheader>
-                                    }
-                                >
-                                    <ListItem
-                                        role={undefined}
-                                        dense
-                                        button
-                                        onClick={e =>
-                                            handleSetField('isPublic', e)
+                    {/* Left Pane */}
+                    <Grid item xs={6}>
+                        <Grid container spacing={1} alignContent='stretch'>
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <TextField
+                                        className={classes.root}
+                                        id='artefact-name'
+                                        label='Artefact name'
+                                        variant='outlined'
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        value={state.name}
+                                        onChange={e =>
+                                            handleSetField('name', e)
                                         }
                                         disabled={
                                             edit &&
                                             !!beingEdited &&
-                                            beingEdited !== 'isPublic'
+                                            beingEdited !== 'name'
+                                        }
+                                    />
+                                    {edit && beingEdited === 'name' && (
+                                        <EditButtons />
+                                    )}
+                                </Paper>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <TextField
+                                        className={classes.root}
+                                        id='state'
+                                        label='Artefact State'
+                                        variant='outlined'
+                                        required
+                                        fullWidth
+                                        value={state.state}
+                                        onChange={e =>
+                                            handleSetField('state', e)
+                                        }
+                                        select
+                                        SelectProps={{
+                                            MenuProps: {
+                                                className: classes.menu
+                                            }
+                                        }}
+                                        disabled={
+                                            edit &&
+                                            !!beingEdited &&
+                                            beingEdited !== 'state'
                                         }
                                     >
-                                        <ListItemIcon>
-                                            <Checkbox
-                                                edge='start'
-                                                checked={state.isPublic}
-                                                tabIndex={-1}
-                                                disableRipple
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText primary={'Public'} />
-                                    </ListItem>
-                                </List>
-                            </Paper>
-                        </Grid>
-
-                        {edit && beingEdited === 'isPublic' && <EditButtons />}
-
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <List
-                                    subheader={
-                                        <ListSubheader component='div'>
-                                            Select which of your families the
-                                            artefact belongs to
-                                        </ListSubheader>
-                                    }
-                                >
-                                    {families.map(family => {
-                                        if (
-                                            !state.belongsToFamiliesBools[
-                                                family.id
-                                            ]
-                                        ) {
-                                            state.belongsToFamiliesBools[
-                                                family.id
-                                            ] = false
-                                        }
-
-                                        return (
-                                            <ListItem
-                                                key={family.id}
-                                                role={undefined}
-                                                dense
-                                                button
-                                                onClick={e =>
-                                                    handleSetField(
-                                                        'belongsToFamiliesBools',
-                                                        e,
-                                                        family.id
-                                                    )
-                                                }
-                                                disabled={
-                                                    edit &&
-                                                    !!beingEdited &&
-                                                    beingEdited !==
-                                                        'belongsToFamiliesBools'
-                                                }
-                                            >
-                                                <ListItemIcon>
-                                                    <Checkbox
-                                                        edge='start'
-                                                        checked={
-                                                            state
-                                                                .belongsToFamiliesBools[
-                                                                family.id
+                                        {Object.keys(artefactStates).map(
+                                            value => {
+                                                return (
+                                                    <MenuItem
+                                                        value={
+                                                            artefactStates[
+                                                                value
                                                             ]
                                                         }
-                                                        tabIndex={-1}
-                                                        disableRipple
-                                                    />
-                                                </ListItemIcon>
-                                                <ListItemText
-                                                    primary={family.familyName}
-                                                />
-                                            </ListItem>
-                                        )
-                                    })}
-                                </List>
-                            </Paper>
-                        </Grid>
+                                                        key={value}
+                                                    >
+                                                        {value}
+                                                    </MenuItem>
+                                                )
+                                            }
+                                        )}
+                                    </TextField>
 
-                        {edit && beingEdited === 'belongsToFamiliesBools' && (
-                            <EditButtons />
-                        )}
-
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <TextField
-                                    className={classes.root}
-                                    id='description'
-                                    label='Tell people about your artefact'
-                                    variant='outlined'
-                                    required
-                                    fullWidth
-                                    multiline
-                                    rows={6}
-                                    value={state.description}
-                                    onChange={e =>
-                                        handleSetField('description', e)
-                                    }
-                                    disabled={
-                                        edit &&
-                                        !!beingEdited &&
-                                        beingEdited !== 'description'
-                                    }
-                                />
-                            </Paper>
-                        </Grid>
-
-                        {edit && beingEdited === 'description' && (
-                            <EditButtons />
-                        )}
-
-                        <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <TextField
-                                    className={classes.root}
-                                    id='artefact-admin'
-                                    label='Artefact Admin'
-                                    variant='outlined'
-                                    required
-                                    fullWidth
-                                    value={
-                                        Object.keys(state.admin).length !== 0
-                                            ? state.admin.username
-                                            : context.user.username
-                                    }
-                                    onChange={e =>
-                                        console.log('admin field was changed')
-                                    }
-                                    disabled
-                                />
-                            </Paper>
-                        </Grid>
-
-                        {/* <Grid item xs={12}>
-                            <Paper className={classes.root}>
-                                <DropzoneArea
-                                    onChange={files => setFiles(files)}
-                                />
-                            </Paper>
-                        </Grid> */}
-
-                        {create && (
-                            <Grid item xs={6}>
-                                <Button
-                                    name='create'
-                                    label='Create'
-                                    fullWidth
-                                    variant='contained'
-                                    color='primary'
-                                    disabled={invalidInputs || creationLoading}
-                                    onClick={submitForm}
-                                >
-                                    Create
-                                </Button>
-                                {!noErrors && (
-                                    <FormHelperText error={!noErrors}>
-                                        Unknown Error Occurred
-                                    </FormHelperText>
-                                )}
+                                    {edit && beingEdited === 'state' && (
+                                        <EditButtons />
+                                    )}
+                                </Paper>
                             </Grid>
-                        )}
+
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <TextField
+                                        className={classes.root}
+                                        id='description'
+                                        label='Description'
+                                        variant='outlined'
+                                        required
+                                        fullWidth
+                                        multiline
+                                        rows={6}
+                                        value={state.description}
+                                        onChange={e =>
+                                            handleSetField('description', e)
+                                        }
+                                        disabled={
+                                            edit &&
+                                            !!beingEdited &&
+                                            beingEdited !== 'description'
+                                        }
+                                    />
+
+                                    {edit && beingEdited === 'description' && (
+                                        <EditButtons />
+                                    )}
+                                </Paper>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <TextField
+                                        className={classes.root}
+                                        id='artefact-admin'
+                                        label='Artefact Admin'
+                                        variant='outlined'
+                                        required
+                                        fullWidth
+                                        value={
+                                            Object.keys(state.admin).length !==
+                                            0
+                                                ? state.admin.username
+                                                : context.user.username
+                                        }
+                                        onChange={e =>
+                                            console.log(
+                                                'admin field was changed'
+                                            )
+                                        }
+                                        disabled
+                                    />
+                                </Paper>
+                            </Grid>
+                        </Grid>
                     </Grid>
 
-                    <ClickAwayListener onClickAway={handleCloseSnackbar}>
-                        <Snackbar
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left'
-                            }}
-                            open={snackbarOpen}
-                            autoHideDuration={2000}
-                            onClose={handleCloseSnackbar}
-                            ContentProps={{
-                                'aria-describedby': 'message-id'
-                            }}
-                            message={
-                                <span id='message-id'>Edit successful</span>
-                            }
-                            action={[
-                                <Button
-                                    key='view'
-                                    color='secondary'
-                                    size='small'
-                                    onClick={e => {
-                                        _pushViewArtefactURL(
-                                            props.artefact.id
-                                        ) && handleCloseSnackbar(e)
-                                    }}
-                                >
-                                    VIEW
-                                </Button>,
-                                <IconButton
-                                    key='close'
-                                    aria-label='close'
-                                    color='inherit'
-                                    onClick={handleCloseSnackbar}
-                                    className={classes.close}
-                                >
-                                    <CloseIcon />
-                                </IconButton>
-                            ]}
-                        />
-                    </ClickAwayListener>
-                </Container>
+                    {/* Right Pane */}
+                    <Grid item xs={6}>
+                        <Grid container spacing={1} alignItems='stretch'>
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <List
+                                        subheader={
+                                            <ListSubheader component='div'>
+                                                Privacy
+                                            </ListSubheader>
+                                        }
+                                    >
+                                        <ListItem
+                                            role={undefined}
+                                            dense
+                                            button
+                                            onClick={e =>
+                                                handleSetField('isPublic', e)
+                                            }
+                                            disabled={
+                                                edit &&
+                                                !!beingEdited &&
+                                                beingEdited !== 'isPublic'
+                                            }
+                                        >
+                                            <ListItemIcon>
+                                                <Checkbox
+                                                    edge='start'
+                                                    checked={state.isPublic}
+                                                    tabIndex={-1}
+                                                    disableRipple
+                                                />
+                                            </ListItemIcon>
+                                            <ListItemText primary={'Public'} />
+                                        </ListItem>
+                                    </List>
+
+                                    {edit && beingEdited === 'isPublic' && (
+                                        <EditButtons />
+                                    )}
+                                </Paper>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <List
+                                        subheader={
+                                            <ListSubheader component='div'>
+                                                Select which of your families
+                                                the artefact belongs to
+                                            </ListSubheader>
+                                        }
+                                    >
+                                        {families.map(family => {
+                                            if (
+                                                !state.belongsToFamiliesBools[
+                                                    family.id
+                                                ]
+                                            ) {
+                                                state.belongsToFamiliesBools[
+                                                    family.id
+                                                ] = false
+                                            }
+
+                                            return (
+                                                <ListItem
+                                                    key={family.id}
+                                                    role={undefined}
+                                                    dense
+                                                    button
+                                                    onClick={e =>
+                                                        handleSetField(
+                                                            'belongsToFamiliesBools',
+                                                            e,
+                                                            family.id
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        edit &&
+                                                        !!beingEdited &&
+                                                        beingEdited !==
+                                                            'belongsToFamiliesBools'
+                                                    }
+                                                >
+                                                    <ListItemIcon>
+                                                        <Checkbox
+                                                            edge='start'
+                                                            checked={
+                                                                state
+                                                                    .belongsToFamiliesBools[
+                                                                    family.id
+                                                                ]
+                                                            }
+                                                            tabIndex={-1}
+                                                            disableRipple
+                                                        />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={
+                                                            family.familyName
+                                                        }
+                                                    />
+                                                </ListItem>
+                                            )
+                                        })}
+                                    </List>
+
+                                    {edit &&
+                                        beingEdited ===
+                                            'belongsToFamiliesBools' && (
+                                            <EditButtons />
+                                        )}
+                                </Paper>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Paper className={classes.root}>
+                                    <DropzoneArea
+                                        onChange={e =>
+                                            handleSetField('upload', e)
+                                        }
+                                    />
+                                </Paper>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    {create && (
+                        <Grid item xs={6}>
+                            <Button
+                                name='create'
+                                label='Create'
+                                type='submit'
+                                fullWidth
+                                variant='contained'
+                                color='primary'
+                                disabled={invalidInputs || creationLoading}
+                            >
+                                Create
+                            </Button>
+                            {!noErrors && (
+                                <FormHelperText error={!noErrors}>
+                                    Unknown Error Occurred
+                                </FormHelperText>
+                            )}
+                        </Grid>
+                    )}
+                </Grid>
+
+                <ClickAwayListener onClickAway={handleCloseSnackbar}>
+                    <Snackbar
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left'
+                        }}
+                        open={snackbarOpen}
+                        autoHideDuration={2000}
+                        onClose={handleCloseSnackbar}
+                        ContentProps={{
+                            'aria-describedby': 'message-id'
+                        }}
+                        message={<span id='message-id'>Edit successful</span>}
+                        action={[
+                            <Button
+                                key='view'
+                                color='secondary'
+                                size='small'
+                                onClick={e => {
+                                    _pushViewArtefactURL(props.artefact.id) &&
+                                        handleCloseSnackbar(e)
+                                }}
+                            >
+                                VIEW
+                            </Button>,
+                            <IconButton
+                                key='close'
+                                aria-label='close'
+                                color='inherit'
+                                onClick={handleCloseSnackbar}
+                                className={classes.close}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        ]}
+                    />
+                </ClickAwayListener>
             </form>
         </Layout>
     )
