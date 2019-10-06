@@ -13,6 +13,7 @@ import CreateFamilyView from './views/CreateFamilyView'
 // Artefact Views
 import CreateArtefactView from './views/CreateArtefactView'
 import DetailView from './views/DetailView'
+import Error404View from './views/Error404View'
 
 import UserHomeView from './views/UserHomeView';
 
@@ -36,7 +37,7 @@ class App extends Component {
 
                         {/* Family routes */}
                         <PrivateRoute exact path="/family/create" loggedIn={CreateFamilyView} />
-                        
+                        <Route component={Error404View} />
                     </Switch>
                 </div>
             </Router>
