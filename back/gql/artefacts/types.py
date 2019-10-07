@@ -15,7 +15,8 @@ class ArtefactType(DjangoObjectType):
             'is_public',
             'added_at',
             'upload',
-            'belongs_to_families'
+            'belongs_to_families',
+            'location',
         )
         # Creates a connection for ArtefactType, to paginate data when we get
         # a list of Artefacts

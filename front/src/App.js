@@ -13,6 +13,7 @@ import CreateArtefactView from './views/CreateArtefactView'
 import DetailView from './views/DetailView'
 import ManageArtefactsView from './views/ManageArtefactsView'
 import EditArtefactView from './views/EditArtefactView'
+import Error404View from './views/Error404View'
 
 import UserHomeView from './views/UserHomeView'
 
@@ -68,6 +69,7 @@ class App extends Component {
                             loggedIn={CreateFamilyView}
                             landingPage
                         />
+                        <Route component={Error404View} />
                     </Switch>
                 </div>
             </Router>

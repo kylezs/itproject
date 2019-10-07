@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from datetime import datetime
 from family.models import Family
-
+from mapbox_location_field.models import LocationField
 
 # NB: You may need to update the graphql logic if you are updating this
 class Artefact(models.Model):
@@ -41,6 +41,9 @@ class Artefact(models.Model):
 
     belongs_to_families = models.ManyToManyField(Family,
                                                  related_name='has_artefacts')
+
+    # artefact location supported by mapbox
+    location = LocationField(null=True)
 
     class Meta:
         verbose_name = _('artefact')
