@@ -38,7 +38,7 @@ import {
 } from '../gqlQueriesMutations'
 
 const useStyles = makeStyles(theme => ({
-    root: {
+    textField: {
         // marginLeft: theme.spacing(1),
         // marginRight: theme.spacing(1),
         padding: theme.spacing(1),
@@ -46,54 +46,11 @@ const useStyles = makeStyles(theme => ({
         textAlign: 'center',
         marginTop: theme.spacing(1)
     },
-    '@global': {
-        body: {
-            backgroundColor: theme.palette.common.white
-        }
-    },
     paper: {
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
         textAlign: 'center'
-    },
-    form: {
-        width: '60%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
-        backgrounColor: theme.palette.common.dark,
-        justify: 'center'
-    },
-    container: {
-        width: '60%', // Fix IE 11 issue.
-        display: 'flex',
-        flexWrap: 'wrap',
-        direction: 'column',
-        alignItems: 'center',
-        justify: 'center'
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2)
-    },
-    gridContainer: {
-        // alignContent: 'center',
-        container: true,
-        spacing: 2,
-        marginTop: 10,
-        marginBottom: 10,
-        padding: 20
-    },
-    gridItem: {
-        // alignItems: 'center',
-        item: true,
-        marginTop: 10,
-        marginBottom: 10,
-        xs: 6,
-        textAlign: 'center'
-    },
-    textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1)
-    },
-    list: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1)
     },
     button: {
         margin: theme.spacing(1)
@@ -154,9 +111,6 @@ function ArtefactView(props) {
         Object.keys(props.artefact).length !== 0
     ) {
         _setArtefactVars(props.artefact)
-    } else if (!initialised) {
-        setState({ ...state, isPublic: false })
-        setInitialised(true)
     }
 
     const _pushViewArtefactURL = id => {
@@ -402,7 +356,7 @@ function ArtefactView(props) {
                     justify='space-evenly'
                 >
                     <Grid item xs={12}>
-                        <Paper className={classes.root}>
+                        <Paper className={classes.paper}>
                             <Typography variant='h4'>
                                 {create ? 'Create' : 'Edit'} Artefact
                             </Typography>
@@ -418,9 +372,9 @@ function ArtefactView(props) {
                     <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} alignContent='stretch'>
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <TextField
-                                        className={classes.root}
+                                        className={classes.textField}
                                         id='artefact-name'
                                         label='Artefact name'
                                         variant='outlined'
@@ -444,9 +398,9 @@ function ArtefactView(props) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <TextField
-                                        className={classes.root}
+                                        className={classes.textField}
                                         id='state'
                                         label='Artefact State'
                                         variant='outlined'
@@ -493,9 +447,9 @@ function ArtefactView(props) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <TextField
-                                        className={classes.root}
+                                        className={classes.textField}
                                         id='description'
                                         label='Description'
                                         variant='outlined'
@@ -521,9 +475,9 @@ function ArtefactView(props) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <TextField
-                                        className={classes.root}
+                                        className={classes.textField}
                                         id='artefact-admin'
                                         label='Artefact Admin'
                                         variant='outlined'
@@ -551,7 +505,7 @@ function ArtefactView(props) {
                     <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} alignItems='stretch'>
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <List
                                         subheader={
                                             <ListSubheader component='div'>
@@ -591,7 +545,7 @@ function ArtefactView(props) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <List
                                         subheader={
                                             <ListSubheader component='div'>
@@ -660,7 +614,7 @@ function ArtefactView(props) {
                             </Grid>
 
                             <Grid item xs={12}>
-                                <Paper className={classes.root}>
+                                <Paper className={classes.paper}>
                                     <DropzoneArea
                                         initialFiles={state.files}
                                         onChange={files =>
@@ -673,6 +627,7 @@ function ArtefactView(props) {
                                             !!beingEdited &&
                                             beingEdited !== 'files'
                                         }
+                                        dropzoneClass={classes.paper}
                                     />
                                 </Paper>
                             </Grid>

@@ -10,14 +10,33 @@ import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import { Link as RouterLink } from 'react-router-dom'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+    textField: {
+        // marginLeft: theme.spacing(1),
+        // marginRight: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        textAlign: 'center',
+        marginTop: theme.spacing(1)
+    },
+    paper: {
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        textAlign: 'center'
+    },
+    button: {
+        margin: theme.spacing(1)
+    },
     card: {
+        backgroundColor: theme.palette.background.paper,
         maxWidth: 345
     },
     media: {
+        backgroundColor: theme.palette.background.paper,
         height: 140
     }
-})
+}))
 
 function ArtefactCard({ mediaURI, title, description, id }) {
     const classes = useStyles()

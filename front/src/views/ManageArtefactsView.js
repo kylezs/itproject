@@ -2,24 +2,28 @@ import React from 'react'
 import Layout from '../components/Layout'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
+import { CssBaseline } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import ArtefactCard from './ArtefactCard'
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        overflow: 'hidden',
-        backgroundColor: theme.palette.background.paper
+    textField: {
+        // marginLeft: theme.spacing(1),
+        // marginRight: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        textAlign: 'center',
+        marginTop: theme.spacing(1)
     },
-    gridList: {
-        width: '80%',
-        height: 450
+    paper: {
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        textAlign: 'center'
     },
-    icon: {
-        color: 'rgba(255, 255, 255, 0.54)'
+    button: {
+        margin: theme.spacing(1)
     }
 }))
 
@@ -61,6 +65,7 @@ function ManageArtefactsView(props) {
     const artefact_edges = data.me.artefactAdministratorOf.edges
     return (
         <Layout>
+            <CssBaseline />
             <Grid container spacing={2} className={classes.root}>
                 <Grid item xs={12}>
                     <Grid container justify='center' spacing={2}>

@@ -15,25 +15,25 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle'
 import MuiDialogContent from '@material-ui/core/DialogContent'
 import { IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
+import { Paper } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
-    '@global': {
-        body: {
-            backgroundColor: theme.palette.common.white
-        }
+    textField: {
+        // marginLeft: theme.spacing(1),
+        // marginRight: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        textAlign: 'center',
+        marginTop: theme.spacing(1)
     },
     paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
+        marginTop: theme.spacing(1),
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        textAlign: 'center'
     },
-    form: {
-        width: '50%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3)
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2)
+    button: {
+        margin: theme.spacing(1)
     }
 }))
 
@@ -128,25 +128,34 @@ export default function CreateFamilyView(props) {
 
     return (
         <Layout>
-            <h1>Create a Family</h1>
-            <p>
-                Families are how you manage your artefacts. We recognise there
-                is often complex overlap between families. That's why you can
-                create and be a part of several families, so you can separate
-                which of the artefacts you manage belong to which family.
-            </p>
-
             <CssBaseline />
-            <div className={classes.paper}>
-                <form className={classes.form} onSubmit={submitForm}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography component='h1' variant='h5'>
-                                Create Family
+            <form className={classes.form} onSubmit={submitForm}>
+                <Grid
+                    container
+                    spacing={2}
+                    direction='row'
+                    alignItems='stretch'
+                    alignContent='stretch'
+                    justify='space-evenly'
+                >
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            <Typography variant='h4'>Create Family</Typography>
+                            <Typography variant='subtitle1'>
+                                Families are how you manage your artefacts. We
+                                recognise there is often complex overlap between
+                                families. That's why you can create and be a
+                                part of several families, so you can separate
+                                which of the artefacts you manage belong to
+                                which family.
                             </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
                             <TextField
+                                className={classes.textField}
                                 variant='outlined'
                                 required
                                 fullWidth
@@ -155,9 +164,12 @@ export default function CreateFamilyView(props) {
                                 autoFocus
                                 onChange={e => setFamilyName(e.target.value)}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
                             <TextField
+                                className={classes.textField}
                                 variant='outlined'
                                 multiline
                                 rows={6}
@@ -166,9 +178,13 @@ export default function CreateFamilyView(props) {
                                 label='Tell people about your family'
                                 onChange={e => setAbout(e.target.value)}
                             />
-                        </Grid>
-                        <Grid item xs={12}>
+                        </Paper>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
                             <TextField
+                                className={classes.textField}
                                 variant='outlined'
                                 disabled
                                 defaultValue={username}
@@ -177,41 +193,40 @@ export default function CreateFamilyView(props) {
                                 label='Family Admin'
                                 onChange={e => console.log('hello')}
                             />
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <Button
-                                name='create'
-                                label='Create'
-                                type='submit'
-                                fullWidth
-                                variant='contained'
-                                color='primary'
-                            >
-                                Create
-                            </Button>
-                        </Grid>
+                        </Paper>
                     </Grid>
-                </form>
 
-                {data && (
-                    <Dialog open={open} onClose={handleClose}>
-                        <DialogTitle onClose={handleClose}>
-                            Begin adding members to '{familyName}'!
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography align='center'>
-                                Begin getting members to join your family!
-                                Simply share the code below to your family
-                                members, get them to sign up and then they can
-                                join!
-                                <br />
-                                {joinCode}
-                            </Typography>
-                        </DialogContent>
-                    </Dialog>
-                )}
-            </div>
+                    <Grid item xs={6}>
+                        <Button
+                            name='create'
+                            label='Create'
+                            type='submit'
+                            fullWidth
+                            variant='contained'
+                            color='primary'
+                        >
+                            Create
+                        </Button>
+                    </Grid>
+                </Grid>
+            </form>
+
+            {data && (
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle onClose={handleClose}>
+                        Begin adding members to '{familyName}'!
+                    </DialogTitle>
+                    <DialogContent>
+                        <Typography align='center'>
+                            Begin getting members to join your family! Simply
+                            share the code below to your family members, get
+                            them to sign up and then they can join!
+                            <br />
+                            {joinCode}
+                        </Typography>
+                    </DialogContent>
+                </Dialog>
+            )}
         </Layout>
     )
 }
