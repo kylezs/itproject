@@ -24,8 +24,7 @@ import {
     FormHelperText,
     ClickAwayListener
 } from '@material-ui/core'
-import Layout from '../components/Layout'
-import Loading from '../components/Loading'
+import { Layout, Loading, Map } from '../components'
 import authContext from '../authContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
@@ -54,6 +53,9 @@ const useStyles = makeStyles(theme => ({
     },
     button: {
         margin: theme.spacing(1)
+    },
+    map: {
+        height: '200px'
     }
 }))
 
@@ -573,15 +575,15 @@ function ArtefactView(props) {
                                                         edit &&
                                                         !!beingEdited &&
                                                         beingEdited !==
-                                                        'belongsToFamiliesBools'
+                                                            'belongsToFamiliesBools'
                                                     }
-                                                    >
+                                                >
                                                     <ListItemIcon>
                                                         <Checkbox
                                                             edge='start'
                                                             checked={
                                                                 state
-                                                                .belongsToFamiliesBools[
+                                                                    .belongsToFamiliesBools[
                                                                     family.id
                                                                 ]
                                                             }
@@ -632,6 +634,24 @@ function ArtefactView(props) {
                                 </Paper>
                             </Grid>
                         </Grid>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            <Map
+                                google={props.google}
+                                center={{ lat: 18.5204, lng: 73.8567 }}
+                                zoom={15}
+                                mapStyles={{
+                                    width: '100vw',
+                                    height: '50vh',
+                                    backgroundColor: 'green',
+                                    display: 'flex',
+                                    justify: 'center',
+                                    alignItems: 'stretch'
+                                }}
+                            />
+                        </Paper>
                     </Grid>
 
                     {create && (

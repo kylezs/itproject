@@ -13,6 +13,7 @@
     "apollo-link-http": "^1.5.15",
     "email-validator": "^2.0.4",
     "eslint": "^6.4.0",
+    "google-maps-react": "^2.0.2",
     "graphql": "^14.4.2",
     "material-ui-dropzone": "^2.4.1",
     "password-validator": "^5.0.2",
