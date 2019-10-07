@@ -1,4 +1,4 @@
-from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List
+from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float
 from rest_framework import serializers
 from graphene_django.rest_framework.mutation import SerializerMutation
 from artefacts.models import Artefact
@@ -19,7 +19,8 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'state',
             'is_public',
             'upload',
-            'belongs_to_families'
+            'belongs_to_families',
+            'location',
         )
 
 
@@ -29,6 +30,7 @@ class ArtefactInputType(InputObjectType):
     state = String()
     is_public = Boolean()
     belongs_to_families = List(ID)
+    location = List(Float)
 
 
 class ArtefactCreate(Mutation):
@@ -54,6 +56,7 @@ class ArtefactCreate(Mutation):
             state=input.state,
             is_public=input.is_public,
             admin=user,
+            location=input.location,
         )
         # Create the artefact so it has an id to be used for ManyToMany
         artefact.save()
