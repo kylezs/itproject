@@ -122,7 +122,7 @@ function ArtefactView(props) {
         description: '',
         isPublic: false,
         state: '',
-        upload: [],
+        files: [],
         admin: '',
         belongsToFamiliesBools: {}
     })
@@ -154,6 +154,9 @@ function ArtefactView(props) {
         Object.keys(props.artefact).length !== 0
     ) {
         _setArtefactVars(props.artefact)
+    } else if (!initialised) {
+        setState({ ...state, isPublic: false })
+        setInitialised(true)
     }
 
     const _pushViewArtefactURL = id => {
@@ -267,6 +270,20 @@ function ArtefactView(props) {
 
     const submitForm = async event => {
         event.preventDefault()
+
+        // read image files
+        const reader = new FileReader()
+
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onload = () => {
+            // Do whatever you want with the file contents
+            const binaryStr = reader.result
+            console.log(binaryStr)
+        }
+
+        state.files.forEach(file => reader.readAsArrayBuffer(file))
+
         var famIDs = Object.keys(state.belongsToFamiliesBools).filter(
             id => state.belongsToFamiliesBools[id]
         )
@@ -543,12 +560,7 @@ function ArtefactView(props) {
                                         }
                                     >
                                         <ListItem
-                                            role={undefined}
                                             dense
-                                            button
-                                            onClick={e =>
-                                                handleSetField('isPublic', e)
-                                            }
                                             disabled={
                                                 edit &&
                                                 !!beingEdited &&
@@ -560,7 +572,12 @@ function ArtefactView(props) {
                                                     edge='start'
                                                     checked={state.isPublic}
                                                     tabIndex={-1}
-                                                    disableRipple
+                                                    onClick={e =>
+                                                        handleSetField(
+                                                            'isPublic',
+                                                            e
+                                                        )
+                                                    }
                                                 />
                                             </ListItemIcon>
                                             <ListItemText primary={'Public'} />
@@ -597,34 +614,31 @@ function ArtefactView(props) {
                                             return (
                                                 <ListItem
                                                     key={family.id}
-                                                    role={undefined}
                                                     dense
-                                                    button
-                                                    onClick={e =>
-                                                        handleSetField(
-                                                            'belongsToFamiliesBools',
-                                                            e,
-                                                            family.id
-                                                        )
-                                                    }
                                                     disabled={
                                                         edit &&
                                                         !!beingEdited &&
                                                         beingEdited !==
-                                                            'belongsToFamiliesBools'
+                                                        'belongsToFamiliesBools'
                                                     }
-                                                >
+                                                    >
                                                     <ListItemIcon>
                                                         <Checkbox
                                                             edge='start'
                                                             checked={
                                                                 state
-                                                                    .belongsToFamiliesBools[
+                                                                .belongsToFamiliesBools[
                                                                     family.id
                                                                 ]
                                                             }
+                                                            onClick={e =>
+                                                                handleSetField(
+                                                                    'belongsToFamiliesBools',
+                                                                    e,
+                                                                    family.id
+                                                                )
+                                                            }
                                                             tabIndex={-1}
-                                                            disableRipple
                                                         />
                                                     </ListItemIcon>
                                                     <ListItemText
@@ -648,13 +662,16 @@ function ArtefactView(props) {
                             <Grid item xs={12}>
                                 <Paper className={classes.root}>
                                     <DropzoneArea
-                                        onChange={e =>
-                                            handleSetField('upload', e)
+                                        initialFiles={state.files}
+                                        onChange={files =>
+                                            handleSetField('files', {
+                                                target: { value: files }
+                                            })
                                         }
                                         disabled={
                                             edit &&
                                             !!beingEdited &&
-                                            beingEdited !== 'upload'
+                                            beingEdited !== 'files'
                                         }
                                     />
                                 </Paper>
