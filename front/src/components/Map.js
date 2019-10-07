@@ -1,20 +1,42 @@
-import React from 'react'
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react'
+import React, { Component, useState } from 'react'
+import ReactMapGL from 'react-map-gl'
 
-function MapContainer(props) {
+function Map(props) {
+    const [state, setState] = useState({
+        viewport: {
+            width: props.width,
+            height: 400,
+            latitude: 37.7577,
+            longitude: -122.4376,
+            zoom: 8
+        }
+    })
+
+    const onViewportChange = viewport => {
+        var { curWidth, curHeight, ...etc } = viewport
+        
+        var { width, height } = props
+        setState({
+            viewport: {
+                width: width,
+                height: curHeight,
+                ...etc
+            }
+        })
+    }
+
+
     return (
-        <Map
-            google={props.google}
-            zoom={8}
-            style={props.mapStyles}
-            initialCenter={{ lat: 47.444, lng: -122.176 }}
-        >
-            <Marker position={{ lat: 48.0, lng: -122.0 }} />
-        </Map>
+        <ReactMapGL
+            width='100vw'
+            height='100vh'
+            {...state.viewport}
+            mapboxApiAccessToken={
+                'pk.eyJ1IjoiemR1ZmZpZWxkIiwiYSI6ImNrMWdkODhpOTBiM28zZG03eDdjZ2dmN24ifQ.vAzlFYY5S9O82SKnwX69kQ'
+            }
+            onViewportChange={viewport => onViewportChange(viewport)}
+        />
     )
 }
 
-export default GoogleApiWrapper({
-    apiKey: 'AIzaSyB6gipDw3h3uEWebumYS-Iub9uoFw_00sc'
-})(MapContainer)
-
+export default Map

@@ -29,6 +29,8 @@ import authContext from '../authContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
 
+import { SizeMe } from 'react-sizeme'
+
 import {
     CREATE_ARTEFACT_MUTATION,
     GET_ARTEFACT_STATES_QUERY,
@@ -369,7 +371,6 @@ function ArtefactView(props) {
                             </Typography>
                         </Paper>
                     </Grid>
-
                     {/* Left Pane */}
                     <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} alignContent='stretch'>
@@ -502,7 +503,6 @@ function ArtefactView(props) {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     {/* Right Pane */}
                     <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} alignItems='stretch'>
@@ -637,21 +637,15 @@ function ArtefactView(props) {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                            <Map
-                                google={props.google}
-                                center={{ lat: 18.5204, lng: 73.8567 }}
-                                zoom={15}
-                                mapStyles={{
-                                    width: '100vw',
-                                    height: '50vh',
-                                    backgroundColor: 'green',
-                                    display: 'flex',
-                                    justify: 'center',
-                                    alignItems: 'stretch'
-                                }}
-                            />
-                        </Paper>
+                        <SizeMe>
+                            {({ size }) => (
+                                <Paper className={classes.paper}>
+                                    <Map
+                                        width={size.width} height={size.height} size={size}
+                                    />
+                                </Paper>
+                            )}
+                        </SizeMe>
                     </Grid>
 
                     {create && (
