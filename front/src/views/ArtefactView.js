@@ -173,6 +173,10 @@ function ArtefactView(props) {
         console.log('Creation errors occurred:', errors)
     }
 
+    const _handleUpdateError = async errors => {
+        console.log('Update error occured: ', errors)
+    }
+
     const [
         createArtefact,
         { error: creationErrors, loading: creationLoading }
@@ -191,7 +195,7 @@ function ArtefactView(props) {
         { error: updateErrors, loading: updateLoading }
     ] = useMutation(UPDATE_ARTEFACT_MUTATION, {
         onCompleted: _updateCompleted,
-        onError: _handleCreationError
+        onError: _handleUpdateError
     })
 
     const _saveFamilies = async data => {
@@ -344,6 +348,10 @@ function ArtefactView(props) {
                         <CancelButton />
                     </Grid>
                 </Grid>
+
+                {updateErrors && (
+                    <FormHelperText error>Error Occurred</FormHelperText>
+                )}
             </Grid>
         )
     }
@@ -390,7 +398,7 @@ function ArtefactView(props) {
                     </Grid>
 
                     {/* Left Pane */}
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} alignContent='stretch'>
                             <Grid item xs={12}>
                                 <Paper className={classes.root}>
@@ -523,7 +531,7 @@ function ArtefactView(props) {
                     </Grid>
 
                     {/* Right Pane */}
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <Grid container spacing={1} alignItems='stretch'>
                             <Grid item xs={12}>
                                 <Paper className={classes.root}>
