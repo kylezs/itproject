@@ -4,12 +4,17 @@ import { PrivateRoute } from './components/PrivateRoute';
 
 // Views
 import CreateView from './views/CreateView'
-import DetailView from './views/DetailView'
+
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
 import Logout from './components/Logout'
 // Family views
 import CreateFamilyView from './views/CreateFamilyView'
+// Artefact Views
+import CreateArtefactView from './views/CreateArtefactView'
+import DetailView from './views/DetailView'
+import Error404View from './views/Error404View'
+
 import UserHomeView from './views/UserHomeView';
 
 class App extends Component {
@@ -27,12 +32,12 @@ class App extends Component {
                         <Route exact path="/logout/" component={Logout} />
 
                         {/* Artefact routes */}
-                        <PrivateRoute exact path="/artefacts/create/" component={CreateView} />
+                        <PrivateRoute exact path="/artefacts/create/" component={CreateArtefactView} />
                         <PrivateRoute exact path="/artefacts/:id/" component={DetailView} />
 
                         {/* Family routes */}
                         <PrivateRoute exact path="/family/create" loggedIn={CreateFamilyView} />
-                        
+                        <Route component={Error404View} />
                     </Switch>
                 </div>
             </Router>

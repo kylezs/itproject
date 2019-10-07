@@ -52,6 +52,7 @@ function Login(props) {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [invalidCred, setInvalidCred] = useState(false)
+    const [unknownError, setUnknownError] = useState(false)
 
     const _confirm = async data => {
         const { token } = data.tokenAuth
@@ -72,11 +73,12 @@ function Login(props) {
             } else {
                 console.log("unexpect error(s):")
                 console.log(errors)
+                setUnknownError(true)
             }
         }
     }
 
-    const [login, { data }] = useMutation(
+    const [login] = useMutation(
         LOGIN_MUTATION,
         {
             onCompleted: _confirm,
@@ -129,7 +131,7 @@ function Login(props) {
                                 <FormHelperText id="password" error={invalidCred}>Please enter valid credentials</FormHelperText>
                             }
                         </Grid>
-                        
+
                         <Grid item xs={12}>
                             <Button
                                 name="submit"
@@ -141,6 +143,10 @@ function Login(props) {
                                 >
                                 Log In
                             </Button>
+                            {
+                                unknownError &&
+                                <FormHelperText id="password" error={unknownError}>Unknown Error Occurred</FormHelperText>
+                            }
                         </Grid>
 
                         <Grid item xs={12}>

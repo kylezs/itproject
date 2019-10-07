@@ -13,6 +13,7 @@ import Layout from '../components/Layout';
 import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks';
 import { USERNAME_TAKEN_ERR_MSG } from "../constants.js"
+import { PASSWORD_SCHEMA, parseFailedRules } from "../components/passwordValidator.js"
 
 const SIGNUP_MUTATION = gql`
 mutation SignupMutation($email: String!, $password: String!, $username: String!){
@@ -54,6 +55,12 @@ function Signup(props) {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [usernameIsTaken, setUsernameIsTaken] = useState(false)
     const [emailIsTaken, setEmailIsTaken] = useState(false)
+    const [validPassword, setValidPassword] = useState(false)
+    const [failedPassRules, setFailedPassRules] = useState([])
+    const [unknownError, setUnknownError] = useState(false)
+
+    var emailValidator = require("email-validator");
+    
 
     const classes = useStyles();
     const _confirm = async data => {
@@ -68,12 +75,14 @@ function Signup(props) {
             if (USERNAME_TAKEN_ERR_MSG.startsWith(subMessage)){
                 setUsernameIsTaken(true)
             } else {
+                console.log("unexpect error(s):")
                 console.log(errors)
+                setUnknownError(true)
             }
         }
     }
 
-    const [signup, { data }] = useMutation(
+    const [signup] = useMutation(
         SIGNUP_MUTATION,
         {
             onCompleted: _confirm,
@@ -82,10 +91,25 @@ function Signup(props) {
     );
 
     const submitForm = async (event) => {
+        event.preventDefault();
         console.log("form submitted")
         signup({ variables: {username: username, email: email, password: password} })
-        event.preventDefault();
     }
+
+    const changePassword = async (pass) => {
+        setPassword(pass)
+
+        // password validation
+        setFailedPassRules(PASSWORD_SCHEMA.validate(pass, { list: true }))
+        if (failedPassRules){
+            setValidPassword(false)
+        } else {
+            setValidPassword(true)
+        }
+    }
+
+    const errorPassword = !!password && !validPassword
+    const errorConfirmPassword = !!confirmPassword && !(confirmPassword === password)
 
     return (
         <Layout>
@@ -128,9 +152,13 @@ function Signup(props) {
                                 name="email"
                                 autoComplete="email"
                                 type="email"
-                                error={emailIsTaken}
+                                error={emailIsTaken || (!!email && !emailValidator.validate(email))}
                                 onChange={e => setEmail(e.target.value)}
                                 />
+                            {
+                                !!email && !emailValidator.validate(email) &&
+                                <FormHelperText id="email" error={!emailValidator.validate(email)}>Email is invalid</FormHelperText>
+                            }
                             {
                                 emailIsTaken &&
                                 <FormHelperText id="email" error={emailIsTaken}>Email is taken</FormHelperText>
@@ -147,8 +175,13 @@ function Signup(props) {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                                onChange={ e => setPassword(e.target.value)}
+                                onChange={ e => changePassword( e.target.value )}
+                                error={errorPassword}
                                 />
+                            {
+                                errorPassword &&
+                                <FormHelperText id="password" error={errorPassword}>{parseFailedRules(failedPassRules)}</FormHelperText>
+                            }
                         </Grid>
 
                         <Grid item xs={12}>
@@ -161,12 +194,12 @@ function Signup(props) {
                                 type="password"
                                 id="confirmPassword"
                                 autoComplete="current-password"
-                                onChange={ e => setConfirmPassword(e.target.value)}
-                                error={!(confirmPassword === password)}
+                                onChange={ e => setConfirmPassword( e.target.value )}
+                                error={errorConfirmPassword}
                                 />
                             {
-                                !(confirmPassword === password) &&
-                                <FormHelperText id="confirmPassword" error={!(confirmPassword === password)}>Passwords must match</FormHelperText>
+                                errorConfirmPassword &&
+                                <FormHelperText id="confirmPassword" error={errorConfirmPassword}>Passwords must match</FormHelperText>
                             }
                         </Grid>
 
@@ -178,10 +211,18 @@ function Signup(props) {
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                disabled={!(confirmPassword === password)}
+                                disabled={
+                                    !(confirmPassword === password)
+                                    || !username || !email || !validPassword
+                                    || !emailValidator.validate(email)
+                                }
                                 >
                                 Sign Up
                             </Button>
+                            {
+                                unknownError &&
+                                <FormHelperText error={unknownError}>Unknown Error Occurred</FormHelperText>
+                            }
                         </Grid>
 
                         <Grid item xs={12}>
