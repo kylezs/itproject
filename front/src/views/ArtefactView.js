@@ -1,7 +1,6 @@
 import React, { useContext, useState, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
 import {
-    Container,
     Button,
     CssBaseline,
     TextField,
@@ -49,8 +48,16 @@ const useStyles = makeStyles(theme => {
             marginTop: theme.spacing(1),
             backgroundColor: theme.palette.background.paper
         },
+        title: {
+            marginLeft: theme.spacing(3),
+            marginRight: theme.spacing(3),
+            padding: theme.spacing(1),
+            textAlign: 'center',
+            backgroundColor: theme.palette.background.paper
+        },
         paper: {
-            marginTop: theme.spacing(1),
+            // marginTop: theme.spacing(1),
+            // marginBottom: theme.spacing(1),
             padding: theme.spacing(1),
             textAlign: 'center',
             backgroundColor: theme.palette.background.paper
@@ -61,6 +68,10 @@ const useStyles = makeStyles(theme => {
         map: {
             height: '200px',
             type: theme.palette.type
+        },
+        form: {
+            marginBottom: theme.spacing(6),
+            marginTop: theme.spacing(2)
         }
     }
 })
@@ -98,6 +109,10 @@ function ArtefactView(props) {
     const [prevValue, setPrevValue] = useState({})
     const [currValue, setCurrValue] = useState({})
     const [snackbarOpen, setSnackbarOpen] = useState(false)
+
+    const [location, setLocation] = useState('')
+    const [locationSearch, setLocationSearch] = useState('')
+    const [locationError, setLocationError] = useState(false)
 
     const _genericHandleError = async errors => {
         console.log(errors)
@@ -140,7 +155,7 @@ function ArtefactView(props) {
     }
 
     const _handleUpdateError = async errors => {
-        console.log('Update error occured: ', errors)
+        console.log('UpdSearch occured: ', errors)
     }
 
     const [
@@ -158,7 +173,7 @@ function ArtefactView(props) {
 
     const [
         updateArtefact,
-        { error: updateErrors, loading: updateLoading }
+        { error: updateErrors }
     ] = useMutation(UPDATE_ARTEFACT_MUTATION, {
         onCompleted: _updateCompleted,
         onError: _handleUpdateError
@@ -355,7 +370,10 @@ function ArtefactView(props) {
     return (
         <Fragment>
             <CssBaseline />
-            <form onSubmit={create ? submitForm : saveChange}>
+            <form
+                onSubmit={create ? submitForm : saveChange}
+                className={classes.form}
+            >
                 <Grid
                     container
                     spacing={2}
@@ -365,16 +383,26 @@ function ArtefactView(props) {
                     justify='space-evenly'
                 >
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                            <Typography variant='h4'>
-                                {create ? 'Create' : 'Edit'} Artefact
-                            </Typography>
-                            <Typography variant='subtitle1'>
-                                {create
-                                    ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
-                                    : 'Click to start editing'}
-                            </Typography>
-                        </Paper>
+                        <Grid container justify='center'>
+                            <Grid item xs={8}>
+                                <Paper className={classes.title}>
+                                    <Typography
+                                        variant='h4'
+                                        className={classes.title}
+                                    >
+                                        {create ? 'Create' : 'Edit'} Artefact
+                                    </Typography>
+                                    <Typography
+                                        variant='subtitle1'
+                                        className={classes.title}
+                                    >
+                                        {create
+                                            ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
+                                            : 'Click to start editing'}
+                                    </Typography>
+                                </Paper>
+                            </Grid>
+                        </Grid>
                     </Grid>
                     {/* Left Pane */}
                     <Grid item xs={12} sm={6}>
@@ -642,26 +670,79 @@ function ArtefactView(props) {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <SizeMe>
-                            {({ size }) => {
-                                var style =
-                                    'mapbox://styles/mapbox/light-v10?optimize=true'
-                                if (theme && theme.palette.type === 'dark'){
-                                    style =
-                                        'mapbox://styles/mapbox/dark-v10?optimize=true'
-                                }
+                        <Paper className={classes.paper}>
+                            <SizeMe>
+                                {({ size }) => {
+                                    var style =
+                                        'mapbox://styles/mapbox/light-v10?optimize=true'
+                                    if (
+                                        theme &&
+                                        theme.palette.type === 'dark'
+                                    ) {
+                                        style =
+                                            'mapbox://styles/mapbox/dark-v10?optimize=true'
+                                    }
 
-                                return (
-                                    <Paper className={classes.paper}>
-                                        <Map
-                                            style={style}
-                                            width={size.width}
-                                            padding={15}
-                                        />
-                                    </Paper>
-                                )
-                            }}
-                        </SizeMe>
+                                    return (
+                                        <Fragment>
+                                            <TextField
+                                                className={classes.textField}
+                                                id='location'
+                                                label='Location'
+                                                variant='outlined'
+                                                required
+                                                fullWidth
+                                                autoFocus
+                                                value={location}
+                                                onChange={e =>
+                                                    setLocation(e.target.value)
+                                                }
+                                                error={locationError}
+                                            />
+                                            {locationError && (
+                                                <FormHelperText
+                                                    id='map'
+                                                    error
+                                                    className={
+                                                        classes.textField
+                                                    }
+                                                >
+                                                    Error Occurred
+                                                </FormHelperText>
+                                            )}
+                                            <Button
+                                                onClick={() => {
+                                                    if (location) {
+                                                        setLocationSearch(
+                                                            location.slice(0)
+                                                        )
+                                                    }
+                                                }}
+                                            >
+                                                Search
+                                            </Button>
+
+                                            {edit &&
+                                                beingEdited === 'location' && (
+                                                    <EditButtons />
+                                                )}
+
+                                            <Map
+                                                style={style}
+                                                width={size.width}
+                                                padding={15}
+                                                location={
+                                                    locationSearch
+                                                        ? locationSearch
+                                                        : 'Melbourne'
+                                                }
+                                                setErrors={setLocationError}
+                                            />
+                                        </Fragment>
+                                    )
+                                }}
+                            </SizeMe>
+                        </Paper>
                     </Grid>
 
                     {create && (

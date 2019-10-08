@@ -1,6 +1,8 @@
 export const AUTH_TOKEN = 'auth-token'
 export const USERNAME_TAKEN_ERR_MSG = `duplicate key`
 export const INVALID_CRED_ERR_MSG = `Please, enter valid credentials`
+export const MY_ACCESS_TOKEN =
+           'pk.eyJ1Ijoiemh1b3BpbmdtIiwiYSI6ImNrMHowaXN1YzA0MmQzY29kbTdlbXJzOWIifQ.eEx-9GUiucpOMEYVVh7Ztg'
 
 // GQL API for prod vs dev
 

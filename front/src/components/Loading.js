@@ -1,6 +1,5 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Layout from '../components/Layout'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 function Loading() {
