@@ -74,7 +74,7 @@ const useStyles = makeStyles(theme => {
             marginTop: theme.spacing(2)
         },
         nestedContainer: {
-            padding: theme.spacing(1)
+            padding: theme.spacing(1),
         }
     }
 })
@@ -366,6 +366,11 @@ function ArtefactView(props) {
     const noErrors = !familyErrors && !creationErrors && !statesErrors
     const dataLoading = familyLoading || statesLoading
 
+    var mapStyle = 'mapbox://styles/mapbox/light-v10?optimize=true'
+    if (theme && theme.palette.type === 'dark') {
+        mapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
+    }
+
     if (edit && dataLoading) {
         return <Loading />
     }
@@ -387,7 +392,7 @@ function ArtefactView(props) {
                 >
                     <Grid item xs={12}>
                         <Grid container justify='center'>
-                            <Grid item xs={8}>
+                            <Grid item xs={12} sm={8}>
                                 <Paper className={classes.title}>
                                     <Typography
                                         variant='h4'
@@ -674,121 +679,79 @@ function ArtefactView(props) {
 
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                            <SizeMe>
-                                {({ size }) => {
-                                    var mapStyle =
-                                        'mapbox://styles/mapbox/light-v10?optimize=true'
-                                    if (
-                                        theme &&
-                                        theme.palette.type === 'dark'
-                                    ) {
-                                        mapStyle =
-                                            'mapbox://styles/mapbox/dark-v10?optimize=true'
+                            <Grid
+                                container
+                                alignItems='center'
+                                className={classes.nestedContainer}
+                            >
+                                <Grid item xs={8}>
+                                    <TextField
+                                        className={classes.textField}
+                                        id='location'
+                                        label='Location'
+                                        variant='outlined'
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        value={location}
+                                        onChange={e =>
+                                            setLocation(e.target.value)
+                                        }
+                                        error={locationError}
+                                        onKeyDown={e => {
+                                            if (e.keyCode == 13) {
+                                                document
+                                                    .getElementById('search')
+                                                    .click()
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <Button
+                                        id='search'
+                                        fullWidth
+                                        variant='outlined'
+                                        className={classes.button}
+                                        onClick={() => {
+                                            if (location) {
+                                                setLocationSearch(
+                                                    location.slice(0)
+                                                )
+                                            }
+                                        }}
+                                    >
+                                        Search
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            {locationError && (
+                                <FormHelperText
+                                    id='map'
+                                    error
+                                    className={classes.textField}
+                                >
+                                    Error Occurred
+                                </FormHelperText>
+                            )}
+
+                            {edit && beingEdited === 'location' && (
+                                <EditButtons />
+                            )}
+
+                            <Grid container className={classes.nestedContainer}>
+                                <Map
+                                    className={classes.map}
+                                    style={mapStyle}
+                                    location={
+                                        locationSearch
+                                            ? locationSearch
+                                            : 'Melbourne'
                                     }
-
-                                    return (
-                                        <Fragment>
-                                            <Grid
-                                                container
-                                                alignItems='center'
-                                                className={
-                                                    classes.nestedContainer
-                                                }
-                                            >
-                                                <Grid item xs={8}>
-                                                    <TextField
-                                                        className={
-                                                            classes.textField
-                                                        }
-                                                        id='location'
-                                                        label='Location'
-                                                        variant='outlined'
-                                                        required
-                                                        fullWidth
-                                                        autoFocus
-                                                        value={location}
-                                                        onChange={e =>
-                                                            setLocation(
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        error={locationError}
-                                                        onKeyDown={e => {
-                                                            if (
-                                                                e.keyCode == 13
-                                                            ) {
-                                                                document
-                                                                    .getElementById(
-                                                                        'search'
-                                                                    )
-                                                                    .click()
-                                                            }
-                                                        }}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <Button
-                                                        id='search'
-                                                        fullWidth
-                                                        variant='outlined'
-                                                        className={
-                                                            classes.button
-                                                        }
-                                                        onClick={() => {
-                                                            if (location) {
-                                                                setLocationSearch(
-                                                                    location.slice(
-                                                                        0
-                                                                    )
-                                                                )
-                                                            }
-                                                        }}
-                                                    >
-                                                        Search
-                                                    </Button>
-                                                </Grid>
-                                            </Grid>
-                                            {locationError && (
-                                                <FormHelperText
-                                                    id='map'
-                                                    error
-                                                    className={
-                                                        classes.textField
-                                                    }
-                                                >
-                                                    Error Occurred
-                                                </FormHelperText>
-                                            )}
-
-                                            {edit &&
-                                                beingEdited === 'location' && (
-                                                    <EditButtons />
-                                                )}
-
-                                            <Grid
-                                                container
-                                                className={
-                                                    classes.nestedContainer
-                                                }
-                                            >
-                                                <Map
-                                                    className={classes.map}
-                                                    style={mapStyle}
-                                                    width={size.width}
-                                                    padding={15}
-                                                    location={
-                                                        locationSearch
-                                                            ? locationSearch
-                                                            : 'Melbourne'
-                                                    }
-                                                    setErrors={setLocationError}
-                                                    setLocation={setLocation}
-                                                />
-                                            </Grid>
-                                        </Fragment>
-                                    )
-                                }}
-                            </SizeMe>
+                                    setErrors={setLocationError}
+                                    setLocation={setLocation}
+                                />
+                            </Grid>
                         </Paper>
                     </Grid>
 

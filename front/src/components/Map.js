@@ -61,7 +61,7 @@ function Map(props) {
 
     const containerStyle = {
         height: '60vh',
-        width: props.width
+        width: '100vw'
     }
 
     return (
@@ -71,7 +71,7 @@ function Map(props) {
                     ? props.style
                     : 'mapbox://styles/mapbox/streets-v9?optimize=true'
             }
-            containerStyle={props.width ? containerStyle : {}}
+            containerStyle={containerStyle}
             onClick={(map, e) => setMarker(map, e)}
             {...state}
         >
