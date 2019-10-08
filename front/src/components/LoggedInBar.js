@@ -23,35 +23,43 @@ export default props => {
 
     return (
         <div>
-            <Button component={RouterLink} to='/family/create' color="inherit">
+            <Button component={RouterLink} to='/family/create' color='inherit'>
                 Create Family
             </Button>
-            <Button component={RouterLink} to='/artefacts/manage' color="inherit">
+            <Button
+                component={RouterLink}
+                to='/artefacts/manage'
+                color='inherit'
+            >
                 Manage Artefacts
             </Button>
-            <Button component={RouterLink} to='/artefacts/create' color="inherit">
+            <Button
+                component={RouterLink}
+                to='/artefacts/create'
+                color='inherit'
+            >
                 Create Artefact
             </Button>
             <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
+                aria-label='account of current user'
+                aria-controls='menu-appbar'
+                aria-haspopup='true'
                 onClick={handleMenu}
-                color="inherit"
+                color='inherit'
             >
                 <AccountCircle />
             </IconButton>
             <Menu
-                id="menu-appbar"
+                id='menu-appbar'
                 anchorEl={anchorEl}
                 anchorOrigin={{
                     vertical: 'top',
-                    horizontal: 'right',
+                    horizontal: 'right'
                 }}
                 keepMounted
                 transformOrigin={{
                     vertical: 'top',
-                    horizontal: 'right',
+                    horizontal: 'right'
                 }}
                 open={open}
                 onClose={handleClose}
@@ -61,5 +69,5 @@ export default props => {
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
-    );
+    )
 };

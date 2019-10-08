@@ -3,6 +3,7 @@ import ArtefactView from './ArtefactView'
 import { useQuery } from '@apollo/react-hooks'
 import { ARTEFACT_DETAIL } from '../gqlQueriesMutations'
 import Loading from '../components/Loading'
+import { Layout } from '../components'
 
 export default function EditArtefactView(props) {
     const [artefact, setArtefact] = useState({})
@@ -23,9 +24,9 @@ export default function EditArtefactView(props) {
         onError: _genericHandleError
     })
 
-    if (artefactLoading) {
-        return <Loading />
-    } else {
-        return <ArtefactView artefact={artefact} mode={'edit'} />
-    }
+    return (
+        <Layout>
+            <ArtefactView artefact={artefact} mode={'edit'} />
+        </Layout>
+    )
 }

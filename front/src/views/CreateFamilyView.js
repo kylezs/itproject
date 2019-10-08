@@ -22,14 +22,12 @@ const useStyles = makeStyles(theme => ({
         // marginLeft: theme.spacing(1),
         // marginRight: theme.spacing(1),
         padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
         textAlign: 'center',
         marginTop: theme.spacing(1)
     },
     paper: {
         marginTop: theme.spacing(1),
         padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
         textAlign: 'center'
     },
     button: {

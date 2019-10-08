@@ -7,12 +7,12 @@ import {
     TextField,
     Grid,
     Typography,
-    makeStyles,
     MenuItem,
     Snackbar,
     IconButton
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
+import { makeStyles } from '@material-ui/core/styles'
 import {
     List,
     ListItem,
@@ -24,7 +24,8 @@ import {
     FormHelperText,
     ClickAwayListener
 } from '@material-ui/core'
-import { Layout, Loading, Map } from '../components'
+import { useTheme } from '@material-ui/styles'
+import { Loading, Map } from '../components'
 import authContext from '../authContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
@@ -38,28 +39,31 @@ import {
     UPDATE_ARTEFACT_MUTATION
 } from '../gqlQueriesMutations'
 
-const useStyles = makeStyles(theme => ({
-    textField: {
-        // marginLeft: theme.spacing(1),
-        // marginRight: theme.spacing(1),
-        padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
-        textAlign: 'center',
-        marginTop: theme.spacing(1)
-    },
-    paper: {
-        marginTop: theme.spacing(1),
-        padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
-        textAlign: 'center'
-    },
-    button: {
-        margin: theme.spacing(1)
-    },
-    map: {
-        height: '200px'
+const useStyles = makeStyles(theme => {
+    return {
+        textField: {
+            // marginLeft: theme.spacing(1),
+            // marginRight: theme.spacing(1),
+            padding: theme.spacing(1),
+            textAlign: 'center',
+            marginTop: theme.spacing(1),
+            backgroundColor: theme.palette.background.paper
+        },
+        paper: {
+            marginTop: theme.spacing(1),
+            padding: theme.spacing(1),
+            textAlign: 'center',
+            backgroundColor: theme.palette.background.paper
+        },
+        button: {
+            margin: theme.spacing(1)
+        },
+        map: {
+            height: '200px',
+            type: theme.palette.type
+        }
     }
-}))
+})
 
 function ArtefactView(props) {
     var create = true,
@@ -71,6 +75,8 @@ function ArtefactView(props) {
         console.log('unknown mode provided, defaulted to create')
     }
 
+    const theme = useTheme()
+    console.log("Theme: ", theme)
     const classes = useStyles()
 
     const context = useContext(authContext)
@@ -348,7 +354,7 @@ function ArtefactView(props) {
     }
 
     return (
-        <Layout>
+        <Fragment>
             <CssBaseline />
             <form onSubmit={create ? submitForm : saveChange}>
                 <Grid
@@ -638,13 +644,24 @@ function ArtefactView(props) {
 
                     <Grid item xs={12}>
                         <SizeMe>
-                            {({ size }) => (
-                                <Paper className={classes.paper}>
-                                    <Map
-                                        width={size.width} height={size.height} size={size}
-                                    />
-                                </Paper>
-                            )}
+                            {({ size }) => {
+                                var style =
+                                    'mapbox://styles/mapbox/light-v10?optimize=true'
+                                if (theme && theme.palette.type === 'dark'){
+                                    style =
+                                        'mapbox://styles/mapbox/dark-v10?optimize=true'
+                                }
+
+                                return (
+                                    <Paper className={classes.paper}>
+                                        <Map
+                                            style={style}
+                                            width={size.width}
+                                            padding={15}
+                                        />
+                                    </Paper>
+                                )
+                            }}
                         </SizeMe>
                     </Grid>
 
@@ -708,7 +725,7 @@ function ArtefactView(props) {
                     />
                 </ClickAwayListener>
             </form>
-        </Layout>
+        </Fragment>
     )
 }
 

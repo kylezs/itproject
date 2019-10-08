@@ -9,9 +9,6 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/react-hooks'
 import Auth from './components/Auth'
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
-import { deepPurple, cyan } from '@material-ui/core/colors'
-
 import App from './App'
 import { AUTH_TOKEN, config } from './constants'
 
@@ -32,24 +29,6 @@ const authLink = setContext((_, { headers }) => {
     }
 })
 
-const theme = createMuiTheme({
-    palette: {
-        primary: {
-            light: '#757ce8',
-            main: '#3f50b5',
-            dark: '#002884',
-            contrastText: '#fff'
-        },
-        secondary: {
-            light: '#ff7961',
-            main: '#f44336',
-            dark: '#ba000d',
-            contrastText: '#000'
-        },
-        type: 'dark'
-    }
-})
-
 const client = new ApolloClient({
     link: authLink.concat(httpLink),
     cache: new InMemoryCache()
@@ -58,9 +37,7 @@ const client = new ApolloClient({
 ReactDOM.render(
     <ApolloProvider client={client}>
         <Auth>
-            <MuiThemeProvider theme={theme}>
-                <App />
-            </MuiThemeProvider>
+            <App />
         </Auth>
     </ApolloProvider>,
     document.getElementById('root')

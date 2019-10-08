@@ -1,56 +1,84 @@
-import React, { useContext } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import React, { useContext } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import {
+    IconButton,
+    Menu,
+    MenuItem,
+    Button,
+    Typography,
+    Toolbar,
+    AppBar
+} from '@material-ui/core'
+import MenuIcon from '@material-ui/icons/Menu'
 
-import LoggedInBar from './LoggedInBar';
-import NotLoggedInBar from './NotLoggedInBar';
-import { Link as RouterLink } from 'react-router-dom';
-import { Link }  from '@material-ui/core';
+import Brightness3Icon from '@material-ui/icons/Brightness3';
+import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
 
-import authContext from '../authContext';
+import LoggedInBar from './LoggedInBar'
+import NotLoggedInBar from './NotLoggedInBar'
+import { Link as RouterLink } from 'react-router-dom'
+import { Link } from '@material-ui/core'
+import { useTheme } from '@material-ui/styles'
+
+import authContext from '../authContext'
 
 const useStyles = makeStyles(theme => ({
     root: {
-        flexGrow: 1,
+        flexGrow: 1
     },
     menuButton: {
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(2)
     },
     title: {
-        flexGrow: 1,
-    },
-}));
+        flexGrow: 1
+    }
+}))
 
-export default function MenuAppBar() {
-    const classes = useStyles();
-    const context = useContext(authContext);
-    let loggedIn = context.authenticated;
-    let username = null;
-
+export default function MenuAppBar(props) {
+    const classes = useStyles()
+    const context = useContext(authContext)
+    let loggedIn = context.authenticated
+    let username = null
+    const theme = useTheme()
+    const dark = (theme && theme.palette.type === 'dark')
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position='static'>
                 <Toolbar>
-                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                    <IconButton
+                        edge='start'
+                        className={classes.menuButton}
+                        color='inherit'
+                        aria-label='menu'
+                    >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" className={classes.title}>
-                        <Link component={RouterLink} to='/' color="inherit" variant="inherit" underline="none">
+                    <Typography variant='h6' className={classes.title}>
+                        <Link
+                            component={RouterLink}
+                            to='/'
+                            color='inherit'
+                            variant='inherit'
+                            underline='none'
+                        >
                             Family AR
                         </Link>
                     </Typography>
-            {loggedIn && (
-                <LoggedInBar username={username} />
-            )}
-            {!loggedIn && (
-                <NotLoggedInBar />
-            )}
+
+                    <IconButton
+                        edge='start'
+                        className={classes.menuButton}
+                        color='inherit'
+                        aria-label='menu'
+                        onClick={props.onToggleDarkTheme}
+                    >
+                        {!dark ? <Brightness3Icon /> : <BrightnessHighIcon />}
+                    </IconButton>
+
+                    {loggedIn && <LoggedInBar username={username} />}
+                    {!loggedIn && <NotLoggedInBar />}
                 </Toolbar>
             </AppBar>
         </div>
-    );
+    )
 }

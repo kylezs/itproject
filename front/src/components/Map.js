@@ -1,41 +1,53 @@
 import React, { Component, useState } from 'react'
-import ReactMapGL from 'react-map-gl'
+import ReactMapboxGl, { Layer, Feature, Marker } from 'react-mapbox-gl'
+
+const Mapbox = ReactMapboxGl({
+    accessToken:
+        'pk.eyJ1IjoiemR1ZmZpZWxkIiwiYSI6ImNrMWdkODhpOTBiM28zZG03eDdjZ2dmN24ifQ.vAzlFYY5S9O82SKnwX69kQ'
+})
 
 function Map(props) {
-    const [state, setState] = useState({
-        viewport: {
-            width: props.width,
-            height: 400,
-            latitude: 37.7577,
-            longitude: -122.4376,
-            zoom: 8
-        }
+    const [coord, setCoord] = useState({
+        lat: 10,
+        lng: 10
     })
 
-    const onViewportChange = viewport => {
-        var { curWidth, curHeight, ...etc } = viewport
-        
-        var { width, height } = props
-        setState({
-            viewport: {
-                width: width,
-                height: curHeight,
-                ...etc
-            }
-        })
+    const set = (map, e) => {
+        var newCoord = { lng: e.lngLat.lng, lat: e.lngLat.lat }
+        setCoord(newCoord)
     }
 
-
+    const containerStyle = {
+        height: '60vh',
+        width: props.width - props.padding
+    }
     return (
-        <ReactMapGL
-            width='100vw'
-            height='100vh'
-            {...state.viewport}
-            mapboxApiAccessToken={
-                'pk.eyJ1IjoiemR1ZmZpZWxkIiwiYSI6ImNrMWdkODhpOTBiM28zZG03eDdjZ2dmN24ifQ.vAzlFYY5S9O82SKnwX69kQ'
+        <Mapbox
+            style={
+                props.style
+                    ? props.style
+                    : 'mapbox://styles/mapbox/streets-v9?optimize=true'
             }
-            onViewportChange={viewport => onViewportChange(viewport)}
-        />
+            containerStyle={props.width ? containerStyle : {}}
+            onClick={(map, e) => set(map, e)}
+        >
+            <Layer
+                type='symbol'
+                id='marker'
+                layout={{
+                    'icon-image': 'dot-11',
+                    'icon-size': 4
+                }}
+            >
+                <Feature coordinates={[coord.lng, coord.lat]} />
+            </Layer>
+
+            {/* <Marker coordinates={[coord.lng, coord.lat]} anchor='bottom'>
+                <img
+                    src={'http://maps.google.com/mapfiles/ms/icons/blue.png'}
+                />
+            </Marker> */}
+        </Mapbox>
     )
 }
 
