@@ -76,7 +76,6 @@ function ArtefactView(props) {
     }
 
     const theme = useTheme()
-    console.log("Theme: ", theme)
     const classes = useStyles()
 
     const context = useContext(authContext)
