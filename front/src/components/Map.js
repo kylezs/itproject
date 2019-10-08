@@ -37,7 +37,6 @@ function Map(props) {
                             [bboxCoords[2], bboxCoords[3]]
                         ]
                         setState({
-                            center: feature.center,
                             fitBounds: bbox
                         })
                     } else if (feature.place_type[0] === 'address') {
@@ -46,6 +45,7 @@ function Map(props) {
                             zoom: [15]
                         })
                     }
+                    props.setLocation(feature.place_name)
                 },
                 error => {
                     console.log(error)
@@ -54,14 +54,14 @@ function Map(props) {
             )
     }
 
-    const set = (map, e) => {
+    const setMarker = (map, e) => {
         var newCoord = [e.lngLat.lng, e.lngLat.lat]
         setState({ center: newCoord })
     }
 
     const containerStyle = {
         height: '60vh',
-        width: props.width - props.padding
+        width: props.width
     }
 
     return (
@@ -72,8 +72,7 @@ function Map(props) {
                     : 'mapbox://styles/mapbox/streets-v9?optimize=true'
             }
             containerStyle={props.width ? containerStyle : {}}
-            onClick={(map, e) => set(map, e)}
-            fitBounds={[[144.5, -38.4], [145.5, -37.5]]}
+            onClick={(map, e) => setMarker(map, e)}
             {...state}
         >
             <Layer
@@ -84,7 +83,7 @@ function Map(props) {
                     'icon-size': 4
                 }}
             >
-                <Feature coordinates={state.center} />
+                {state.center && <Feature coordinates={state.center} />}
             </Layer>
 
             {/* <Marker coordinates={[coord.lng, coord.lat]} anchor='bottom'>

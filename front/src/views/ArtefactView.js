@@ -60,10 +60,10 @@ const useStyles = makeStyles(theme => {
             // marginBottom: theme.spacing(1),
             padding: theme.spacing(1),
             textAlign: 'center',
-            backgroundColor: theme.palette.background.paper
+            backgroundColor: theme.palette.background.paper,
         },
         button: {
-            margin: theme.spacing(1)
+            margin: theme.spacing(1),
         },
         map: {
             height: '200px',
@@ -72,6 +72,9 @@ const useStyles = makeStyles(theme => {
         form: {
             marginBottom: theme.spacing(6),
             marginTop: theme.spacing(2)
+        },
+        nestedContainer: {
+            padding: theme.spacing(1)
         }
     }
 })
@@ -171,13 +174,13 @@ function ArtefactView(props) {
         setSnackbarOpen(true)
     }
 
-    const [
-        updateArtefact,
-        { error: updateErrors }
-    ] = useMutation(UPDATE_ARTEFACT_MUTATION, {
-        onCompleted: _updateCompleted,
-        onError: _handleUpdateError
-    })
+    const [updateArtefact, { error: updateErrors }] = useMutation(
+        UPDATE_ARTEFACT_MUTATION,
+        {
+            onCompleted: _updateCompleted,
+            onError: _handleUpdateError
+        }
+    )
 
     const _saveFamilies = async data => {
         setFamilies(data.me.isMemberOf)
@@ -685,20 +688,64 @@ function ArtefactView(props) {
 
                                     return (
                                         <Fragment>
-                                            <TextField
-                                                className={classes.textField}
-                                                id='location'
-                                                label='Location'
-                                                variant='outlined'
-                                                required
-                                                fullWidth
-                                                autoFocus
-                                                value={location}
-                                                onChange={e =>
-                                                    setLocation(e.target.value)
+                                            <Grid
+                                                container
+                                                alignItems='center'
+                                                className={
+                                                    classes.nestedContainer
                                                 }
-                                                error={locationError}
-                                            />
+                                            >
+                                                <Grid item xs={8}>
+                                                    <TextField
+                                                        className={
+                                                            classes.textField
+                                                        }
+                                                        id='location'
+                                                        label='Location'
+                                                        variant='outlined'
+                                                        required
+                                                        fullWidth
+                                                        autoFocus
+                                                        value={location}
+                                                        onChange={e =>
+                                                            setLocation(
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        error={locationError}
+                                                        onKeyDown={e => {
+                                                            if (e.keyCode == 13){
+                                                                document
+                                                                    .getElementById(
+                                                                        'search'
+                                                                    )
+                                                                    .click()
+                                                            }
+                                                        }}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <Button
+                                                        id='search'
+                                                        fullWidth
+                                                        variant='outlined'
+                                                        className={
+                                                            classes.button
+                                                        }
+                                                        onClick={() => {
+                                                            if (location) {
+                                                                setLocationSearch(
+                                                                    location.slice(
+                                                                        0
+                                                                    )
+                                                                )
+                                                            }
+                                                        }}
+                                                    >
+                                                        Search
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
                                             {locationError && (
                                                 <FormHelperText
                                                     id='map'
@@ -710,17 +757,6 @@ function ArtefactView(props) {
                                                     Error Occurred
                                                 </FormHelperText>
                                             )}
-                                            <Button
-                                                onClick={() => {
-                                                    if (location) {
-                                                        setLocationSearch(
-                                                            location.slice(0)
-                                                        )
-                                                    }
-                                                }}
-                                            >
-                                                Search
-                                            </Button>
 
                                             {edit &&
                                                 beingEdited === 'location' && (
@@ -737,6 +773,7 @@ function ArtefactView(props) {
                                                         : 'Melbourne'
                                                 }
                                                 setErrors={setLocationError}
+                                                setLocation={setLocation}
                                             />
                                         </Fragment>
                                     )
