@@ -60,10 +60,10 @@ const useStyles = makeStyles(theme => {
             // marginBottom: theme.spacing(1),
             padding: theme.spacing(1),
             textAlign: 'center',
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: theme.palette.background.paper
         },
         button: {
-            margin: theme.spacing(1),
+            margin: theme.spacing(1)
         },
         map: {
             height: '200px',
@@ -676,13 +676,13 @@ function ArtefactView(props) {
                         <Paper className={classes.paper}>
                             <SizeMe>
                                 {({ size }) => {
-                                    var style =
+                                    var mapStyle =
                                         'mapbox://styles/mapbox/light-v10?optimize=true'
                                     if (
                                         theme &&
                                         theme.palette.type === 'dark'
                                     ) {
-                                        style =
+                                        mapStyle =
                                             'mapbox://styles/mapbox/dark-v10?optimize=true'
                                     }
 
@@ -714,7 +714,9 @@ function ArtefactView(props) {
                                                         }
                                                         error={locationError}
                                                         onKeyDown={e => {
-                                                            if (e.keyCode == 13){
+                                                            if (
+                                                                e.keyCode == 13
+                                                            ) {
                                                                 document
                                                                     .getElementById(
                                                                         'search'
@@ -763,18 +765,26 @@ function ArtefactView(props) {
                                                     <EditButtons />
                                                 )}
 
-                                            <Map
-                                                style={style}
-                                                width={size.width}
-                                                padding={15}
-                                                location={
-                                                    locationSearch
-                                                        ? locationSearch
-                                                        : 'Melbourne'
+                                            <Grid
+                                                container
+                                                className={
+                                                    classes.nestedContainer
                                                 }
-                                                setErrors={setLocationError}
-                                                setLocation={setLocation}
-                                            />
+                                            >
+                                                <Map
+                                                    className={classes.map}
+                                                    style={mapStyle}
+                                                    width={size.width}
+                                                    padding={15}
+                                                    location={
+                                                        locationSearch
+                                                            ? locationSearch
+                                                            : 'Melbourne'
+                                                    }
+                                                    setErrors={setLocationError}
+                                                    setLocation={setLocation}
+                                                />
+                                            </Grid>
                                         </Fragment>
                                     )
                                 }}
