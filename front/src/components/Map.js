@@ -6,6 +6,50 @@ import { MY_ACCESS_TOKEN } from '../constants'
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
 const geocodingService = mbxGeocoding({ accessToken: MY_ACCESS_TOKEN })
 
+export const geocodeQuery = query => {
+    return geocodingService
+        .forwardGeocode({
+            query: query,
+            limit: 1,
+            types: ['address', 'place']
+        })
+        .send()
+        .then(
+            response => {
+                var result = {}
+                console.log('GEOCODING RESPONSE: ', response.body)
+                const feature = response.body.features[0]
+                if (!feature) {
+                    result.noResults = true
+                    return result
+                }
+                if (feature.place_type[0] === 'place') {
+                    const bboxCoords = feature.bbox
+                    const bbox = [
+                        [bboxCoords[0], bboxCoords[1]],
+                        [bboxCoords[2], bboxCoords[3]]
+                    ]
+                    result.mapState = {
+                        fitBounds: bbox
+                    }
+                } else if (feature.place_type[0] === 'address') {
+                    result.mapState = {
+                        center: feature.center,
+                        zoom: [15]
+                    }
+                }
+                result.place_name = feature.placeName
+                return result
+            },
+            error => {
+                var result = {}
+                console.log(error)
+                result.error = error
+                return result
+            }
+        )
+}
+
 const Mapbox = ReactMapboxGl({
     accessToken: MY_ACCESS_TOKEN,
     interactive: true,
@@ -13,50 +57,17 @@ const Mapbox = ReactMapboxGl({
     maxZoom: 18
 })
 
-function Map(props) {
-    const [query, setQuery] = useState('')
-    const [state, setState] = useState({})
-
-    if (props.location && props.location !== query) {
-        setQuery(props.location)
-        geocodingService
-            .forwardGeocode({
-                query: props.location,
-                limit: 2,
-                types: ['address', 'place']
-            })
-            .send()
-            .then(
-                response => {
-                    console.log('GEOCODING RESPONSE: ', response.body)
-                    const feature = response.body.features[0]
-                    if (feature.place_type[0] === 'place') {
-                        const bboxCoords = feature.bbox
-                        const bbox = [
-                            [bboxCoords[0], bboxCoords[1]],
-                            [bboxCoords[2], bboxCoords[3]]
-                        ]
-                        setState({
-                            fitBounds: bbox
-                        })
-                    } else if (feature.place_type[0] === 'address') {
-                        setState({
-                            center: feature.center,
-                            zoom: [15]
-                        })
-                    }
-                    props.setLocation(feature.place_name)
-                },
-                error => {
-                    console.log(error)
-                    props.setErrors(error)
-                }
-            )
+export default function Map(props) {
+    const [mapState, setMapState] = useState({})
+    
+    const setCenter = coord => {
+        setMapState({ ...mapState, center: coord })
+        props.setCoord(coord)
     }
 
     const setMarker = (map, e) => {
         var newCoord = [e.lngLat.lng, e.lngLat.lat]
-        setState({ center: newCoord })
+        setCenter(newCoord)
     }
 
     const containerStyle = {
@@ -73,7 +84,7 @@ function Map(props) {
             }
             containerStyle={containerStyle}
             onClick={(map, e) => setMarker(map, e)}
-            {...state}
+            {...props.mapState}
         >
             <Layer
                 type='symbol'
@@ -83,7 +94,7 @@ function Map(props) {
                     'icon-size': 4
                 }}
             >
-                {state.center && <Feature coordinates={state.center} />}
+                {mapState.center && <Feature coordinates={mapState.center} />}
             </Layer>
 
             {/* <Marker coordinates={[coord.lng, coord.lat]} anchor='bottom'>
@@ -94,5 +105,3 @@ function Map(props) {
         </Mapbox>
     )
 }
-
-export default Map

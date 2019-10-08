@@ -25,6 +25,7 @@ import {
 } from '@material-ui/core'
 import { useTheme } from '@material-ui/styles'
 import { Loading, Map } from '../components'
+import { geocodeQuery } from '../components/Map'
 import authContext from '../authContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
@@ -74,7 +75,7 @@ const useStyles = makeStyles(theme => {
             marginTop: theme.spacing(2)
         },
         nestedContainer: {
-            padding: theme.spacing(1),
+            padding: theme.spacing(1)
         }
     }
 })
@@ -104,7 +105,9 @@ function ArtefactView(props) {
         state: '',
         files: [],
         admin: '',
-        belongsToFamiliesBools: {}
+        belongsToFamiliesBools: {},
+        locationText: '',
+        location: []
     })
     const [initialised, setInitialised] = useState(false)
 
@@ -113,9 +116,9 @@ function ArtefactView(props) {
     const [currValue, setCurrValue] = useState({})
     const [snackbarOpen, setSnackbarOpen] = useState(false)
 
-    const [location, setLocation] = useState('')
-    const [locationSearch, setLocationSearch] = useState('')
-    const [locationError, setLocationError] = useState(false)
+    const [mapState, setMapState] = useState({})
+    const [location, setLocation] = useState([])
+    const [locationError, setLocationError] = useState('')
 
     const _genericHandleError = async errors => {
         console.log(errors)
@@ -227,14 +230,11 @@ function ArtefactView(props) {
         }
     }
 
-    const handleSetField = (fieldName, event, famId) => {
-        var value = event.target.value
-        if (fieldName === 'isPublic') {
-            value = event.target.checked
-        } else if (fieldName === 'belongsToFamiliesBools') {
+    const handleSetField = (fieldName, value, famId) => {
+        if (fieldName === 'belongsToFamiliesBools') {
             value = {
                 ...state.belongsToFamiliesBools,
-                [famId]: event.target.checked
+                [famId]: value
             }
         }
         setField(fieldName, value)
@@ -242,6 +242,18 @@ function ArtefactView(props) {
         if (edit && beingEdited !== fieldName) {
             setBeingEdited(fieldName)
         }
+    }
+
+    const _handleGeocodeQuery = () => {
+        geocodeQuery(state.locationText).then(result => {
+            if (result.noResults) {
+                setLocationError('No results')
+            } else {
+                setMapState(result.mapState)
+                handleSetField('locationText', result.placeName)
+                setLocationError('')
+            }
+        })
     }
 
     const cancelEditing = () => {
@@ -427,7 +439,7 @@ function ArtefactView(props) {
                                         autoFocus
                                         value={state.name}
                                         onChange={e =>
-                                            handleSetField('name', e)
+                                            handleSetField('name', e.target.value)
                                         }
                                         disabled={
                                             edit &&
@@ -452,7 +464,7 @@ function ArtefactView(props) {
                                         fullWidth
                                         value={state.state}
                                         onChange={e =>
-                                            handleSetField('state', e)
+                                            handleSetField('state', e.target.value)
                                         }
                                         select
                                         SelectProps={{
@@ -503,7 +515,7 @@ function ArtefactView(props) {
                                         rows={6}
                                         value={state.description}
                                         onChange={e =>
-                                            handleSetField('description', e)
+                                            handleSetField('description', e.target.value)
                                         }
                                         disabled={
                                             edit &&
@@ -572,7 +584,7 @@ function ArtefactView(props) {
                                                     onClick={e =>
                                                         handleSetField(
                                                             'isPublic',
-                                                            e
+                                                            e.target.checked
                                                         )
                                                     }
                                                 />
@@ -631,7 +643,7 @@ function ArtefactView(props) {
                                                             onClick={e =>
                                                                 handleSetField(
                                                                     'belongsToFamiliesBools',
-                                                                    e,
+                                                                    e.target.checked,
                                                                     family.id
                                                                 )
                                                             }
@@ -661,9 +673,7 @@ function ArtefactView(props) {
                                     <DropzoneArea
                                         initialFiles={state.files}
                                         onChange={files =>
-                                            handleSetField('files', {
-                                                target: { value: files }
-                                            })
+                                            handleSetField('files', files)
                                         }
                                         disabled={
                                             edit &&
@@ -687,17 +697,17 @@ function ArtefactView(props) {
                                 <Grid item xs={8}>
                                     <TextField
                                         className={classes.textField}
-                                        id='location'
+                                        id='locationText'
                                         label='Location'
                                         variant='outlined'
                                         required
                                         fullWidth
                                         autoFocus
-                                        value={location}
+                                        value={state.locationText}
                                         onChange={e =>
-                                            setLocation(e.target.value)
+                                            handleSetField('locationText', e.target.value)
                                         }
-                                        error={locationError}
+                                        error={!!locationError}
                                         onKeyDown={e => {
                                             if (e.keyCode == 13) {
                                                 document
@@ -705,6 +715,7 @@ function ArtefactView(props) {
                                                     .click()
                                             }
                                         }}
+                                        helperText={locationError}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
@@ -713,29 +724,14 @@ function ArtefactView(props) {
                                         fullWidth
                                         variant='outlined'
                                         className={classes.button}
-                                        onClick={() => {
-                                            if (location) {
-                                                setLocationSearch(
-                                                    location.slice(0)
-                                                )
-                                            }
-                                        }}
+                                        onClick={_handleGeocodeQuery}
                                     >
                                         Search
                                     </Button>
                                 </Grid>
                             </Grid>
-                            {locationError && (
-                                <FormHelperText
-                                    id='map'
-                                    error
-                                    className={classes.textField}
-                                >
-                                    Error Occurred
-                                </FormHelperText>
-                            )}
 
-                            {edit && beingEdited === 'location' && (
+                            {edit && beingEdited === 'locationText' && (
                                 <EditButtons />
                             )}
 
@@ -743,13 +739,8 @@ function ArtefactView(props) {
                                 <Map
                                     className={classes.map}
                                     style={mapStyle}
-                                    location={
-                                        locationSearch
-                                            ? locationSearch
-                                            : 'Melbourne'
-                                    }
-                                    setErrors={setLocationError}
-                                    setLocation={setLocation}
+                                    mapState={mapState}
+                                    setCoord={setLocation}
                                 />
                             </Grid>
                         </Paper>
