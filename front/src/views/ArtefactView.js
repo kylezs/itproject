@@ -703,7 +703,7 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         autoFocus
-                                        value={state.locationText}
+                                        value={state.locationText || ''}
                                         onChange={e =>
                                             handleSetField('locationText', e.target.value)
                                         }
