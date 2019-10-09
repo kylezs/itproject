@@ -30,8 +30,6 @@ import authContext from '../authContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
 
-import { SizeMe } from 'react-sizeme'
-
 import {
     CREATE_ARTEFACT_MUTATION,
     GET_ARTEFACT_STATES_QUERY,
@@ -98,49 +96,41 @@ function ArtefactView(props) {
     const [artefactStates, setArtefactStates] = useState({})
     const [families, setFamilies] = useState([])
 
+    // only need to exlicitly set the unrequired fields here
     const [state, setState] = useState({
-        name: '',
-        description: '',
         isPublic: false,
-        state: '',
-        files: [],
-        admin: '',
-        belongsToFamiliesBools: {},
-        locationText: '',
-        location: []
+        belongsToFamiliesBools: {}
     })
-    const [initialised, setInitialised] = useState(false)
+    const stateLen = Object.keys(state).length
+    const artefactLoaded = edit && Object.keys(props.artefact).length !== 0
+    if (artefactLoaded && stateLen === 0) {
+        var belong = {}
+        props.artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        var locationStrings = props.artefact.location
+            .slice(1, -1)
+            .split(',', 2)
+            .reverse()
+        var location = locationStrings.map(str => parseFloat(str))
+        console.log('Loaded artefact: ', props.artefact)
 
+        setState({
+            ...props.artefact,
+            belongsToFamiliesBools: belong,
+            location: location
+        })
+    }
+
+    const [locationText, setLocationText] = useState('')
     const [beingEdited, setBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
     const [currValue, setCurrValue] = useState({})
     const [snackbarOpen, setSnackbarOpen] = useState(false)
 
     const [mapState, setMapState] = useState({})
-    const [location, setLocation] = useState([])
     const [locationError, setLocationError] = useState('')
 
     const _genericHandleError = async errors => {
         console.log(errors)
-    }
-
-    const _setArtefactVars = artefact => {
-        var belong = {}
-        artefact.belongsToFamilies.map(val => (belong[val.id] = true))
-
-        setState({ ...artefact, belongsToFamiliesBools: belong })
-        setInitialised(true)
-    }
-
-    // if in edit mode (but not in create mode) load in data for the artefact
-    if (
-        !initialised &&
-        !create &&
-        edit &&
-        props.artefact &&
-        Object.keys(props.artefact).length !== 0
-    ) {
-        _setArtefactVars(props.artefact)
     }
 
     const _pushViewArtefactURL = id => {
@@ -161,7 +151,7 @@ function ArtefactView(props) {
     }
 
     const _handleUpdateError = async errors => {
-        console.log('UpdSearch occured: ', errors)
+        console.log('update error occured: ', errors)
     }
 
     const [
@@ -220,6 +210,11 @@ function ArtefactView(props) {
 
     const setField = (fieldName, value) => {
         var prev = state[fieldName]
+
+        console.log('Setting state: ', {
+            ...state,
+            [fieldName]: value
+        })
         setState({
             ...state,
             [fieldName]: value
@@ -237,6 +232,7 @@ function ArtefactView(props) {
                 [famId]: value
             }
         }
+
         setField(fieldName, value)
         setCurrValue(value)
         if (edit && beingEdited !== fieldName) {
@@ -244,27 +240,58 @@ function ArtefactView(props) {
         }
     }
 
-    const _handleGeocodeQuery = () => {
-        geocodeQuery(state.locationText).then(result => {
-            if (result.noResults) {
-                setLocationError('No results')
-            } else {
-                setMapState(result.mapState)
-                handleSetField('locationText', result.placeName)
-                setLocationError('')
-            }
-        })
+    const _handleGeocodeQuery = query => {
+        if (query) {
+            console.log('Query run with argument: ', query)
+            return geocodeQuery(query).then(result => {
+                if (result.error) {
+                    setLocationError(
+                        'Unknown error occurred, check console for details'
+                    )
+                    console.log(result.error)
+                } else if (result.noResults) {
+                    setLocationError('No results')
+                } else {
+                    setMapState(result.mapState)
+                    handleSetField('location', result.mapState.center)
+                    setLocationText(result.placeName)
+                    setLocationError('')
+                }
+                return result
+            })
+        }
     }
+    
+    const setMapToLocation = () => {
+        _handleGeocodeQuery(state.location)
+    }
+
+    const [initLocationText, setInitLocationText] = useState(false)
+    if (
+        !locationText &&
+        artefactLoaded &&
+        state.location &&
+        !initLocationText
+    ) {
+        setMapToLocation()
+        setInitLocationText(true)
+    }
+
 
     const cancelEditing = () => {
         setField(beingEdited, prevValue)
         setBeingEdited('')
+
+        if (beingEdited === 'location'){
+            _handleGeocodeQuery(prevValue)
+        }
     }
 
     const submitForm = async event => {
         event.preventDefault()
 
         // read image files
+        // TO DO
         const reader = new FileReader()
 
         reader.onabort = () => console.log('file reading was aborted')
@@ -275,7 +302,9 @@ function ArtefactView(props) {
             console.log(binaryStr)
         }
 
-        state.files.forEach(file => reader.readAsArrayBuffer(file))
+        if (state.files){
+            state.files.forEach(file => reader.readAsArrayBuffer(file))
+        }
 
         var famIDs = Object.keys(state.belongsToFamiliesBools).filter(
             id => state.belongsToFamiliesBools[id]
@@ -285,9 +314,10 @@ function ArtefactView(props) {
             description: state.description,
             state: state.state,
             isPublic: state.isPublic,
-            belongsToFamilies: famIDs
+            belongsToFamilies: famIDs,
+            location: state.location.reverse()
         }
-        console.log(input)
+        console.log('Input to GQL mutation:', input)
 
         createArtefact({
             variables: input
@@ -374,13 +404,16 @@ function ArtefactView(props) {
         setSnackbarOpen(false)
     }
 
-    const invalidInputs = !state.name || !state.state || !state.description
+    const invalidInputs =
+        !state.name || !state.state || !state.description || !state.location
     const noErrors = !familyErrors && !creationErrors && !statesErrors
     const dataLoading = familyLoading || statesLoading
 
-    var mapStyle = 'mapbox://styles/mapbox/light-v10?optimize=true'
+    var mapStyle
     if (theme && theme.palette.type === 'dark') {
         mapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
+    } else {
+        // mapStyle = 'mapbox://styles/mapbox/light-v10?optimize=true'
     }
 
     if (edit && dataLoading) {
@@ -437,9 +470,12 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         autoFocus
-                                        value={state.name}
+                                        value={state.name || ''}
                                         onChange={e =>
-                                            handleSetField('name', e.target.value)
+                                            handleSetField(
+                                                'name',
+                                                e.target.value
+                                            )
                                         }
                                         disabled={
                                             edit &&
@@ -462,9 +498,12 @@ function ArtefactView(props) {
                                         variant='outlined'
                                         required
                                         fullWidth
-                                        value={state.state}
+                                        value={state.state || ''}
                                         onChange={e =>
-                                            handleSetField('state', e.target.value)
+                                            handleSetField(
+                                                'state',
+                                                e.target.value
+                                            )
                                         }
                                         select
                                         SelectProps={{
@@ -513,9 +552,12 @@ function ArtefactView(props) {
                                         fullWidth
                                         multiline
                                         rows={6}
-                                        value={state.description}
+                                        value={state.description || ''}
                                         onChange={e =>
-                                            handleSetField('description', e.target.value)
+                                            handleSetField(
+                                                'description',
+                                                e.target.value
+                                            )
                                         }
                                         disabled={
                                             edit &&
@@ -540,8 +582,9 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         value={
+                                            state.admin &&
                                             Object.keys(state.admin).length !==
-                                            0
+                                                0
                                                 ? state.admin.username
                                                 : context.user.username
                                         }
@@ -579,7 +622,9 @@ function ArtefactView(props) {
                                             <ListItemIcon>
                                                 <Checkbox
                                                     edge='start'
-                                                    checked={state.isPublic}
+                                                    checked={
+                                                        state.isPublic || false
+                                                    }
                                                     tabIndex={-1}
                                                     onClick={e =>
                                                         handleSetField(
@@ -611,6 +656,7 @@ function ArtefactView(props) {
                                     >
                                         {families.map(family => {
                                             if (
+                                                state.belongsToFamiliesBools &&
                                                 !state.belongsToFamiliesBools[
                                                     family.id
                                                 ]
@@ -635,15 +681,19 @@ function ArtefactView(props) {
                                                         <Checkbox
                                                             edge='start'
                                                             checked={
-                                                                state
-                                                                    .belongsToFamiliesBools[
-                                                                    family.id
-                                                                ]
+                                                                (state.belongsToFamiliesBools &&
+                                                                    state
+                                                                        .belongsToFamiliesBools[
+                                                                        family
+                                                                            .id
+                                                                    ]) ||
+                                                                false
                                                             }
                                                             onClick={e =>
                                                                 handleSetField(
                                                                     'belongsToFamiliesBools',
-                                                                    e.target.checked,
+                                                                    e.target
+                                                                        .checked,
                                                                     family.id
                                                                 )
                                                             }
@@ -671,7 +721,7 @@ function ArtefactView(props) {
                             <Grid item xs={12}>
                                 <Paper className={classes.paper}>
                                     <DropzoneArea
-                                        initialFiles={state.files}
+                                        initialFiles={state.files || []}
                                         onChange={files =>
                                             handleSetField('files', files)
                                         }
@@ -703,13 +753,13 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         autoFocus
-                                        value={state.locationText || ''}
+                                        value={locationText || ''}
                                         onChange={e =>
-                                            handleSetField('locationText', e.target.value)
+                                            setLocationText(e.target.value)
                                         }
                                         error={!!locationError}
                                         onKeyDown={e => {
-                                            if (e.keyCode == 13) {
+                                            if (e.keyCode === 13) {
                                                 document
                                                     .getElementById('search')
                                                     .click()
@@ -724,23 +774,27 @@ function ArtefactView(props) {
                                         fullWidth
                                         variant='outlined'
                                         className={classes.button}
-                                        onClick={_handleGeocodeQuery}
+                                        onClick={() =>
+                                            _handleGeocodeQuery(locationText)
+                                        }
                                     >
                                         Search
                                     </Button>
                                 </Grid>
                             </Grid>
 
-                            {edit && beingEdited === 'locationText' && (
+                            {edit && beingEdited === 'location' && (
                                 <EditButtons />
                             )}
 
                             <Grid container className={classes.nestedContainer}>
                                 <Map
                                     className={classes.map}
-                                    style={mapStyle}
+                                    mapStyle={mapStyle}
                                     mapState={mapState}
-                                    setCoord={setLocation}
+                                    setCoord={coord =>
+                                        handleSetField('location', coord)
+                                    }
                                 />
                             </Grid>
                         </Paper>

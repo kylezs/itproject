@@ -2,9 +2,6 @@ import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import {
     IconButton,
-    Menu,
-    MenuItem,
-    Button,
     Typography,
     Toolbar,
     AppBar
