@@ -39,30 +39,34 @@ import {
 
 const useStyles = makeStyles(theme => {
     return {
-        textField: {
-            // marginLeft: theme.spacing(1),
-            // marginRight: theme.spacing(1),
-            padding: theme.spacing(1),
-            textAlign: 'center',
-            marginTop: theme.spacing(1),
+        root: {
+            width: '100%',
             backgroundColor: theme.palette.background.paper
+        },
+        textField: {
+            backgroundColor: theme.palette.background.paper,
+            height: '100%'  
         },
         title: {
             marginLeft: theme.spacing(3),
             marginRight: theme.spacing(3),
             padding: theme.spacing(1),
-            textAlign: 'center',
-            backgroundColor: theme.palette.background.paper
+            textAlign: 'center'
         },
         paper: {
-            // marginTop: theme.spacing(1),
-            // marginBottom: theme.spacing(1),
             padding: theme.spacing(1),
-            textAlign: 'center',
+            // textAlign: 'center',
             backgroundColor: theme.palette.background.paper
         },
+        paperTextWrapper: {
+            padding: theme.spacing(1),
+            // textAlign: 'center',
+            backgroundColor: theme.palette.background.paper,
+            height: '100%',
+             alignItems: 'center'
+        },
         button: {
-            margin: theme.spacing(1)
+            height: '100%'
         },
         map: {
             height: '200px',
@@ -70,10 +74,12 @@ const useStyles = makeStyles(theme => {
         },
         form: {
             marginBottom: theme.spacing(6),
-            marginTop: theme.spacing(2)
+            marginTop: theme.spacing(2),
+            display: 'flex',
+            flexWrap: 'wrap'
         },
-        nestedContainer: {
-            padding: theme.spacing(1)
+        mapContainer: {
+            marginTop: theme.spacing(1)
         }
     }
 })
@@ -261,7 +267,7 @@ function ArtefactView(props) {
             })
         }
     }
-    
+
     const setMapToLocation = () => {
         _handleGeocodeQuery(state.location)
     }
@@ -277,12 +283,11 @@ function ArtefactView(props) {
         setInitLocationText(true)
     }
 
-
     const cancelEditing = () => {
         setField(beingEdited, prevValue)
         setBeingEdited('')
 
-        if (beingEdited === 'location'){
+        if (beingEdited === 'location') {
             _handleGeocodeQuery(prevValue)
         }
     }
@@ -302,7 +307,7 @@ function ArtefactView(props) {
             console.log(binaryStr)
         }
 
-        if (state.files){
+        if (state.files) {
             state.files.forEach(file => reader.readAsArrayBuffer(file))
         }
 
@@ -429,311 +434,290 @@ function ArtefactView(props) {
             >
                 <Grid
                     container
-                    spacing={2}
-                    direction='row'
+                    spacing={1}
                     alignItems='stretch'
                     alignContent='stretch'
                     justify='space-evenly'
                 >
-                    <Grid item xs={12}>
-                        <Grid container justify='center'>
-                            <Grid item xs={12} sm={8}>
-                                <Paper className={classes.title}>
-                                    <Typography
-                                        variant='h4'
-                                        className={classes.title}
-                                    >
-                                        {create ? 'Create' : 'Edit'} Artefact
-                                    </Typography>
-                                    <Typography
-                                        variant='subtitle1'
-                                        className={classes.title}
-                                    >
-                                        {create
-                                            ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
-                                            : 'Click to start editing'}
-                                    </Typography>
-                                </Paper>
-                            </Grid>
+                    <Grid item xs={12} container justify='center'>
+                        <Grid item xs={12} sm={8}>
+                            <Typography variant='h4' className={classes.title}>
+                                {create ? 'Create' : 'Edit'} Artefact
+                            </Typography>
+                            <Typography
+                                variant='subtitle1'
+                                className={classes.title}
+                            >
+                                {create
+                                    ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
+                                    : 'Click to start editing'}
+                            </Typography>
                         </Grid>
                     </Grid>
                     {/* Left Pane */}
-                    <Grid item xs={12} sm={6}>
-                        <Grid container spacing={1} alignContent='stretch'>
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <TextField
-                                        className={classes.textField}
-                                        id='artefact-name'
-                                        label='Artefact name'
-                                        variant='outlined'
-                                        required
-                                        fullWidth
-                                        autoFocus
-                                        value={state.name || ''}
-                                        onChange={e =>
-                                            handleSetField(
-                                                'name',
-                                                e.target.value
-                                            )
-                                        }
-                                        disabled={
-                                            edit &&
-                                            !!beingEdited &&
-                                            beingEdited !== 'name'
-                                        }
-                                    />
-                                    {edit && beingEdited === 'name' && (
-                                        <EditButtons />
-                                    )}
-                                </Paper>
-                            </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        container
+                        spacing={1}
+                        alignContent='stretch'
+                        alignItems='stretch'
+                        flexGrow={1}
+                    >
+                        <Grid item xs={12}>
+                            <Paper className={classes.paperTextWrapper}>
+                                <TextField
+                                    className={classes.textField}
+                                    id='artefact-name'
+                                    label='Artefact name'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    autoFocus
+                                    value={state.name || ''}
+                                    onChange={e =>
+                                        handleSetField('name', e.target.value)
+                                    }
+                                    disabled={
+                                        edit &&
+                                        !!beingEdited &&
+                                        beingEdited !== 'name'
+                                    }
+                                />
+                                {edit && beingEdited === 'name' && (
+                                    <EditButtons />
+                                )}
+                            </Paper>
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <TextField
-                                        className={classes.textField}
-                                        id='state'
-                                        label='Artefact State'
-                                        variant='outlined'
-                                        required
-                                        fullWidth
-                                        value={state.state || ''}
-                                        onChange={e =>
-                                            handleSetField(
-                                                'state',
-                                                e.target.value
-                                            )
+                        <Grid item xs={12}>
+                            <Paper className={classes.paperTextWrapper}>
+                                <TextField
+                                    className={classes.textField}
+                                    id='state'
+                                    label='Artefact State'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    value={state.state || ''}
+                                    onChange={e =>
+                                        handleSetField('state', e.target.value)
+                                    }
+                                    select
+                                    SelectProps={{
+                                        MenuProps: {
+                                            className: classes.menu
                                         }
-                                        select
-                                        SelectProps={{
-                                            MenuProps: {
-                                                className: classes.menu
-                                            }
-                                        }}
-                                        disabled={
-                                            edit &&
-                                            !!beingEdited &&
-                                            beingEdited !== 'state'
-                                        }
-                                    >
-                                        {Object.keys(artefactStates).map(
-                                            value => {
-                                                return (
-                                                    <MenuItem
-                                                        value={
-                                                            artefactStates[
-                                                                value
-                                                            ]
-                                                        }
-                                                        key={value}
-                                                    >
-                                                        {value}
-                                                    </MenuItem>
-                                                )
-                                            }
-                                        )}
-                                    </TextField>
+                                    }}
+                                    disabled={
+                                        edit &&
+                                        !!beingEdited &&
+                                        beingEdited !== 'state'
+                                    }
+                                >
+                                    {Object.keys(artefactStates).map(value => {
+                                        return (
+                                            <MenuItem
+                                                value={artefactStates[value]}
+                                                key={value}
+                                            >
+                                                {value}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </TextField>
 
-                                    {edit && beingEdited === 'state' && (
-                                        <EditButtons />
-                                    )}
-                                </Paper>
-                            </Grid>
+                                {edit && beingEdited === 'state' && (
+                                    <EditButtons />
+                                )}
+                            </Paper>
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <TextField
-                                        className={classes.textField}
-                                        id='description'
-                                        label='Description'
-                                        variant='outlined'
-                                        required
-                                        fullWidth
-                                        multiline
-                                        rows={6}
-                                        value={state.description || ''}
-                                        onChange={e =>
-                                            handleSetField(
-                                                'description',
-                                                e.target.value
-                                            )
-                                        }
-                                        disabled={
-                                            edit &&
-                                            !!beingEdited &&
-                                            beingEdited !== 'description'
-                                        }
-                                    />
+                        <Grid item xs={12}>
+                            <Paper className={classes.paperTextWrapper}>
+                                <TextField
+                                    className={classes.textField}
+                                    id='description'
+                                    label='Description'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    multiline
+                                    rows={6}
+                                    value={state.description || ''}
+                                    onChange={e =>
+                                        handleSetField(
+                                            'description',
+                                            e.target.value
+                                        )
+                                    }
+                                    disabled={
+                                        edit &&
+                                        !!beingEdited &&
+                                        beingEdited !== 'description'
+                                    }
+                                />
 
-                                    {edit && beingEdited === 'description' && (
-                                        <EditButtons />
-                                    )}
-                                </Paper>
-                            </Grid>
+                                {edit && beingEdited === 'description' && (
+                                    <EditButtons />
+                                )}
+                            </Paper>
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <TextField
-                                        className={classes.textField}
-                                        id='artefact-admin'
-                                        label='Artefact Admin'
-                                        variant='outlined'
-                                        required
-                                        fullWidth
-                                        value={
-                                            state.admin &&
-                                            Object.keys(state.admin).length !==
-                                                0
-                                                ? state.admin.username
-                                                : context.user.username
-                                        }
-                                        onChange={e =>
-                                            console.log(
-                                                'admin field was changed'
-                                            )
-                                        }
-                                        disabled
-                                    />
-                                </Paper>
-                            </Grid>
+                        <Grid item xs={12}>
+                            <Paper className={classes.paperTextWrapper}>
+                                <TextField
+                                    className={classes.textField}
+                                    id='artefact-admin'
+                                    label='Artefact Admin'
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    value={
+                                        state.admin &&
+                                        Object.keys(state.admin).length !== 0
+                                            ? state.admin.username
+                                            : context.user.username
+                                    }
+                                    onChange={e =>
+                                        console.log('admin field was changed')
+                                    }
+                                    disabled
+                                />
+                            </Paper>
                         </Grid>
                     </Grid>
                     {/* Right Pane */}
-                    <Grid item xs={12} sm={6}>
-                        <Grid container spacing={1} alignItems='stretch'>
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <List
-                                        subheader={
-                                            <ListSubheader component='div'>
-                                                Privacy
-                                            </ListSubheader>
-                                        }
-                                    >
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        container
+                        spacing={1}
+                        alignContent='stretch'
+                        flexGrow={1}
+                    >
+                        <Grid item xs={12}>
+                            <List
+                                subheader={
+                                    <ListSubheader component='div'>
+                                        Privacy
+                                    </ListSubheader>
+                                }
+                                className={classes.root}
+                            >
+                                <ListItem
+                                    dense
+                                    disabled={
+                                        edit &&
+                                        !!beingEdited &&
+                                        beingEdited !== 'isPublic'
+                                    }
+                                >
+                                    <ListItemIcon>
+                                        <Checkbox
+                                            edge='start'
+                                            checked={state.isPublic || false}
+                                            tabIndex={-1}
+                                            onClick={e =>
+                                                handleSetField(
+                                                    'isPublic',
+                                                    e.target.checked
+                                                )
+                                            }
+                                        />
+                                    </ListItemIcon>
+                                    <ListItemText primary={'Public'} />
+                                </ListItem>
+                            </List>
+
+                            {edit && beingEdited === 'isPublic' && (
+                                <EditButtons />
+                            )}
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <List
+                                subheader={
+                                    <ListSubheader component='div'>
+                                        Select which of your families the
+                                        artefact belongs to
+                                    </ListSubheader>
+                                }
+                                className={classes.root}
+                            >
+                                {families.map(family => {
+                                    if (
+                                        state.belongsToFamiliesBools &&
+                                        !state.belongsToFamiliesBools[family.id]
+                                    ) {
+                                        state.belongsToFamiliesBools[
+                                            family.id
+                                        ] = false
+                                    }
+
+                                    return (
                                         <ListItem
+                                            key={family.id}
                                             dense
                                             disabled={
                                                 edit &&
                                                 !!beingEdited &&
-                                                beingEdited !== 'isPublic'
+                                                beingEdited !==
+                                                    'belongsToFamiliesBools'
                                             }
                                         >
                                             <ListItemIcon>
                                                 <Checkbox
                                                     edge='start'
                                                     checked={
-                                                        state.isPublic || false
+                                                        (state.belongsToFamiliesBools &&
+                                                            state
+                                                                .belongsToFamiliesBools[
+                                                                family.id
+                                                            ]) ||
+                                                        false
                                                     }
-                                                    tabIndex={-1}
                                                     onClick={e =>
                                                         handleSetField(
-                                                            'isPublic',
-                                                            e.target.checked
+                                                            'belongsToFamiliesBools',
+                                                            e.target.checked,
+                                                            family.id
                                                         )
                                                     }
+                                                    tabIndex={-1}
                                                 />
                                             </ListItemIcon>
-                                            <ListItemText primary={'Public'} />
+                                            <ListItemText
+                                                primary={family.familyName}
+                                            />
                                         </ListItem>
-                                    </List>
+                                    )
+                                })}
+                            </List>
 
-                                    {edit && beingEdited === 'isPublic' && (
-                                        <EditButtons />
-                                    )}
-                                </Paper>
-                            </Grid>
+                            {edit &&
+                                beingEdited === 'belongsToFamiliesBools' && (
+                                    <EditButtons />
+                                )}
+                        </Grid>
 
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <List
-                                        subheader={
-                                            <ListSubheader component='div'>
-                                                Select which of your families
-                                                the artefact belongs to
-                                            </ListSubheader>
-                                        }
-                                    >
-                                        {families.map(family => {
-                                            if (
-                                                state.belongsToFamiliesBools &&
-                                                !state.belongsToFamiliesBools[
-                                                    family.id
-                                                ]
-                                            ) {
-                                                state.belongsToFamiliesBools[
-                                                    family.id
-                                                ] = false
-                                            }
-
-                                            return (
-                                                <ListItem
-                                                    key={family.id}
-                                                    dense
-                                                    disabled={
-                                                        edit &&
-                                                        !!beingEdited &&
-                                                        beingEdited !==
-                                                            'belongsToFamiliesBools'
-                                                    }
-                                                >
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            edge='start'
-                                                            checked={
-                                                                (state.belongsToFamiliesBools &&
-                                                                    state
-                                                                        .belongsToFamiliesBools[
-                                                                        family
-                                                                            .id
-                                                                    ]) ||
-                                                                false
-                                                            }
-                                                            onClick={e =>
-                                                                handleSetField(
-                                                                    'belongsToFamiliesBools',
-                                                                    e.target
-                                                                        .checked,
-                                                                    family.id
-                                                                )
-                                                            }
-                                                            tabIndex={-1}
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={
-                                                            family.familyName
-                                                        }
-                                                    />
-                                                </ListItem>
-                                            )
-                                        })}
-                                    </List>
-
-                                    {edit &&
-                                        beingEdited ===
-                                            'belongsToFamiliesBools' && (
-                                            <EditButtons />
-                                        )}
-                                </Paper>
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                    <DropzoneArea
-                                        initialFiles={state.files || []}
-                                        onChange={files =>
-                                            handleSetField('files', files)
-                                        }
-                                        disabled={
-                                            edit &&
-                                            !!beingEdited &&
-                                            beingEdited !== 'files'
-                                        }
-                                        dropzoneClass={classes.paper}
-                                    />
-                                </Paper>
-                            </Grid>
+                        <Grid item xs={12}>
+                            <Paper className={classes.paper}>
+                            <DropzoneArea
+                                initialFiles={state.files || []}
+                                onChange={files =>
+                                    handleSetField('files', files)
+                                }
+                                disabled={
+                                    edit &&
+                                    !!beingEdited &&
+                                    beingEdited !== 'files'
+                                }
+                                dropzoneClass={classes.paper}
+                            />
+                            </Paper>
                         </Grid>
                     </Grid>
 
@@ -741,8 +725,9 @@ function ArtefactView(props) {
                         <Paper className={classes.paper}>
                             <Grid
                                 container
-                                alignItems='center'
-                                className={classes.nestedContainer}
+                                alignItems='stretch'
+                                spacing={1}
+                                className={classes.paper}
                             >
                                 <Grid item xs={8}>
                                     <TextField
@@ -768,10 +753,11 @@ function ArtefactView(props) {
                                         helperText={locationError}
                                     />
                                 </Grid>
-                                <Grid item xs={3}>
+                                <Grid item xs={4}>
                                     <Button
                                         id='search'
                                         fullWidth
+                                        xs={4}
                                         variant='outlined'
                                         className={classes.button}
                                         onClick={() =>
@@ -787,7 +773,7 @@ function ArtefactView(props) {
                                 <EditButtons />
                             )}
 
-                            <Grid container className={classes.nestedContainer}>
+                            <Grid container className={classes.mapContainer}>
                                 <Map
                                     className={classes.map}
                                     mapStyle={mapStyle}
