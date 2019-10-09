@@ -11,6 +11,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'id',
             'bio',
             'birth_date',
+            'selected_family',
         )
 
 

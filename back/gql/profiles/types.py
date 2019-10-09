@@ -10,4 +10,5 @@ class ProfileType(DjangoObjectType):
             'user',
             'bio',
             'birth_date',
+            'selected_family',
         )
