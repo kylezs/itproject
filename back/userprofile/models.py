@@ -15,6 +15,11 @@ class Profile(models.Model):
     bio = models.TextField(max_length=600, blank=True)
     birth_date = models.DateField(null=True, blank=True)
 
+    # Holds the family to be displayed at any point in time for this user
+    selected_family = models.ForeignKey("family.Family",
+                                        on_delete=models.SET_NULL,
+                                        null=True)
+
     # TODO: Profile picture
 
     class Meta:

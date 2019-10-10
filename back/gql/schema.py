@@ -33,11 +33,25 @@ class Query(ObjectType):
 
     artefact = Field(ArtefactType, id=Argument(ID, required=True))
 
+    def resolve_artefacts_for_family(root, info, **kwargs):
+        return Artefact.objects.filter()
+
+
     def resolve_artefacts(root, info, **kwargs):
         return Artefact.objects.all()
 
     def resolve_artefact(root, info, **kwargs):
-        return Artefact.objects.get(id=kwargs.get('id'))
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception(AUTH_EXCEPTION)
+
+        user_families = Family.objects.filter(family_members__username=user.username)
+        artefact = Artefact.objects.get(id=kwargs.get('id'))
+        artefact_families = artefact.belongs_to_families.all()
+        if (set(user_families) & set(artefact_families)) or artefact.is_public:
+            return artefact
+        else:
+            raise Exception(AUTH_EXCEPTION)
 
     # ==== User queries and resolvers ====
     users = List(UserType)

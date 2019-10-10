@@ -10,7 +10,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'bio',
-            'birth_date'
+            'birth_date',
+            'selected_family',
         )
 
 
