@@ -10,8 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
+import { Typography } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import gql from "graphql-tag";
 import { useMutation, useQuery } from '@apollo/react-hooks';
@@ -45,18 +44,29 @@ const tileData = [
 const HOMEPAGE_INFO = gql`
         query {
             me {
-                isMemberOf {
+            isMemberOf {
+            id
+            familyName
+            joinCode
+            hasArtefacts {
+                edges {
+                node {
+                    id
+                    name
+                    admin {
+                    username
+                    }
+                }
+                }
+            }
+            }
+            profile {
+                id
+                selectedFamily {
                     id
                     familyName
-                    joinCode
-                }
-                profile {
-                    id
-                    selectedFamily {
-                        id
-                        familyName
-                        }
                     }
+                }
         }
         }`
 
@@ -107,7 +117,7 @@ function UserHomeView(props) {
         <Layout>
         <Grid container spacing={3}>
             <Grid item xs={9}>
-                <h1>{selectedFamily.familyName}</h1>
+                <Typography variant="h1">{selectedFamily.familyName}</Typography>
                 <h4>Your username is: {username}</h4>
                 <h4>Your families:</h4>
                 {data.me.isMemberOf.map(family => (
