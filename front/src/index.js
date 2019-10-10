@@ -29,11 +29,13 @@ const authLink = setContext((_, { headers }) => {
   }
 });
 
+// Set up Apollo client using Jwt auth
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache()
 });
 
+// Wrap application with Apollo and Auth providers to give access across the application
 ReactDOM.render(
     <ApolloProvider client={client}>
       <Auth>

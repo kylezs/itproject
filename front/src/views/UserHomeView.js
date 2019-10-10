@@ -117,7 +117,12 @@ function UserHomeView(props) {
         <Layout>
         <Grid container spacing={3}>
             <Grid item xs={9}>
-                <Typography variant="h1">{selectedFamily.familyName}</Typography>
+                {selectedFamily && (
+                    <Typography variant="h1">{selectedFamily.familyName}</Typography>
+                )}
+                {!selectedFamily && (
+                    <Typography variant="h2">Join and/or Select a Family</Typography>
+                )}
                 <h4>Your username is: {username}</h4>
                 <h4>Your families:</h4>
                 {data.me.isMemberOf.map(family => (
@@ -149,7 +154,7 @@ function UserHomeView(props) {
                     <Select
                         variant='outlined'
                         fullWidth
-                        value={selectedFamily.id}
+                        value={selectedFamily ? selectedFamily.id : null}
                         onChange={handleChange}
                         inputProps={{
                             name: 'age',
@@ -158,7 +163,7 @@ function UserHomeView(props) {
                         }}
                         padding="5px"
                     >
-                        {families.map((item, key) =>
+                        {families && (families.map((item, key) =>
                                 <MenuItem 
                                 key={item.id}
                                 value={item.id}
@@ -166,7 +171,7 @@ function UserHomeView(props) {
                                 {item.familyName}
                                 </MenuItem>
                             )
-                        }
+                        )}
                     </Select>
             </Grid>
             </Grid>
