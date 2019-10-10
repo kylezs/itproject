@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { PrivateRoute } from './components/PrivateRoute';
 
 // Views
-import CreateView from './views/CreateView'
 
 import Login from './views/LoginView'
 import Signup from './views/SignupView'

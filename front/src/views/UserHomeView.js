@@ -1,14 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import gql from "graphql-tag";
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 
 const useStyles = makeStyles(theme => ({
@@ -36,7 +42,7 @@ const tileData = [
     },
 ]
 
-const LIST_OF_FAMILIES = gql`
+const HOMEPAGE_INFO = gql`
         query {
             me {
                 isMemberOf {
@@ -44,10 +50,26 @@ const LIST_OF_FAMILIES = gql`
                     familyName
                     joinCode
                 }
-            }
+                profile {
+                    id
+                    selectedFamily {
+                        id
+                        familyName
+                        }
+                    }
+        }
         }`
 
-
+const SELECT_FAMILY_MUTATION = gql`
+mutation SelectFamilyMutation($profileId: Int!, $toFamily: String!) {
+    updateProfile(input: {
+        id: $profileId,
+        selectedFamily: $toFamily
+    }) {
+        id
+        selectedFamily
+    }
+}`
 
 function UserHomeView(props) {
 
@@ -56,40 +78,88 @@ function UserHomeView(props) {
     const context = useContext(authContext);
     const username = context.user.username;
 
-    let { data, loading } = useQuery(LIST_OF_FAMILIES)
-    console.log("The data is: ", data);
+    let { data, loading } = useQuery(HOMEPAGE_INFO)
+
+    const [selectFamily] = useMutation(SELECT_FAMILY_MUTATION,
+        {
+            refetchQueries: () => [
+                { query: HOMEPAGE_INFO }
+            ],
+        });
+
+    const inputLabel = React.useRef(null);
+
+    const handleChange = event => {
+        event.preventDefault()
+        const newFamily = event.target.value;
+        selectFamily({ variables: { profileId: profileId, toFamily: newFamily } })
+    };
 
     if (loading) {
         return <p>Loading...</p>
     }
+    
+    const selectedFamily = data.me.profile.selectedFamily
     const families = data.me.isMemberOf;
+    const profileId = data.me.profile.id;
+
     return (
         <Layout>
-            <h1>Family: {families[0].familyName}</h1>
-            <h3>Join code: {families[0].joinCode}</h3>
-            <h4>Your username is: {username}</h4>
-            <h4>Your families:</h4>
-            {data.me.isMemberOf.map(family => (
-                <p key={family.id} id={family.id}>{family.familyName}</p>
-            ))}
-            <div className={classes.root}>
-                <GridList cellHeight={180} className={classes.gridList}>
-                    {tileData.map(tile => (
-                        <GridListTile key={tile.img}>
-                            <img src={tile.img} alt={tile.title} />
-                            <GridListTileBar
-                                title={tile.title}
-                                subtitle={<span>by: {tile.author}</span>}
-                                actionIcon={
-                                    <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
-                                        <InfoIcon />
-                                    </IconButton>
-                                }
-                            />
-                        </GridListTile>
-                    ))}
-                </GridList>
-            </div>
+        <Grid container spacing={3}>
+            <Grid item xs={9}>
+                <h1>{selectedFamily.familyName}</h1>
+                <h4>Your username is: {username}</h4>
+                <h4>Your families:</h4>
+                {data.me.isMemberOf.map(family => (
+                    <p key={family.id} id={family.id}>{family.familyName}</p>
+                ))}
+                <div className={classes.root}>
+                    <GridList cellHeight={180} className={classes.gridList}>
+                        {tileData.map(tile => (
+                            <GridListTile key={tile.img}>
+                                <img src={tile.img} alt={tile.title} />
+                                <GridListTileBar
+                                    title={tile.title}
+                                    subtitle={<span>by: {tile.author}</span>}
+                                    actionIcon={
+                                        <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
+                                            <InfoIcon />
+                                        </IconButton>
+                                    }
+                                />
+                            </GridListTile>
+                        ))}
+                    </GridList>
+                    </div>
+            </Grid>
+            <Grid item xs={3}>
+                    <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
+                        Select Family
+                    </InputLabel>
+                    <Select
+                        variant='outlined'
+                        fullWidth
+                        value={selectedFamily.id}
+                        onChange={handleChange}
+                        inputProps={{
+                            name: 'age',
+                            id: 'outlined-age-simple',
+                            styles: {padding: '4px'}
+                        }}
+                        padding="5px"
+                    >
+                        {families.map((item, key) =>
+                                <MenuItem 
+                                key={item.id}
+                                value={item.id}
+                                >
+                                {item.familyName}
+                                </MenuItem>
+                            )
+                        }
+                    </Select>
+            </Grid>
+            </Grid>
         </Layout>
     );
 }
