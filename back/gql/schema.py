@@ -48,7 +48,6 @@ class Query(ObjectType):
         user_families = Family.objects.filter(family_members__username=user.username)
         artefact = Artefact.objects.get(id=kwargs.get('id'))
         artefact_families = artefact.belongs_to_families.all()
-        print(artefact.is_public)
         if (set(user_families) & set(artefact_families)) or artefact.is_public:
             return artefact
         else:
