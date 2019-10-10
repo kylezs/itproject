@@ -14,13 +14,8 @@ import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks'
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from '../constants.js'
 
-const LOGIN_MUTATION = gql`
-    mutation TokenAuth($username: String!, $password: String!) {
-        tokenAuth(username: $username, password: $password) {
-            token
-        }
-    }
-`
+import { LOGIN_MUTATION } from '../gqlQueriesMutations'
+
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -57,6 +52,7 @@ function Login(props) {
         console.log('getting token first in confirm mutation')
         context.handleAuthentication(token)
         localStorage.setItem(AUTH_TOKEN, token)
+
         // this._saveUserData(token)
         props.history.push(`/`)
     }

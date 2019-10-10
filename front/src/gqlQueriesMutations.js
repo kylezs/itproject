@@ -83,3 +83,11 @@ export const UPDATE_ARTEFACT_MUTATION = gql`
         }
     }
 `
+
+export const LOGIN_MUTATION = gql`
+    mutation TokenAuth($username: String!, $password: String!) {
+        tokenAuth(username: $username, password: $password) {
+            token
+        }
+    }
+`

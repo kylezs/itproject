@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Layout from '../components/Layout'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -50,11 +50,13 @@ function ManageArtefactsView(props) {
 
     const classes = useStyles()
     const numArtefactsFetched = 10
+    const [artefactEdges, SetArtefactEdges] = useState([])
 
     let { data, loading } = useQuery(LIST_OF_ARTEFACTS, {
         variables: {
             first: numArtefactsFetched
-        }
+        },
+        onCompleted: data => SetArtefactEdges(data.me.artefactAdministratorOf.edges)
     })
 
     console.log('The data is: ', data)
@@ -62,14 +64,13 @@ function ManageArtefactsView(props) {
     if (loading) {
         return <p>Loading...</p>
     }
-    const artefact_edges = data.me.artefactAdministratorOf.edges
     return (
         <Layout>
             <CssBaseline />
             <Grid container spacing={2} className={classes.root}>
                 <Grid item xs={12}>
                     <Grid container justify='center' spacing={2}>
-                        {artefact_edges.map(edge => (
+                        {artefactEdges.map(edge => (
                             <Grid item key={edge.node.id}>
                                 <ArtefactCard
                                     mediaURI={tempImgURI}

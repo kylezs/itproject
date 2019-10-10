@@ -5,7 +5,18 @@ import Header from './Header'
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
 
+import { SET_DARK_MODE_MUTATION } from '../gqlQueriesMutations'
+import { useMutation } from '@apollo/react-hooks'
+import { THEME_TYPE } from '../constants.js'
+
 export default props => {
+    const [myId, setMyId] = useState(0)
+
+    if (!localStorage.getItem(THEME_TYPE)){
+        localStorage.setItem(THEME_TYPE, 'light')
+        console.log("here")
+    }
+
     const [theme, setTheme] = useState({
         palette: {
             primary: {
@@ -20,12 +31,13 @@ export default props => {
                 dark: '#ba000d',
                 contrastText: '#000'
             },
-            type: 'dark'
+            type: localStorage.getItem(THEME_TYPE) || 'light'
         }
     })
 
     const toggleDarkTheme = () => {
         var newPaletteType = theme.palette.type === 'light' ? 'dark' : 'light'
+        localStorage.setItem(THEME_TYPE, newPaletteType)
         setTheme({
             palette: {
                 ...theme.palette,

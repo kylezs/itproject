@@ -47,7 +47,7 @@ export const geocodeQuery = query => {
             .reverseGeocode({
                 query: query,
                 limit: 1,
-                types: ['address', 'place']
+                types: ['address']
             })
             .send()
             .then(
@@ -59,7 +59,7 @@ export const geocodeQuery = query => {
             .forwardGeocode({
                 query: query,
                 limit: 1,
-                types: ['address', 'place']
+                types: ['address']
             })
             .send()
             .then(
