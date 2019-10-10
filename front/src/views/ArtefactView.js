@@ -802,7 +802,8 @@ function ArtefactView(props) {
                                                 >
                                                     <SearchIcon />
                                                 </IconButton>
-                                            )
+                                            ),
+                                            style: { marginBottom: 3 }
                                         }}
                                         required
                                         fullWidth
