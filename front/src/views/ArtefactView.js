@@ -469,14 +469,16 @@ function ArtefactView(props) {
                                 {create && 'Create'} {edit && 'Edit'}{' '}
                                 {view && 'View'} Artefact
                             </Typography>
-                            <Typography
-                                variant='subtitle1'
-                                className={classes.title}
-                            >
-                                {create &&
-                                    'Artefacts are belongings of the family, enter as much or as little detail as you like'}
-                                {edit && 'Click to start editing'}
-                            </Typography>
+                            {!view && (
+                                <Typography
+                                    variant='subtitle1'
+                                    className={classes.title}
+                                >
+                                    {create &&
+                                        'Artefacts are belongings of the family, enter as much or as little detail as you like'}
+                                    {edit && 'Click to start editing'}
+                                </Typography>
+                            )}
                         </Grid>
                     </Grid>
                     {/* Left Pane */}
