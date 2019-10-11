@@ -1,11 +1,14 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { PrivateRoute } from './components/PrivateRoute'
+import { CssBaseline } from '@material-ui/core'
 
 // Views
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
 import Logout from './components/Logout'
+import Layout from './components/Layout'
+
 // Family views
 import CreateFamilyView from './views/CreateFamilyView'
 // Artefact Views
@@ -20,6 +23,7 @@ import UserHomeView from './views/UserHomeView'
 function App(props) {
     return (
         <Router>
+            <CssBaseline />
             <div>
                 <Switch>
                     {/* This is a special protected route, since it sends to the landing page if not logged in, which 
@@ -31,8 +35,24 @@ function App(props) {
                         landingPage
                     />
                     {/* User auth routes */}
-                    <Route exact path='/login/' component={Login} />
-                    <Route exact path='/signup/' component={Signup} />
+                    <Route
+                        exact
+                        path='/login/'
+                        render={props => (
+                            <Layout>
+                                <Login {...props} />
+                            </Layout>
+                        )}
+                    />
+                    <Route
+                        exact
+                        path='/signup/'
+                        render={props => (
+                            <Layout>
+                                <Signup {...props} />
+                            </Layout>
+                        )}
+                    />
                     <Route exact path='/logout/' component={Logout} />
 
                     {/* Artefact routes */}
