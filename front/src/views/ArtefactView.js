@@ -82,6 +82,10 @@ const useStyles = makeStyles(theme => ({
     },
     iconButton: {
         padding: 10
+    },
+    dropzone: {
+        backgroundColor: theme.palette.background.paper,
+        minHeight: '80px' 
     }
 }))
 
@@ -768,7 +772,7 @@ function ArtefactView(props) {
                                         !!beingEdited &&
                                         beingEdited !== 'files'
                                     }
-                                    dropzoneClass={classes.paper}
+                                    dropzoneClass={classes.dropzone}
                                 />
                             </Paper>
                         </Grid>
