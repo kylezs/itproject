@@ -299,7 +299,7 @@ function ArtefactView(props) {
             name: state.name,
             description: state.description,
             state: state.state,
-            isPublic: state.isPublic,
+            isPublic: state.isPublic ? state.isPublic : false,
             belongsToFamilies: famIDs,
             location: state.location,
             locationType: locationState.locationType.toUpperCase()
