@@ -95,8 +95,8 @@ function ArtefactView(props) {
     var { families, familiesLoading } = props
     var { artefactStates, statesLoading } = props
     var { artefact, isAdmin, artefactLoading } = props
-    
-    if (!isAdmin && edit){
+
+    if (!isAdmin && edit) {
         edit = false
         view = true
     }
@@ -349,7 +349,7 @@ function ArtefactView(props) {
             }
 
             if (beingEdited === 'belongsToFamiliesBools') {
-                input[beingEdited] = Object.keys(
+                input['belongsToFamilies'] = Object.keys(
                     state.belongsToFamiliesBools
                 ).filter(id => state.belongsToFamiliesBools[id])
             } else {
@@ -466,15 +466,16 @@ function ArtefactView(props) {
                     <Grid item xs={12} container justify='center'>
                         <Grid item xs={12} sm={8}>
                             <Typography variant='h4' className={classes.title}>
-                                {create ? 'Create' : 'Edit'} Artefact
+                                {create && 'Create'} {edit && 'Edit'}{' '}
+                                {view && 'View'} Artefact
                             </Typography>
                             <Typography
                                 variant='subtitle1'
                                 className={classes.title}
                             >
-                                {create
-                                    ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
-                                    : 'Click to start editing'}
+                                {create &&
+                                    'Artefacts are belongings of the family, enter as much or as little detail as you like'}
+                                {edit && 'Click to start editing'}
                             </Typography>
                         </Grid>
                     </Grid>
@@ -674,21 +675,24 @@ function ArtefactView(props) {
                                                 beingEdited !== 'isPublic'
                                             }
                                         >
-                                            <ListItemIcon>
-                                                <Checkbox
-                                                    edge='start'
-                                                    checked={
-                                                        state.isPublic || false
-                                                    }
-                                                    tabIndex={-1}
-                                                    onClick={e =>
-                                                        handleSetField(
-                                                            'isPublic',
-                                                            e.target.checked
-                                                        )
-                                                    }
-                                                />
-                                            </ListItemIcon>
+                                            {!view && (
+                                                <ListItemIcon>
+                                                    <Checkbox
+                                                        edge='start'
+                                                        checked={
+                                                            state.isPublic ||
+                                                            false
+                                                        }
+                                                        tabIndex={-1}
+                                                        onClick={e =>
+                                                            handleSetField(
+                                                                'isPublic',
+                                                                e.target.checked
+                                                            )
+                                                        }
+                                                    />
+                                                </ListItemIcon>
+                                            )}
                                             <ListItemText primary={'Public'} />
                                         </ListItem>
                                     </List>
@@ -709,12 +713,17 @@ function ArtefactView(props) {
                                     <List
                                         subheader={
                                             <ListSubheader component='div'>
-                                                Select which of your families
-                                                the artefact belongs to
+                                                {!view
+                                                    ? 'Select which of your families the artefact belongs to'
+                                                    : 'Belongs to'}
                                             </ListSubheader>
                                         }
                                     >
                                         {families.map(family => {
+                                            if (!state.belongsToFamiliesBools) {
+                                                return
+                                            }
+
                                             if (
                                                 state.belongsToFamiliesBools &&
                                                 !state.belongsToFamiliesBools[
@@ -726,47 +735,59 @@ function ArtefactView(props) {
                                                 ] = false
                                             }
 
-                                            return (
-                                                <ListItem
-                                                    key={family.id}
-                                                    dense
-                                                    disabled={
-                                                        edit &&
-                                                        !!beingEdited &&
-                                                        beingEdited !==
-                                                            'belongsToFamiliesBools'
-                                                    }
-                                                >
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            edge='start'
-                                                            checked={
-                                                                (state.belongsToFamiliesBools &&
-                                                                    state
-                                                                        .belongsToFamiliesBools[
-                                                                        family
-                                                                            .id
-                                                                    ]) ||
-                                                                false
-                                                            }
-                                                            onClick={e =>
-                                                                handleSetField(
-                                                                    'belongsToFamiliesBools',
-                                                                    e.target
-                                                                        .checked,
-                                                                    family.id
-                                                                )
-                                                            }
-                                                            tabIndex={-1}
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={
-                                                            family.familyName
+                                            if (
+                                                !view ||
+                                                state.belongsToFamiliesBools[
+                                                    family.id
+                                                ]
+                                            ) {
+                                                return (
+                                                    <ListItem
+                                                        key={family.id}
+                                                        dense
+                                                        disabled={
+                                                            edit &&
+                                                            !!beingEdited &&
+                                                            beingEdited !==
+                                                                'belongsToFamiliesBools'
                                                         }
-                                                    />
-                                                </ListItem>
-                                            )
+                                                    >
+                                                        {!view && (
+                                                            <ListItemIcon>
+                                                                <Checkbox
+                                                                    edge='start'
+                                                                    checked={
+                                                                        (state.belongsToFamiliesBools &&
+                                                                            state
+                                                                                .belongsToFamiliesBools[
+                                                                                family
+                                                                                    .id
+                                                                            ]) ||
+                                                                        false
+                                                                    }
+                                                                    onClick={e =>
+                                                                        handleSetField(
+                                                                            'belongsToFamiliesBools',
+                                                                            e
+                                                                                .target
+                                                                                .checked,
+                                                                            family.id
+                                                                        )
+                                                                    }
+                                                                    tabIndex={
+                                                                        -1
+                                                                    }
+                                                                />
+                                                            </ListItemIcon>
+                                                        )}
+                                                        <ListItemText
+                                                            primary={
+                                                                family.familyName
+                                                            }
+                                                        />
+                                                    </ListItem>
+                                                )
+                                            }
                                         })}
                                     </List>
 
@@ -828,7 +849,7 @@ function ArtefactView(props) {
                                         }}
                                         error={!!locationState.locationError}
                                         InputProps={{
-                                            endAdornment: (
+                                            endAdornment: !view && (
                                                 <IconButton
                                                     className={
                                                         classes.iconButton
