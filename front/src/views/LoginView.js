@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Layout from '../components/Layout'
 import authContext from '../authContext'
-import gql from 'graphql-tag'
 import { useMutation } from '@apollo/react-hooks'
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from '../constants.js'
 

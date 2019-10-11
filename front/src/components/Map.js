@@ -1,53 +1,63 @@
-import React, { useState } from 'react'
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'
-// import RoomIcon from '@material-ui/icons/Room'
+import React, { Fragment } from 'react'
+import ReactMapboxGl, { Layer, Feature, Marker, Popup } from 'react-mapbox-gl'
 import { MY_ACCESS_TOKEN } from '../constants'
 
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
 const geocodingService = mbxGeocoding({ accessToken: MY_ACCESS_TOKEN })
 
 const _handleResponse = response => {
-    var result = {}
+    var out = {}
     console.log('GEOCODING RESPONSE: ', response.body)
-    const feature = response.body.features[0]
-    if (!feature) {
-        result.noResults = true
-        return result
+    const features = response.body.features
+    if (!features) {
+        out.noResults = true
+        return out
     }
-    if (feature.place_type[0] === 'place') {
-        const bboxCoords = feature.bbox
-        const bbox = [
-            [bboxCoords[0], bboxCoords[1]],
-            [bboxCoords[2], bboxCoords[3]]
-        ]
-        result.mapState = {
-            fitBounds: bbox,
-            center: feature.center
+    var results = []
+    for (var i = 0; i < features.length; i++) {
+        var feature = features[i]
+        var result = {}
+        if (feature.place_type[0] === 'place') {
+            const bboxCoords = feature.bbox
+            const bbox = [
+                [bboxCoords[0], bboxCoords[1]],
+                [bboxCoords[2], bboxCoords[3]]
+            ]
+            result.mapState = {
+                fitBounds: bbox,
+                center: feature.center
+            }
+        } else if (feature.place_type[0] === 'address') {
+            result.mapState = {
+                center: feature.center,
+                zoom: [15]
+            }
+        } else {
+            out.noResults = true
+            return out
         }
-    } else if (feature.place_type[0] === 'address') {
-        result.mapState = {
-            center: feature.center,
-            zoom: [15]
-        }
+        result.placeName = feature.place_name
+        result.locationType = feature.place_type[0]
+        results.push(result)
     }
-    result.placeName = feature.place_name
-    return result
+    out.results = results
+    return out
 }
 
 const _handleError = error => {
-    var result = {}
+    var out = {}
     console.log('query error occurred')
-    result.error = error
-    return result
+    out.error = error
+    return out
 }
 
-export const geocodeQuery = query => {
+export const geocodeQuery = (query, types) => {
     if (typeof query === 'object') {
         return geocodingService
             .reverseGeocode({
                 query: query,
                 limit: 1,
-                types: ['address']
+                types: types
             })
             .send()
             .then(
@@ -58,8 +68,8 @@ export const geocodeQuery = query => {
         return geocodingService
             .forwardGeocode({
                 query: query,
-                limit: 1,
-                types: ['address']
+                limit: 5,
+                types: types
             })
             .send()
             .then(
@@ -77,16 +87,9 @@ const Mapbox = ReactMapboxGl({
 })
 
 export default function Map(props) {
-    const [mapState, setMapState] = useState({})
-
-    const setCenter = coord => {
-        setMapState({ ...mapState, center: coord })
-        props.setCoord(coord)
-    }
-
     const setMarker = (map, e) => {
         var newCoord = [e.lngLat.lng, e.lngLat.lat]
-        setCenter(newCoord)
+        props.setCoord(newCoord)
     }
 
     const containerStyle = {
@@ -105,22 +108,26 @@ export default function Map(props) {
             onClick={(map, e) => setMarker(map, e)}
             {...props.mapState}
         >
-            <Layer
-                type='symbol'
-                id='marker'
-                layout={{
-                    'icon-image': 'dot-11',
-                    'icon-size': 4
+            {props.coord && props.coord.length && (
+                <Marker coordinates={props.coord}>
+                    <img
+                        src={'http://maps.google.com/mapfiles/ms/icons/red.png'}
+                        alt='marker-img'
+                    />
+                </Marker>
+            )}
+
+            {/* for later when doing artefact card popups over pin */}
+            {/* <Popup
+                coordinates={mapState.center}
+                offset={{
+                    'bottom-left': [12, -38],
+                    bottom: [0, -38],
+                    'bottom-right': [-12, -38]
                 }}
             >
-                {mapState.center && <Feature coordinates={mapState.center} />}
-            </Layer>
-
-            {/* <Marker coordinates={[coord.lng, coord.lat]} anchor='bottom'>
-                <img
-                    src={'http://maps.google.com/mapfiles/ms/icons/blue.png'}
-                />
-            </Marker> */}
+                <img src={'http://maps.google.com/mapfiles/ms/icons/red.png'} />
+            </Popup> */}
         </Mapbox>
     )
 }

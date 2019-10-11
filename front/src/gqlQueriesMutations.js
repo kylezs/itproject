@@ -5,10 +5,11 @@ export const CREATE_ARTEFACT_MUTATION = gql`
     mutation CreateArtefactMutation(
         $name: String!
         $state: String!
-        $isPublic: Boolean!
+        $isPublic: Boolean
         $description: String!
         $belongsToFamilies: [ID]
         $location: [Float]
+        $locationType: String
     ) {
         artefactCreate(
             input: {
@@ -18,6 +19,7 @@ export const CREATE_ARTEFACT_MUTATION = gql`
                 isPublic: $isPublic
                 belongsToFamilies: $belongsToFamilies
                 location: $location
+                locationType: $locationType
             }
         ) {
             artefact {
@@ -67,6 +69,7 @@ export const ARTEFACT_DETAIL = gql`
             }
             addedAt
             location
+            locationType
         }
     }
 `

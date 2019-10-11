@@ -3,7 +3,7 @@ export const THEME_TYPE = 'theme-type'
 export const USERNAME_TAKEN_ERR_MSG = `duplicate key`
 export const INVALID_CRED_ERR_MSG = `Please, enter valid credentials`
 export const MY_ACCESS_TOKEN =
-           'pk.eyJ1Ijoiemh1b3BpbmdtIiwiYSI6ImNrMHowaXN1YzA0MmQzY29kbTdlbXJzOWIifQ.eEx-9GUiucpOMEYVVh7Ztg'
+           'pk.eyJ1IjoiemR1ZmZpZWxkIiwiYSI6ImNrMWdkODhpOTBiM28zZG03eDdjZ2dmN24ifQ.vAzlFYY5S9O82SKnwX69kQ'
 
 // GQL API for prod vs dev
 

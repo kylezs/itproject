@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { makeStyles } from '@material-ui/core/styles';

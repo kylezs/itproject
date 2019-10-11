@@ -5,13 +5,9 @@ import Header from './Header'
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
 
-import { SET_DARK_MODE_MUTATION } from '../gqlQueriesMutations'
-import { useMutation } from '@apollo/react-hooks'
 import { THEME_TYPE } from '../constants.js'
 
 export default props => {
-    const [myId, setMyId] = useState(0)
-
     if (!localStorage.getItem(THEME_TYPE)){
         localStorage.setItem(THEME_TYPE, 'light')
         console.log("here")

@@ -31,6 +31,7 @@ class ArtefactInputType(InputObjectType):
     is_public = Boolean()
     belongs_to_families = List(ID)
     location = List(Float)
+    location_type = String()
 
 
 class ArtefactCreate(Mutation):
@@ -57,6 +58,7 @@ class ArtefactCreate(Mutation):
             is_public=input.is_public,
             admin=user,
             location=input.location,
+            location_type=input.location_type
         )
         # Create the artefact so it has an id to be used for ManyToMany
         artefact.save()

@@ -6,6 +6,8 @@ from datetime import datetime
 from family.models import Family
 
 # NB: You may need to update the graphql logic if you are updating this
+
+
 class Artefact(models.Model):
 
     name = models.CharField(max_length=255)
@@ -32,7 +34,7 @@ class Artefact(models.Model):
         default='OKY'
     )
 
-    is_public = models.BooleanField(default=False, blank=False)
+    is_public = models.BooleanField(default=False, blank=True)
 
     # upload image file to AWS S3 bucket
     upload = models.FileField(default=False, blank=True)
@@ -40,9 +42,15 @@ class Artefact(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     belongs_to_families = models.ManyToManyField(Family,
-                                                 related_name='has_artefacts')
+                                                 related_name='has_artefacts', blank=True)
 
-    location = ArrayField(models.FloatField(), null=True)
+    location = ArrayField(models.FloatField(), blank=True, null=True)
+    location_type = models.CharField(
+        max_length=9,
+        choices=[('place', 'place'), ('address', 'address')],
+        default='address',
+        blank=True
+    )
 
     class Meta:
         verbose_name = _('artefact')
