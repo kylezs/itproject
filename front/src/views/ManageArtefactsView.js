@@ -67,7 +67,7 @@ function ManageArtefactsView(props) {
     return (
         <Layout>
             <CssBaseline />
-            <Grid container spacing={2} className={classes.root}>
+            <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Grid container justify='center' spacing={2}>
                         {artefactEdges.map(edge => (

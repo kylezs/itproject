@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Typography } from '@material-ui/core';
+import { Typography, CssBaseline } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import gql from "graphql-tag";
 import { useMutation, useQuery } from '@apollo/react-hooks';
@@ -115,6 +115,7 @@ function UserHomeView(props) {
 
     return (
         <Layout>
+            <CssBaseline/>
         <Grid container spacing={3}>
             <Grid item xs={9}>
                 {selectedFamily && (
