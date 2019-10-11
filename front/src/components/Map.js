@@ -7,7 +7,7 @@ const geocodingService = mbxGeocoding({ accessToken: MY_ACCESS_TOKEN })
 
 const _handleResponse = response => {
     var out = {}
-    console.log('GEOCODING RESPONSE: ', response.body)
+    // console.log('GEOCODING RESPONSE: ', response.body)
     const features = response.body.features
     if (!features) {
         out.noResults = true

@@ -85,18 +85,20 @@ const useStyles = makeStyles(theme => ({
     },
     dropzone: {
         backgroundColor: theme.palette.background.paper,
-        minHeight: '80px' 
+        minHeight: '80px'
     }
 }))
 
 function ArtefactView(props) {
-    var create = true,
+    // get the mode
+    var { create, edit, view } = props
+    var { families, familiesLoading } = props
+    var { artefactStates, statesLoading } = props
+    var { artefact, isAdmin, artefactLoading } = props
+    
+    if (!isAdmin && edit){
         edit = false
-    if (props.mode === 'edit') {
-        create = false
-        edit = true
-    } else if (props.mode !== 'create') {
-        console.log('unknown mode provided, defaulted to create')
+        view = true
     }
 
     const theme = useTheme()
@@ -118,18 +120,23 @@ function ArtefactView(props) {
 
     const [state, setState] = useState({})
     const stateLen = Object.keys(state).length
-    const artefactLoaded = edit && Object.keys(props.artefact).length !== 0
-    if (artefactLoaded && stateLen === 0) {
+
+    if (
+        (edit || view) &&
+        !artefactLoading &&
+        Object.keys(artefact).length !== 0 &&
+        Object.keys(state).length === 0
+    ) {
         var belong = {}
-        props.artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        artefact.belongsToFamilies.map(val => (belong[val.id] = true))
 
         // run geocode query here and process result
         // if the query is blank an empty promise is immediately returned
         var address = ''
-        console.log('Query run with argument: ', props.artefact.address)
-        geocodeQuery(props.artefact.address)
+        console.log('Query run with argument: ', artefact.address)
+        geocodeQuery(artefact.address)
             .then(response => {
-                if (props.artefact.address) {
+                if (artefact.address) {
                     var errMsg = ''
                     console.log('response: ', response)
                     if (response.error) {
@@ -139,7 +146,7 @@ function ArtefactView(props) {
                     }
 
                     // only say no results when the query was non-empty
-                    if (response.noResults && props.artefact.address) {
+                    if (response.noResults && artefact.address) {
                         errMsg = 'No results'
                     }
 
@@ -160,7 +167,7 @@ function ArtefactView(props) {
             .then(result => {
                 console.log(address)
                 setState({
-                    ...props.artefact,
+                    ...artefact,
                     belongsToFamiliesBools: belong,
                     address: address
                 })
@@ -353,7 +360,7 @@ function ArtefactView(props) {
 
             updateArtefact({
                 variables: {
-                    id: props.artefact.id,
+                    id: artefact.id,
                     artefactInput: input
                 }
             })
@@ -427,7 +434,7 @@ function ArtefactView(props) {
     }
 
     const noErrors = !creationErrors
-    const dataLoading = props.familyLoading || props.statesLoading
+    const dataLoading = familiesLoading || statesLoading
 
     var mapStyle
     if (theme && theme.palette.type === 'dark') {
@@ -488,6 +495,9 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         value={state.name || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             handleSetField(
                                                 'name',
@@ -521,6 +531,9 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         value={state.state || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             handleSetField(
                                                 'state',
@@ -534,7 +547,7 @@ function ArtefactView(props) {
                                             beingEdited !== 'state'
                                         }
                                     >
-                                        {Object.keys(props.artefactStates).map(
+                                        {Object.keys(artefactStates).map(
                                             value => {
                                                 return (
                                                     <MenuItem
@@ -575,6 +588,9 @@ function ArtefactView(props) {
                                         multiline
                                         rows={6}
                                         value={state.description || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             handleSetField(
                                                 'description',
@@ -614,6 +630,9 @@ function ArtefactView(props) {
                                                 ? state.admin.username
                                                 : context.user.username
                                         }
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             console.log(
                                                 'admin field was changed'
@@ -695,7 +714,7 @@ function ArtefactView(props) {
                                             </ListSubheader>
                                         }
                                     >
-                                        {props.families.map(family => {
+                                        {families.map(family => {
                                             if (
                                                 state.belongsToFamiliesBools &&
                                                 !state.belongsToFamiliesBools[
@@ -768,9 +787,10 @@ function ArtefactView(props) {
                                         handleSetField('files', files)
                                     }
                                     disabled={
-                                        edit &&
-                                        !!beingEdited &&
-                                        beingEdited !== 'files'
+                                        (edit &&
+                                            !!beingEdited &&
+                                            beingEdited !== 'files') ||
+                                        view
                                     }
                                     dropzoneClass={classes.dropzone}
                                 />
@@ -791,6 +811,9 @@ function ArtefactView(props) {
                                         variant='outlined'
                                         fullWidth
                                         value={state.address || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e => {
                                             setState({
                                                 ...state,
@@ -921,7 +944,7 @@ function ArtefactView(props) {
                                 color='secondary'
                                 size='small'
                                 onClick={e => {
-                                    _pushViewArtefactURL(props.artefact.id) &&
+                                    _pushViewArtefactURL(artefact.id) &&
                                         handleCloseSnackbar(e)
                                 }}
                             >
