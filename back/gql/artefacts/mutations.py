@@ -20,7 +20,7 @@ class ArtefactSerializer(serializers.ModelSerializer):
             'is_public',
             'upload',
             'belongs_to_families',
-            'location',
+            'address',
         )
 
 
@@ -30,8 +30,7 @@ class ArtefactInputType(InputObjectType):
     state = String()
     is_public = Boolean()
     belongs_to_families = List(ID)
-    location = List(Float)
-    location_type = String()
+    address = String()
 
 
 class ArtefactCreate(Mutation):
@@ -57,8 +56,7 @@ class ArtefactCreate(Mutation):
             state=input.state,
             is_public=input.is_public,
             admin=user,
-            location=input.location,
-            location_type=input.location_type
+            address=input.address
         )
         # Create the artefact so it has an id to be used for ManyToMany
         artefact.save()
