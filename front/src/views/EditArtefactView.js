@@ -16,7 +16,6 @@ export default function EditArtefactView(props) {
         edit: true
     }
 
-    console.log(thisChildProps)
     return (
         <Layout>
             <GetStatesWrapper

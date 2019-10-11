@@ -9,11 +9,8 @@ import {
     MenuItem,
     Snackbar,
     IconButton,
-    FormControl
-} from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import { makeStyles } from '@material-ui/core/styles'
-import {
+    FormControl,
+    Popover,
     List,
     ListItem,
     ListItemIcon,
@@ -23,15 +20,17 @@ import {
     Checkbox,
     Paper,
     FormHelperText,
-    ClickAwayListener
+    ClickAwayListener,
+    Popper
 } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
+import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'
 import { Loading, Map } from '../components'
 import { geocodeQuery } from '../components/Map'
 import authContext from '../authContext'
 import { useMutation } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
-
 import SearchIcon from '@material-ui/icons/Search'
 
 import {
@@ -90,12 +89,24 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function ArtefactView(props) {
+    const context = useContext(authContext)
+    const username = context.user.username
+
     // get the mode
     var { create, edit, view } = props
-    var { families, familiesLoading } = props
-    var { artefactStates, statesLoading } = props
-    var { artefact, isAdmin, artefactLoading } = props
 
+    // get families, states, and artefact data
+    var { statesLoading, familiesLoading, artefactLoading } = props
+    var families = !familiesLoading ? props.familiesData.me.isMemberOf : []
+    if (!create) {
+        var artefact = !artefactLoading ? props.artefactData.artefact : {}
+        var isAdmin = !artefactLoading
+            ? artefact.admin.username === username
+            : false
+    }
+    var { artefactStates } = props
+
+    // only allow admins to see the edit page
     if (!isAdmin && edit) {
         edit = false
         view = true
@@ -104,8 +115,6 @@ function ArtefactView(props) {
     const theme = useTheme()
     const classes = useStyles()
 
-    const context = useContext(authContext)
-
     const [beingEdited, setBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
     const [currValue, setCurrValue] = useState({})
@@ -113,6 +122,7 @@ function ArtefactView(props) {
 
     const [locationState, setLocationState] = useState({
         mapState: {},
+        prevMapState: {},
         locationError: ''
     })
     const [addressIsSearchResult, setAddressIsSearchResult] = useState(true)
@@ -130,49 +140,41 @@ function ArtefactView(props) {
         var belong = {}
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
 
+        setState({
+            ...artefact,
+            belongsToFamiliesBools: belong
+        })
+
         // run geocode query here and process result
         // if the query is blank an empty promise is immediately returned
-        var address = ''
         console.log('Query run with argument: ', artefact.address)
-        geocodeQuery(artefact.address)
-            .then(response => {
-                if (artefact.address) {
-                    var errMsg = ''
-                    console.log('response: ', response)
-                    if (response.error) {
-                        errMsg =
-                            'Unknown error occurred, check console for details'
-                        console.log(response.error)
-                    }
-
-                    // only say no results when the query was non-empty
-                    if (response.noResults && artefact.address) {
-                        errMsg = 'No results'
-                    }
-
-                    if (errMsg) {
-                        setLocationState({
-                            ...locationState,
-                            locationError: errMsg
-                        })
-                    } else {
-                        setLocationState({
-                            mapState: response.results[0].mapState,
-                            locationError: ''
-                        })
-                        address = response.results[0].placeName
-                    }
+        geocodeQuery(artefact.address).then(response => {
+            if (artefact.address) {
+                var address = ''
+                var errMsg = ''
+                console.log('response: ', response)
+                if (response.error) {
+                    errMsg = 'Unknown error occurred, check console for details'
+                    console.log(response.error)
+                } else if (response.noResults) {
+                    errMsg = 'No results'
                 }
-            })
-            .then(result => {
-                console.log(address)
-                setState({
-                    ...artefact,
-                    belongsToFamiliesBools: belong,
-                    address: address
-                })
-                setAddressIsSearchResult(true)
-            })
+
+                if (errMsg) {
+                    setLocationState({
+                        ...locationState,
+                        locationError: errMsg
+                    })
+                } else {
+                    setLocationState({
+                        mapState: response.results[0].mapState,
+                        locationError: ''
+                    })
+                    address = response.results[0].placeName
+                }
+                setAddressIsSearchResult(artefact.address === address)
+            }
+        })
     }
 
     const _pushViewArtefactURL = id => {
@@ -268,13 +270,30 @@ function ArtefactView(props) {
     }
 
     const handleSetLocationResult = result => {
-        handleSetField('address', result.placeName)
-        setQueryResults([])
-        setLocationState({
+        var newLocationState = {
             mapState: result.mapState,
             locationError: ''
+        }
+        if (beingEdited === 'address' && !locationState.prevMapState) {
+            newLocationState.prevMapState = locationState.mapState
+        }
+        handleSetField('address', result.placeName)
+        setQueryResults([])
+
+        setLocationState({
+            ...locationState,
+            ...newLocationState
         })
         setAddressIsSearchResult(true)
+    }
+
+    const resetMapToPrevState = () => {
+        setLocationState({
+            ...locationState,
+            mapState: locationState.prevMapState,
+            prevMapState: {}
+        })
+        setQueryResults([])
     }
 
     const cancelEditing = () => {
@@ -282,7 +301,7 @@ function ArtefactView(props) {
         setBeingEdited('')
 
         if (beingEdited === 'address') {
-            _handleGeocodeQuery(prevValue)
+            resetMapToPrevState()
         }
     }
 
@@ -440,7 +459,7 @@ function ArtefactView(props) {
     if (theme && theme.palette.type === 'dark') {
         mapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
     } else {
-        mapStyle = 'mapbox://styles/mapbox/light-v10?optimize=true'
+        mapStyle = 'mapbox://styles/mapbox/streets-v9?optimize=true'
     }
 
     const submitHandler = e => {
@@ -802,23 +821,20 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12}>
-                            <Paper className={classes.paper}>
-                                <DropzoneArea
-                                    initialFiles={state.files || []}
-                                    onChange={files =>
-                                        handleSetField('files', files)
-                                    }
-                                    disabled={
-                                        (edit &&
-                                            !!beingEdited &&
-                                            beingEdited !== 'files') ||
-                                        view
-                                    }
-                                    dropzoneClass={classes.dropzone}
-                                />
-                            </Paper>
-                        </Grid>
+                        {/* TO DO: show images in different way on view page */}
+                        {!view && (
+                            <Grid item xs={12}>
+                                <Paper className={classes.paper}>
+                                    <DropzoneArea
+                                        initialFiles={state.files || []}
+                                        onChange={files =>
+                                            handleSetField('files', files)
+                                        }
+                                        dropzoneClass={classes.dropzone}
+                                    />
+                                </Paper>
+                            </Grid>
+                        )}
                     </Grid>
 
                     <Grid container item xs={12} spacing={1}>
@@ -838,10 +854,14 @@ function ArtefactView(props) {
                                             readOnly: view
                                         }}
                                         onChange={e => {
-                                            setState({
-                                                ...state,
-                                                address: e.target.value
-                                            })
+                                            // setState({
+                                            //     ...state,
+                                            //     address: e.target.value
+                                            // })
+                                            handleSetField(
+                                                'address',
+                                                e.target.value
+                                            )
                                             if (e.target.value) {
                                                 setAddressIsSearchResult(false)
                                             } else {
@@ -858,7 +878,7 @@ function ArtefactView(props) {
                                                     }
                                                     aria-label='search'
                                                     id='search'
-                                                    onClick={() =>
+                                                    onClick={e =>
                                                         _handleGeocodeQuery(
                                                             state.address
                                                         )
@@ -879,11 +899,25 @@ function ArtefactView(props) {
                                         }}
                                         helperText={locationState.locationError}
                                     />
-
-                                    <Collapse
-                                        in={!!queryResults}
-                                        timeout='auto'
-                                        unmountOnExit
+                                    <Popover
+                                        id={
+                                            queryResults.length
+                                                ? 'results'
+                                                : undefined
+                                        }
+                                        open={!!queryResults.length}
+                                        anchorEl={document.getElementById(
+                                            'address'
+                                        )}
+                                        onClose={e => setQueryResults([])}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'left'
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'left'
+                                        }}
                                     >
                                         <List component='div' disablePadding>
                                             {queryResults.map(result => (
@@ -897,9 +931,6 @@ function ArtefactView(props) {
                                                         )
                                                     }
                                                 >
-                                                    {/* <ListItemIcon>
-                                                        <StarBorder />
-                                                    </ListItemIcon> */}
                                                     <ListItemText
                                                         primary={
                                                             result.placeName
@@ -908,7 +939,7 @@ function ArtefactView(props) {
                                                 </ListItem>
                                             ))}
                                         </List>
-                                    </Collapse>
+                                    </Popover>
 
                                     {edit && beingEdited === 'address' && (
                                         <EditButtons />

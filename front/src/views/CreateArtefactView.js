@@ -7,11 +7,13 @@ import {
     GetStatesWrapper
 } from '../components'
 
-export default function EditArtefactView(props) {
+export default function CreateArtefactView(props) {
     const childProps = {
         child: GetArtefactWrapper,
-        edit: true,
-        grandchild: ArtefactView
+        childProps: {
+            child: ArtefactView
+        },
+        create: true
     }
     return (
         <Layout>

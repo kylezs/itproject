@@ -11,22 +11,17 @@ export default function GetArtefactWrapper({
     const context = useContext(authContext)
     const username = context.user.username
 
-    // get artefact details
-    const [artefact, setArtefact] = useState({})
-
-    const { loading } = useQuery(ARTEFACT_DETAIL, {
+    const { data, loading } = useQuery(ARTEFACT_DETAIL, {
         variables: {
             id: rest.match.params.id
         },
-        onCompleted: data => setArtefact(data.artefact),
         onError: error => console.log(error)
     })
 
     var thisChildProps = {
         ...childProps,
-        artefact: artefact,
+        artefactData: data,
         artefactLoading: loading,
-        isAdmin: artefact.admin && artefact.admin.username === username
     }
 
     return <Child {...rest} {...thisChildProps} />
