@@ -176,7 +176,8 @@ function UserHomeView(props) {
                     <h4>Your username is (temp, for testing): {username}</h4>
                     <GridList cellHeight={"auto"} className={classes.gridList} cols={2}>
                         {artefacts.map((artefact, key) => (
-                            <GridListTile>
+                            <GridListTile
+                                key={key}>
                                 <ArtefactCard
                                     key={key}
                                     mediaURI={artefact.node.upload}
