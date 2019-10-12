@@ -1,70 +1,32 @@
 import React, { useContext, useState } from 'react'
-import { withStyles } from '@material-ui/core/styles'
+import {
+    IconButton,
+    Button,
+    CssBaseline,
+    TextField,
+    Typography,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Grid,
+    Paper,
+    FormControl
+} from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
+
+import { useMutation } from '@apollo/react-hooks'
+
 import Layout from '../components/Layout'
 import authContext from '../authContext'
-import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import TextField from '@material-ui/core/TextField'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
-import gql from 'graphql-tag'
-import { useMutation } from '@apollo/react-hooks'
-import Dialog from '@material-ui/core/Dialog'
-import MuiDialogTitle from '@material-ui/core/DialogTitle'
-import MuiDialogContent from '@material-ui/core/DialogContent'
-import { IconButton } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import { Paper } from '@material-ui/core'
+import { artefactFamilyFormUseStyles } from '../components'
+import { CREATE_FAMILY_MUTATION } from '../gqlQueriesMutations'
 
-const useStyles = makeStyles(theme => ({
-    textField: {
-        // marginLeft: theme.spacing(1),
-        // marginRight: theme.spacing(1),
-        padding: theme.spacing(1),
-        textAlign: 'center',
-        marginTop: theme.spacing(1)
-    },
-    paper: {
-        marginTop: theme.spacing(1),
-        padding: theme.spacing(1),
-        textAlign: 'center'
-    },
-    button: {
-        margin: theme.spacing(1)
-    }
-}))
+const MyDialogTitle = props => {
+    const classes = artefactFamilyFormUseStyles()
+    const { children, onClose } = props
 
-// Get the familyName and joinCode back to present to the user straight away after
-// successful creation
-const CREATE_FAMILY_MUTATION = gql`
-    mutation FamilyCreate($familyName: String!, $about: String) {
-        familyCreate(input: { familyName: $familyName, about: $about }) {
-            family {
-                familyName
-                joinCode
-            }
-        }
-    }
-`
-
-const styles = theme => ({
-    root: {
-        margin: 0,
-        padding: theme.spacing(2)
-    },
-    closeButton: {
-        position: 'absolute',
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500]
-    }
-})
-
-const DialogTitle = withStyles(styles)(props => {
-    const { children, classes, onClose } = props
     return (
-        <MuiDialogTitle disableTypography className={classes.root}>
+        <DialogTitle disableTypography className={classes.root}>
             <Typography variant='h6'>{children}</Typography>
             {onClose ? (
                 <IconButton
@@ -75,18 +37,12 @@ const DialogTitle = withStyles(styles)(props => {
                     <CloseIcon />
                 </IconButton>
             ) : null}
-        </MuiDialogTitle>
+        </DialogTitle>
     )
-})
+}
 
-const DialogContent = withStyles(theme => ({
-    root: {
-        padding: theme.spacing(2)
-    }
-}))(MuiDialogContent)
-
-export default function CreateFamilyView(props) {
-    const classes = useStyles()
+function CreateFamilyView(props) {
+    const classes = artefactFamilyFormUseStyles()
 
     const context = useContext(authContext)
     const username = context.user.username
@@ -125,35 +81,33 @@ export default function CreateFamilyView(props) {
     }
 
     return (
-        <Layout>
-            <CssBaseline />
-            <form className={classes.form} onSubmit={submitForm}>
-                <Grid
-                    container
-                    spacing={2}
-                    direction='row'
-                    alignItems='stretch'
-                    alignContent='stretch'
-                    justify='space-evenly'
-                >
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                            <Typography variant='h4'>Create Family</Typography>
-                            <Typography variant='subtitle1'>
-                                Families are how you manage your artefacts. We
-                                recognise there is often complex overlap between
-                                families. That's why you can create and be a
-                                part of several families, so you can separate
-                                which of the artefacts you manage belong to
-                                which family.
-                            </Typography>
-                        </Paper>
-                    </Grid>
+        <form className={classes.form} onSubmit={submitForm}>
+            <Grid
+                container
+                spacing={2}
+                direction='row'
+                alignItems='stretch'
+                alignContent='stretch'
+                justify='space-evenly'
+            >
+                <Grid item xs={12} container justify='center'>
+                    <Typography variant='h4' className={classes.title}>
+                        Create Family
+                    </Typography>
 
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
+                    <Typography variant='subtitle1' className={classes.title}>
+                        Families are how you manage your artefacts. We recognise
+                        there is often complex overlap between families. That's
+                        why you can create and be a part of several families, so
+                        you can separate which of the artefacts you manage
+                        belong to which family.
+                    </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Paper className={classes.paper}>
+                        <FormControl className={classes.formControl} fullWidth>
                             <TextField
-                                className={classes.textField}
                                 variant='outlined'
                                 required
                                 fullWidth
@@ -162,12 +116,13 @@ export default function CreateFamilyView(props) {
                                 autoFocus
                                 onChange={e => setFamilyName(e.target.value)}
                             />
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
+                        </FormControl>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                    <Paper className={classes.paper}>
+                        <FormControl className={classes.formControl} fullWidth>
                             <TextField
-                                className={classes.textField}
                                 variant='outlined'
                                 multiline
                                 rows={6}
@@ -176,13 +131,14 @@ export default function CreateFamilyView(props) {
                                 label='Tell people about your family'
                                 onChange={e => setAbout(e.target.value)}
                             />
-                        </Paper>
-                    </Grid>
+                        </FormControl>
+                    </Paper>
+                </Grid>
 
-                    <Grid item xs={12}>
-                        <Paper className={classes.paper}>
+                <Grid item xs={12}>
+                    <Paper className={classes.paper}>
+                        <FormControl className={classes.formControl} fullWidth>
                             <TextField
-                                className={classes.textField}
                                 variant='outlined'
                                 disabled
                                 defaultValue={username}
@@ -191,29 +147,28 @@ export default function CreateFamilyView(props) {
                                 label='Family Admin'
                                 onChange={e => console.log('hello')}
                             />
-                        </Paper>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                        <Button
-                            name='create'
-                            label='Create'
-                            type='submit'
-                            fullWidth
-                            variant='contained'
-                            color='primary'
-                        >
-                            Create
-                        </Button>
-                    </Grid>
+                        </FormControl>
+                    </Paper>
                 </Grid>
-            </form>
 
+                <Grid item xs={6}>
+                    <Button
+                        name='create'
+                        label='Create'
+                        type='submit'
+                        fullWidth
+                        variant='contained'
+                        color='primary'
+                    >
+                        Create
+                    </Button>
+                </Grid>
+            </Grid>
             {data && (
                 <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle onClose={handleClose}>
+                    <MyDialogTitle onClose={handleClose}>
                         Begin adding members to '{familyName}'!
-                    </DialogTitle>
+                    </MyDialogTitle>
                     <DialogContent>
                         <Typography align='center'>
                             Begin getting members to join your family! Simply
@@ -225,6 +180,24 @@ export default function CreateFamilyView(props) {
                     </DialogContent>
                 </Dialog>
             )}
-        </Layout>
+        </form>
     )
 }
+
+export default props => (
+    <Layout>
+        <CssBaseline />
+        <Grid
+            container
+            spacing={0}
+            direction='column'
+            alignItems='center'
+            justify='center'
+            style={{ minHeight: '80vh' }}
+        >
+            <Grid item xs={6}>
+                <CreateFamilyView {...props} />
+            </Grid>
+        </Grid>
+    </Layout>
+)

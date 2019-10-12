@@ -1,4 +1,5 @@
 import { MY_ACCESS_TOKEN } from '../constants'
+// import { geocodeQuery } from '.'
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
 const geocodingService = mbxGeocoding({ accessToken: MY_ACCESS_TOKEN })
 
@@ -41,7 +42,7 @@ const _handleError = error => {
     return out
 }
 
-export default (query, types) => {
+export default function geocodeQuery(query, types) {
     if (!query) {
         return new Promise(function(resolve, reject) {
             resolve()
@@ -50,7 +51,8 @@ export default (query, types) => {
 
     var args = {
         query: query,
-        limit: 5
+        limit: 5,
+        types: ['place', 'address']
     }
     if (types) args.types = types
 
@@ -71,4 +73,10 @@ export default (query, types) => {
                 error => _handleError(error)
             )
     }
+}
+
+export function artefactGeocodeQuery(artefact) {
+    return geocodeQuery(artefact.address).then(response => {
+        return { artefact: artefact, response: response }
+    })
 }

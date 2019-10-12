@@ -11,6 +11,9 @@ const Mapbox = ReactMapboxGl({
 })
 
 export default function Map(props) {
+    var artefacts = props.artefacts
+    if (!artefacts) artefacts = []
+
     return (
         <Mapbox
             style={
@@ -21,14 +24,14 @@ export default function Map(props) {
             containerStyle={props.containerStyle}
             {...props.mapState}
         >
-            {props.artefacts.map(artefact => {
+            {artefacts.map(artefact => {
                 var { center, showPopup, ...rest } = artefact
 
-                if (!center || !center.length){
+                if (!center || !center.length) {
                     return
                 }
                 return (
-                    <Fragment>
+                    <Fragment key={artefact.id}>
                         <Marker coordinates={center}>
                             <img
                                 src={
@@ -37,6 +40,7 @@ export default function Map(props) {
                                 alt='marker-img'
                             />
                         </Marker>
+
                         {showPopup && (
                             <Popup
                                 coordinates={center}

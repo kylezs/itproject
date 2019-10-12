@@ -99,3 +99,49 @@ export const LOGIN_MUTATION = gql`
         }
     }
 `
+
+export const GET_FAMILY_ARTEFACTS = gql`
+    query getFamilyArtefacts($id: ID!) {
+        family(id: $id) {
+            hasArtefacts {
+                edges {
+                    node {
+                        id
+                        name
+                        description
+                        address
+                    }
+                }
+            }
+        }
+    }
+`
+
+export const SIGNUP_MUTATION = gql`
+    mutation SignupMutation(
+        $email: String!
+        $password: String!
+        $username: String!
+    ) {
+        createUser(email: $email, username: $username, password: $password) {
+            user {
+                id
+                username
+                email
+            }
+        }
+    }
+`
+
+// Get the familyName and joinCode back to present to the user straight away after
+// successful creation
+export const CREATE_FAMILY_MUTATION = gql`
+    mutation FamilyCreate($familyName: String!, $about: String) {
+        familyCreate(input: { familyName: $familyName, about: $about }) {
+            family {
+                familyName
+                joinCode
+            }
+        }
+    }
+`

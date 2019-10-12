@@ -1,5 +1,4 @@
 import React from 'react'
-import { Layout } from '../components'
 import ArtefactView from './ArtefactView'
 import {
     GetArtefactWrapper,
@@ -16,12 +15,10 @@ export default function CreateArtefactView(props) {
         create: true
     }
     return (
-        <Layout>
-            <GetStatesWrapper
-                {...props}
-                {...childProps}
-                child={GetFamiliesWrapper}
-            />
-        </Layout>
+        <GetStatesWrapper
+            {...props}
+            {...childProps}
+            child={GetFamiliesWrapper}
+        />
     )
 }
