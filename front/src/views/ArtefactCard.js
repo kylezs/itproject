@@ -46,7 +46,7 @@ function ArtefactCard({ mediaURI, title, description, id }) {
             <CardActionArea>
                 <CardMedia
                     className={classes.media}
-                    image={mediaURI}
+                    image={mediaURI || undefined}
                     title={title}
                 />
                 <CardContent>

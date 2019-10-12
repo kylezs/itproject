@@ -26,8 +26,7 @@ import {
 import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'
-import { Loading, Map } from '../components'
-import { geocodeQuery } from '../components/Map'
+import { Loading, Map, geocodeQuery } from '../components'
 import authContext from '../authContext'
 import { useMutation } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
@@ -97,14 +96,13 @@ function ArtefactView(props) {
 
     // get families, states, and artefact data
     var { statesLoading, familiesLoading, artefactLoading } = props
-    var families = !familiesLoading ? props.familiesData.me.isMemberOf : []
     if (!create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
         var isAdmin = !artefactLoading
             ? artefact.admin.username === username
             : false
     }
-    var { artefactStates } = props
+    var { artefactStates, families } = props
 
     // only allow admins to see the edit page
     if (!isAdmin && edit) {
@@ -129,7 +127,6 @@ function ArtefactView(props) {
     const [queryResults, setQueryResults] = useState([])
 
     const [state, setState] = useState({})
-    const stateLen = Object.keys(state).length
 
     if (
         (edit || view) &&
@@ -174,6 +171,16 @@ function ArtefactView(props) {
                 }
                 setAddressIsSearchResult(artefact.address === address)
             }
+        })
+    }
+
+    if (create && families && !state.belongsToFamiliesBools) {
+        var belong = {}
+        families.map(val => (belong[val.id] = true))
+
+        setState({
+            ...artefact,
+            belongsToFamiliesBools: belong
         })
     }
 
@@ -890,7 +897,7 @@ function ArtefactView(props) {
                                             style: { marginBottom: 3 }
                                         }}
                                         onKeyDown={e => {
-                                            if (e.keyCode === 13) {
+                                            if (e.keyCode === 13 && !view) {
                                                 e.preventDefault()
                                                 document
                                                     .getElementById('search')
@@ -950,6 +957,17 @@ function ArtefactView(props) {
                                             className={classes.map}
                                             mapStyle={mapStyle}
                                             mapState={locationState.mapState}
+                                            containerStyle={{
+                                                height: '60vh',
+                                                width: '100vw'
+                                            }}
+                                            artefacts={[
+                                                {
+                                                    center:
+                                                        locationState.mapState
+                                                            .center
+                                                }
+                                            ]}
                                         />
                                     </Grid>
                                 </FormControl>

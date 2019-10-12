@@ -12,15 +12,17 @@ export default function GetFamiliesWrapper({
     childProps,
     ...rest
 }) {
+
+    const [families, setFamilies] = useState([])
     // get users families
-    const { data, loading } = useQuery(GET_FAMILIES_QUERY, {
-        // onCompleted: data => setFamilies(data.me.isMemberOf),
+    const { loading } = useQuery(GET_FAMILIES_QUERY, {
+        onCompleted: data => setFamilies(data.me.isMemberOf),
         onError: error => console.log(error)
     })
 
     var thisChildProps = {
         ...childProps,
-        familiesData: data,
+        families: families,
         familiesLoading: loading
     }
 
