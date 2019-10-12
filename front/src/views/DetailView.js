@@ -1,34 +1,27 @@
 import React from 'react'
-import gql from 'graphql-tag'
-import { useQuery } from '@apollo/react-hooks'
+import { Layout } from '../components'
+import ArtefactView from './ArtefactView'
+import {
+    GetArtefactWrapper,
+    GetFamiliesWrapper,
+    GetStatesWrapper
+} from '../components'
 
-const ARTEFACT_DETAIL = gql`
-    query DetailView($id: ID!) {
-        artefact(id: $id) {
-            id
-            name
-            description
-            addedAt
-        }
-    }
-`
-
-export default function DetailView(props) {
-    let { data, loading, errors } = useQuery(ARTEFACT_DETAIL, {
-        variables: { id: props.match.params.id }
-    })
-    if (loading) {
-        return <p>Loading...</p>
-    } else if (errors) {
-        return <p>ERROR!</p>
+export default function EditArtefactView(props) {
+    const thisChildProps = {
+        child: GetArtefactWrapper,
+        childProps: {
+            child: ArtefactView
+        },
+        view: true
     }
     return (
-        <div>
-            <h1>
-                {data.artefact.name} - #{data.artefact.id}
-            </h1>
-            <p>{data.artefact.addedAt}</p>
-            <p>{data.artefact.description}</p>
-        </div>
+        <Layout>
+            <GetStatesWrapper
+                {...props}
+                child={GetFamiliesWrapper}
+                childProps={thisChildProps}
+            />
+        </Layout>
     )
 }

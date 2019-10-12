@@ -49,6 +49,14 @@ export const GET_FAMILIES_QUERY = gql`
     }
 `
 
+export const GET_MY_ID_QUERY = gql`
+    query artefactsQuery {
+        me {
+            id
+        }
+    }
+`
+
 export const ARTEFACT_DETAIL = gql`
     query DetailView($id: ID!) {
         artefact(id: $id) {

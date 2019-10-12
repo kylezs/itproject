@@ -9,11 +9,8 @@ import {
     MenuItem,
     Snackbar,
     IconButton,
-    FormControl
-} from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import { makeStyles } from '@material-ui/core/styles'
-import {
+    FormControl,
+    Popover,
     List,
     ListItem,
     ListItemIcon,
@@ -23,15 +20,16 @@ import {
     Checkbox,
     Paper,
     FormHelperText,
-    ClickAwayListener
+    ClickAwayListener,
+    Popper
 } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
+import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'
-import { Loading, Map } from '../components'
-import { geocodeQuery } from '../components/Map'
+import { Loading, Map, geocodeQuery } from '../components'
 import authContext from '../authContext'
 import { useMutation } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
-
 import SearchIcon from '@material-ui/icons/Search'
 
 import {
@@ -85,24 +83,35 @@ const useStyles = makeStyles(theme => ({
     },
     dropzone: {
         backgroundColor: theme.palette.background.paper,
-        minHeight: '80px' 
+        minHeight: '80px'
     }
 }))
 
 function ArtefactView(props) {
-    var create = true,
+    const context = useContext(authContext)
+    const username = context.user.username
+
+    // get the mode
+    var { create, edit, view } = props
+
+    // get families, states, and artefact data
+    var { statesLoading, familiesLoading, artefactLoading } = props
+    if (!create) {
+        var artefact = !artefactLoading ? props.artefactData.artefact : {}
+        var isAdmin = !artefactLoading
+            ? artefact.admin.username === username
+            : false
+    }
+    var { artefactStates, families } = props
+
+    // only allow admins to see the edit page
+    if (!isAdmin && edit) {
         edit = false
-    if (props.mode === 'edit') {
-        create = false
-        edit = true
-    } else if (props.mode !== 'create') {
-        console.log('unknown mode provided, defaulted to create')
+        view = true
     }
 
     const theme = useTheme()
     const classes = useStyles()
-
-    const context = useContext(authContext)
 
     const [beingEdited, setBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
@@ -111,61 +120,68 @@ function ArtefactView(props) {
 
     const [locationState, setLocationState] = useState({
         mapState: {},
+        prevMapState: {},
         locationError: ''
     })
     const [addressIsSearchResult, setAddressIsSearchResult] = useState(true)
     const [queryResults, setQueryResults] = useState([])
 
     const [state, setState] = useState({})
-    const stateLen = Object.keys(state).length
-    const artefactLoaded = edit && Object.keys(props.artefact).length !== 0
-    if (artefactLoaded && stateLen === 0) {
+
+    if (
+        (edit || view) &&
+        !artefactLoading &&
+        Object.keys(artefact).length !== 0 &&
+        Object.keys(state).length === 0
+    ) {
         var belong = {}
-        props.artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+
+        setState({
+            ...artefact,
+            belongsToFamiliesBools: belong
+        })
 
         // run geocode query here and process result
         // if the query is blank an empty promise is immediately returned
-        var address = ''
-        console.log('Query run with argument: ', props.artefact.address)
-        geocodeQuery(props.artefact.address)
-            .then(response => {
-                if (props.artefact.address) {
-                    var errMsg = ''
-                    console.log('response: ', response)
-                    if (response.error) {
-                        errMsg =
-                            'Unknown error occurred, check console for details'
-                        console.log(response.error)
-                    }
-
-                    // only say no results when the query was non-empty
-                    if (response.noResults && props.artefact.address) {
-                        errMsg = 'No results'
-                    }
-
-                    if (errMsg) {
-                        setLocationState({
-                            ...locationState,
-                            locationError: errMsg
-                        })
-                    } else {
-                        setLocationState({
-                            mapState: response.results[0].mapState,
-                            locationError: ''
-                        })
-                        address = response.results[0].placeName
-                    }
+        console.log('Query run with argument: ', artefact.address)
+        geocodeQuery(artefact.address).then(response => {
+            if (artefact.address) {
+                var address = ''
+                var errMsg = ''
+                console.log('response: ', response)
+                if (response.error) {
+                    errMsg = 'Unknown error occurred, check console for details'
+                    console.log(response.error)
+                } else if (response.noResults) {
+                    errMsg = 'No results'
                 }
-            })
-            .then(result => {
-                console.log(address)
-                setState({
-                    ...props.artefact,
-                    belongsToFamiliesBools: belong,
-                    address: address
-                })
-                setAddressIsSearchResult(true)
-            })
+
+                if (errMsg) {
+                    setLocationState({
+                        ...locationState,
+                        locationError: errMsg
+                    })
+                } else {
+                    setLocationState({
+                        mapState: response.results[0].mapState,
+                        locationError: ''
+                    })
+                    address = response.results[0].placeName
+                }
+                setAddressIsSearchResult(artefact.address === address)
+            }
+        })
+    }
+
+    if (create && families && !state.belongsToFamiliesBools) {
+        var belong = {}
+        families.map(val => (belong[val.id] = true))
+
+        setState({
+            ...artefact,
+            belongsToFamiliesBools: belong
+        })
     }
 
     const _pushViewArtefactURL = id => {
@@ -261,13 +277,30 @@ function ArtefactView(props) {
     }
 
     const handleSetLocationResult = result => {
-        handleSetField('address', result.placeName)
-        setQueryResults([])
-        setLocationState({
+        var newLocationState = {
             mapState: result.mapState,
             locationError: ''
+        }
+        if (beingEdited === 'address' && !locationState.prevMapState) {
+            newLocationState.prevMapState = locationState.mapState
+        }
+        handleSetField('address', result.placeName)
+        setQueryResults([])
+
+        setLocationState({
+            ...locationState,
+            ...newLocationState
         })
         setAddressIsSearchResult(true)
+    }
+
+    const resetMapToPrevState = () => {
+        setLocationState({
+            ...locationState,
+            mapState: locationState.prevMapState,
+            prevMapState: {}
+        })
+        setQueryResults([])
     }
 
     const cancelEditing = () => {
@@ -275,7 +308,7 @@ function ArtefactView(props) {
         setBeingEdited('')
 
         if (beingEdited === 'address') {
-            _handleGeocodeQuery(prevValue)
+            resetMapToPrevState()
         }
     }
 
@@ -342,7 +375,7 @@ function ArtefactView(props) {
             }
 
             if (beingEdited === 'belongsToFamiliesBools') {
-                input[beingEdited] = Object.keys(
+                input['belongsToFamilies'] = Object.keys(
                     state.belongsToFamiliesBools
                 ).filter(id => state.belongsToFamiliesBools[id])
             } else {
@@ -353,7 +386,7 @@ function ArtefactView(props) {
 
             updateArtefact({
                 variables: {
-                    id: props.artefact.id,
+                    id: artefact.id,
                     artefactInput: input
                 }
             })
@@ -427,13 +460,13 @@ function ArtefactView(props) {
     }
 
     const noErrors = !creationErrors
-    const dataLoading = props.familyLoading || props.statesLoading
+    const dataLoading = familiesLoading || statesLoading
 
     var mapStyle
     if (theme && theme.palette.type === 'dark') {
         mapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
     } else {
-        mapStyle = 'mapbox://styles/mapbox/light-v10?optimize=true'
+        mapStyle = 'mapbox://styles/mapbox/streets-v9?optimize=true'
     }
 
     const submitHandler = e => {
@@ -459,16 +492,19 @@ function ArtefactView(props) {
                     <Grid item xs={12} container justify='center'>
                         <Grid item xs={12} sm={8}>
                             <Typography variant='h4' className={classes.title}>
-                                {create ? 'Create' : 'Edit'} Artefact
+                                {create && 'Create'} {edit && 'Edit'}{' '}
+                                {view && 'View'} Artefact
                             </Typography>
-                            <Typography
-                                variant='subtitle1'
-                                className={classes.title}
-                            >
-                                {create
-                                    ? 'Artefacts are belongings of the family, enter as much or as little detail as you like'
-                                    : 'Click to start editing'}
-                            </Typography>
+                            {!view && (
+                                <Typography
+                                    variant='subtitle1'
+                                    className={classes.title}
+                                >
+                                    {create &&
+                                        'Artefacts are belongings of the family, enter as much or as little detail as you like'}
+                                    {edit && 'Click to start editing'}
+                                </Typography>
+                            )}
                         </Grid>
                     </Grid>
                     {/* Left Pane */}
@@ -488,6 +524,9 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         value={state.name || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             handleSetField(
                                                 'name',
@@ -521,6 +560,9 @@ function ArtefactView(props) {
                                         required
                                         fullWidth
                                         value={state.state || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             handleSetField(
                                                 'state',
@@ -534,7 +576,7 @@ function ArtefactView(props) {
                                             beingEdited !== 'state'
                                         }
                                     >
-                                        {Object.keys(props.artefactStates).map(
+                                        {Object.keys(artefactStates).map(
                                             value => {
                                                 return (
                                                     <MenuItem
@@ -575,6 +617,9 @@ function ArtefactView(props) {
                                         multiline
                                         rows={6}
                                         value={state.description || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             handleSetField(
                                                 'description',
@@ -614,6 +659,9 @@ function ArtefactView(props) {
                                                 ? state.admin.username
                                                 : context.user.username
                                         }
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e =>
                                             console.log(
                                                 'admin field was changed'
@@ -655,21 +703,24 @@ function ArtefactView(props) {
                                                 beingEdited !== 'isPublic'
                                             }
                                         >
-                                            <ListItemIcon>
-                                                <Checkbox
-                                                    edge='start'
-                                                    checked={
-                                                        state.isPublic || false
-                                                    }
-                                                    tabIndex={-1}
-                                                    onClick={e =>
-                                                        handleSetField(
-                                                            'isPublic',
-                                                            e.target.checked
-                                                        )
-                                                    }
-                                                />
-                                            </ListItemIcon>
+                                            {!view && (
+                                                <ListItemIcon>
+                                                    <Checkbox
+                                                        edge='start'
+                                                        checked={
+                                                            state.isPublic ||
+                                                            false
+                                                        }
+                                                        tabIndex={-1}
+                                                        onClick={e =>
+                                                            handleSetField(
+                                                                'isPublic',
+                                                                e.target.checked
+                                                            )
+                                                        }
+                                                    />
+                                                </ListItemIcon>
+                                            )}
                                             <ListItemText primary={'Public'} />
                                         </ListItem>
                                     </List>
@@ -690,12 +741,17 @@ function ArtefactView(props) {
                                     <List
                                         subheader={
                                             <ListSubheader component='div'>
-                                                Select which of your families
-                                                the artefact belongs to
+                                                {!view
+                                                    ? 'Select which of your families the artefact belongs to'
+                                                    : 'Belongs to'}
                                             </ListSubheader>
                                         }
                                     >
-                                        {props.families.map(family => {
+                                        {families.map(family => {
+                                            if (!state.belongsToFamiliesBools) {
+                                                return
+                                            }
+
                                             if (
                                                 state.belongsToFamiliesBools &&
                                                 !state.belongsToFamiliesBools[
@@ -707,47 +763,59 @@ function ArtefactView(props) {
                                                 ] = false
                                             }
 
-                                            return (
-                                                <ListItem
-                                                    key={family.id}
-                                                    dense
-                                                    disabled={
-                                                        edit &&
-                                                        !!beingEdited &&
-                                                        beingEdited !==
-                                                            'belongsToFamiliesBools'
-                                                    }
-                                                >
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            edge='start'
-                                                            checked={
-                                                                (state.belongsToFamiliesBools &&
-                                                                    state
-                                                                        .belongsToFamiliesBools[
-                                                                        family
-                                                                            .id
-                                                                    ]) ||
-                                                                false
-                                                            }
-                                                            onClick={e =>
-                                                                handleSetField(
-                                                                    'belongsToFamiliesBools',
-                                                                    e.target
-                                                                        .checked,
-                                                                    family.id
-                                                                )
-                                                            }
-                                                            tabIndex={-1}
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={
-                                                            family.familyName
+                                            if (
+                                                !view ||
+                                                state.belongsToFamiliesBools[
+                                                    family.id
+                                                ]
+                                            ) {
+                                                return (
+                                                    <ListItem
+                                                        key={family.id}
+                                                        dense
+                                                        disabled={
+                                                            edit &&
+                                                            !!beingEdited &&
+                                                            beingEdited !==
+                                                                'belongsToFamiliesBools'
                                                         }
-                                                    />
-                                                </ListItem>
-                                            )
+                                                    >
+                                                        {!view && (
+                                                            <ListItemIcon>
+                                                                <Checkbox
+                                                                    edge='start'
+                                                                    checked={
+                                                                        (state.belongsToFamiliesBools &&
+                                                                            state
+                                                                                .belongsToFamiliesBools[
+                                                                                family
+                                                                                    .id
+                                                                            ]) ||
+                                                                        false
+                                                                    }
+                                                                    onClick={e =>
+                                                                        handleSetField(
+                                                                            'belongsToFamiliesBools',
+                                                                            e
+                                                                                .target
+                                                                                .checked,
+                                                                            family.id
+                                                                        )
+                                                                    }
+                                                                    tabIndex={
+                                                                        -1
+                                                                    }
+                                                                />
+                                                            </ListItemIcon>
+                                                        )}
+                                                        <ListItemText
+                                                            primary={
+                                                                family.familyName
+                                                            }
+                                                        />
+                                                    </ListItem>
+                                                )
+                                            }
                                         })}
                                     </List>
 
@@ -760,22 +828,20 @@ function ArtefactView(props) {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={12}>
-                            <Paper className={classes.paper}>
-                                <DropzoneArea
-                                    initialFiles={state.files || []}
-                                    onChange={files =>
-                                        handleSetField('files', files)
-                                    }
-                                    disabled={
-                                        edit &&
-                                        !!beingEdited &&
-                                        beingEdited !== 'files'
-                                    }
-                                    dropzoneClass={classes.dropzone}
-                                />
-                            </Paper>
-                        </Grid>
+                        {/* TO DO: show images in different way on view page */}
+                        {!view && (
+                            <Grid item xs={12}>
+                                <Paper className={classes.paper}>
+                                    <DropzoneArea
+                                        initialFiles={state.files || []}
+                                        onChange={files =>
+                                            handleSetField('files', files)
+                                        }
+                                        dropzoneClass={classes.dropzone}
+                                    />
+                                </Paper>
+                            </Grid>
+                        )}
                     </Grid>
 
                     <Grid container item xs={12} spacing={1}>
@@ -791,11 +857,18 @@ function ArtefactView(props) {
                                         variant='outlined'
                                         fullWidth
                                         value={state.address || ''}
+                                        inputProps={{
+                                            readOnly: view
+                                        }}
                                         onChange={e => {
-                                            setState({
-                                                ...state,
-                                                address: e.target.value
-                                            })
+                                            // setState({
+                                            //     ...state,
+                                            //     address: e.target.value
+                                            // })
+                                            handleSetField(
+                                                'address',
+                                                e.target.value
+                                            )
                                             if (e.target.value) {
                                                 setAddressIsSearchResult(false)
                                             } else {
@@ -805,14 +878,14 @@ function ArtefactView(props) {
                                         }}
                                         error={!!locationState.locationError}
                                         InputProps={{
-                                            endAdornment: (
+                                            endAdornment: !view && (
                                                 <IconButton
                                                     className={
                                                         classes.iconButton
                                                     }
                                                     aria-label='search'
                                                     id='search'
-                                                    onClick={() =>
+                                                    onClick={e =>
                                                         _handleGeocodeQuery(
                                                             state.address
                                                         )
@@ -824,7 +897,7 @@ function ArtefactView(props) {
                                             style: { marginBottom: 3 }
                                         }}
                                         onKeyDown={e => {
-                                            if (e.keyCode === 13) {
+                                            if (e.keyCode === 13 && !view) {
                                                 e.preventDefault()
                                                 document
                                                     .getElementById('search')
@@ -833,11 +906,25 @@ function ArtefactView(props) {
                                         }}
                                         helperText={locationState.locationError}
                                     />
-
-                                    <Collapse
-                                        in={!!queryResults}
-                                        timeout='auto'
-                                        unmountOnExit
+                                    <Popover
+                                        id={
+                                            queryResults.length
+                                                ? 'results'
+                                                : undefined
+                                        }
+                                        open={!!queryResults.length}
+                                        anchorEl={document.getElementById(
+                                            'address'
+                                        )}
+                                        onClose={e => setQueryResults([])}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'left'
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'left'
+                                        }}
                                     >
                                         <List component='div' disablePadding>
                                             {queryResults.map(result => (
@@ -851,9 +938,6 @@ function ArtefactView(props) {
                                                         )
                                                     }
                                                 >
-                                                    {/* <ListItemIcon>
-                                                        <StarBorder />
-                                                    </ListItemIcon> */}
                                                     <ListItemText
                                                         primary={
                                                             result.placeName
@@ -862,7 +946,7 @@ function ArtefactView(props) {
                                                 </ListItem>
                                             ))}
                                         </List>
-                                    </Collapse>
+                                    </Popover>
 
                                     {edit && beingEdited === 'address' && (
                                         <EditButtons />
@@ -873,6 +957,17 @@ function ArtefactView(props) {
                                             className={classes.map}
                                             mapStyle={mapStyle}
                                             mapState={locationState.mapState}
+                                            containerStyle={{
+                                                height: '60vh',
+                                                width: '100vw'
+                                            }}
+                                            artefacts={[
+                                                {
+                                                    center:
+                                                        locationState.mapState
+                                                            .center
+                                                }
+                                            ]}
                                         />
                                     </Grid>
                                 </FormControl>
@@ -921,7 +1016,7 @@ function ArtefactView(props) {
                                 color='secondary'
                                 size='small'
                                 onClick={e => {
-                                    _pushViewArtefactURL(props.artefact.id) &&
+                                    _pushViewArtefactURL(artefact.id) &&
                                         handleCloseSnackbar(e)
                                 }}
                             >
