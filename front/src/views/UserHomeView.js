@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,7 +13,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Typography, CssBaseline } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import gql from "graphql-tag";
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks';
+import ArtefactCard from '../components/ArtefactCard';
 
 
 const useStyles = makeStyles(theme => ({
@@ -26,21 +27,12 @@ const useStyles = makeStyles(theme => ({
     },
     gridList: {
         width: '80%',
-        height: 450
+        backgroundColor: theme.palette.background.paper
     },
     icon: {
         color: 'rgba(255, 255, 255, 0.54)'
     }
 }))
-
-const tileData = [
-    {
-        img:
-            'https://assets.pernod-ricard.com/nz/media_images/test.jpg?hUV74FvXQrWUBk1P2.fBvzoBUmjZ1wct',
-        title: 'Title1',
-        author: 'Author 1'
-    }
-]
 
 const HOMEPAGE_INFO = gql`
         query {
@@ -66,6 +58,16 @@ const HOMEPAGE_INFO = gql`
                 selectedFamily {
                     id
                     familyName
+                        hasArtefacts {
+                            edges {
+                                node {
+                                    id
+                                    name
+                                    description
+                                    upload
+                                }
+                            }
+                        }
                     }
                 }
         }
@@ -88,12 +90,25 @@ function UserHomeView(props) {
     const context = useContext(authContext)
     const username = context.user.username
 
-    let { data, loading } = useQuery(HOMEPAGE_INFO)
+    const _homepageInfoCompleted = (data) => {
+        const selectedFamily = data.me.profile.selectedFamily
+        if (!selectedFamily) {
+            console.error("User has not selected a family");
+            return;
+        }
+    }
 
-    const [selectFamily] = useMutation(SELECT_FAMILY_MUTATION,
+    let { data: home_data, loading, called: home_page_info_called } = useQuery(HOMEPAGE_INFO, {
+        onCompleted: (data) => {
+            _homepageInfoCompleted(data)
+        }
+    })
+
+
+    const [selectFamily, { data: mutation_data }] = useMutation(SELECT_FAMILY_MUTATION,
         {
-            refetchQueries: () => [
-                { query: HOMEPAGE_INFO }
+            refetchQueries: (data) => [
+                { query: HOMEPAGE_INFO },
             ],
         });
 
@@ -108,47 +123,42 @@ function UserHomeView(props) {
     if (loading) {
         return <p>Loading...</p>
     }
-    
-    const selectedFamily = data.me.profile.selectedFamily
-    const families = data.me.isMemberOf;
-    const profileId = data.me.profile.id;
+
+    const selectedFamily = home_data.me.profile.selectedFamily
+    const families = home_data.me.isMemberOf;
+    const profileId = home_data.me.profile.id;
+    const artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges;
+
+    console.log("Artefacts")
+    console.log(artefacts)
+
 
     return (
         <Layout>
-            <CssBaseline/>
-        <Grid container spacing={3}>
-            <Grid item xs={9}>
-                {selectedFamily && (
-                    <Typography variant="h1">{selectedFamily.familyName}</Typography>
-                )}
-                {!selectedFamily && (
-                    <Typography variant="h2">Join and/or Select a Family</Typography>
-                )}
-                <h4>Your username is: {username}</h4>
-                <h4>Your families:</h4>
-                {data.me.isMemberOf.map(family => (
-                    <p key={family.id} id={family.id}>{family.familyName}</p>
-                ))}
-                <div className={classes.root}>
-                    <GridList cellHeight={180} className={classes.gridList}>
-                        {tileData.map(tile => (
-                            <GridListTile key={tile.img}>
-                                <img src={tile.img} alt={tile.title} />
-                                <GridListTileBar
-                                    title={tile.title}
-                                    subtitle={<span>by: {tile.author}</span>}
-                                    actionIcon={
-                                        <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
-                                            <InfoIcon />
-                                        </IconButton>
-                                    }
-                                />
+            <CssBaseline />
+            <Grid container spacing={3}>
+                <Grid item xs={9}>
+                    {selectedFamily && (
+                        <Typography variant="h1">{selectedFamily.familyName}</Typography>
+                    )}
+                    {!selectedFamily && (
+                        <Typography variant="h2">Join and/or Select a Family</Typography>
+                    )}
+                    <h4>Your username is (temp, for testing): {username}</h4>
+                    <GridList cellHeight={"auto"} className={classes.gridList} cols={2}>
+                        {artefacts.map((artefact, key) => (
+                            <GridListTile>
+                                <ArtefactCard
+                                    key={key}
+                                    mediaURI={artefact.node.upload}
+                                    title={artefact.node.name}
+                                    description={artefact.node.description}
+                                    id={artefact.node.id} />
                             </GridListTile>
                         ))}
                     </GridList>
-                    </div>
-            </Grid>
-            <Grid item xs={3}>
+                </Grid>
+                <Grid item xs={3}>
                     <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
                         Select Family
                     </InputLabel>
@@ -160,21 +170,21 @@ function UserHomeView(props) {
                         inputProps={{
                             name: 'age',
                             id: 'outlined-age-simple',
-                            styles: {padding: '4px'}
+                            styles: { padding: '4px' }
                         }}
                         padding="5px"
                     >
                         {families && (families.map((item, key) =>
-                                <MenuItem 
+                            <MenuItem
                                 key={item.id}
                                 value={item.id}
-                                >
+                            >
                                 {item.familyName}
-                                </MenuItem>
-                            )
+                            </MenuItem>
+                        )
                         )}
                     </Select>
-            </Grid>
+                </Grid>
             </Grid>
         </Layout>
     )
