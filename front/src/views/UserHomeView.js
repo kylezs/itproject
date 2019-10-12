@@ -157,8 +157,14 @@ function UserHomeView(props) {
     const selectedFamily = home_data.me.profile.selectedFamily
     const families = home_data.me.isMemberOf;
     const profileId = home_data.me.profile.id;
-    const artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges;
-
+    let artefacts = []
+    
+    // If the user has selected a family there will be a list of artefacts
+    // Though the list may be empty
+    if (selectedFamily) {
+        artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges;
+    }
+    
     return (
         <Layout>
             <CssBaseline />
