@@ -1,36 +1,39 @@
 import React, { useState, useContext } from 'react'
-import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import TextField from '@material-ui/core/TextField'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import Link from '@material-ui/core/Link'
-import { Link as RouterLink } from 'react-router-dom'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
+import {
+    Button,
+    TextField,
+    FormHelperText,
+    Link,
+    Grid,
+    Typography,
+    Paper,
+    Container
+} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import Layout from '../components/Layout'
+import { Link as RouterLink } from 'react-router-dom'
 import authContext from '../authContext'
 import { useMutation } from '@apollo/react-hooks'
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from '../constants.js'
 
 import { LOGIN_MUTATION } from '../gqlQueriesMutations'
 
-
 const useStyles = makeStyles(theme => ({
     '@global': {
         body: {
-            backgroundColor: theme.palette.common.white
+            backgroundColor: theme.palette.background.paper
         }
     },
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: theme.palette.background.paper
     },
     form: {
         width: '50%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3)
+        marginTop: theme.spacing(3),
+        backgroundColor: theme.palette.background.paper
     },
     submit: {
         margin: theme.spacing(3, 0, 2)
@@ -82,10 +85,9 @@ function Login(props) {
     }
 
     return (
-        <Layout>
-            <CssBaseline />
-            <div className={classes.paper}>
-                <form className={classes.form} onSubmit={submitForm}>
+        <form className={classes.form} onSubmit={submitForm}>
+            <Container justifyContent='center'>
+                <Paper className={classes.paper}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Typography component='h1' variant='h5'>
@@ -155,9 +157,9 @@ function Login(props) {
                             </Grid>
                         </Grid>
                     </Grid>
-                </form>
-            </div>
-        </Layout>
+                </Paper>
+            </Container>
+        </form>
     )
 }
 

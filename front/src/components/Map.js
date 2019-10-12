@@ -17,24 +17,17 @@ const _handleResponse = response => {
     for (var i = 0; i < features.length; i++) {
         var feature = features[i]
         var result = {}
+        result.mapState = { center: feature.center }
+
         if (feature.place_type[0] === 'place') {
             const bboxCoords = feature.bbox
             const bbox = [
                 [bboxCoords[0], bboxCoords[1]],
                 [bboxCoords[2], bboxCoords[3]]
             ]
-            result.mapState = {
-                fitBounds: bbox,
-                center: feature.center
-            }
+            result.mapState.fitBounds = bbox
         } else if (feature.place_type[0] === 'address') {
-            result.mapState = {
-                center: feature.center,
-                zoom: [15]
-            }
-        } else {
-            out.noResults = true
-            return out
+            result.mapState.zoom = [15]
         }
         result.placeName = feature.place_name
         result.locationType = feature.place_type[0]
@@ -52,13 +45,21 @@ const _handleError = error => {
 }
 
 export const geocodeQuery = (query, types) => {
+    if (!query) {
+        return new Promise(function(resolve, reject) {
+            resolve()
+        })
+    }
+
+    var args = {
+        query: query,
+        limit: 5
+    }
+    if (types) args.types = types
+
     if (typeof query === 'object') {
         return geocodingService
-            .reverseGeocode({
-                query: query,
-                limit: 1,
-                types: types
-            })
+            .reverseGeocode(args)
             .send()
             .then(
                 response => _handleResponse(response),
@@ -66,11 +67,7 @@ export const geocodeQuery = (query, types) => {
             )
     } else if (typeof query === 'string') {
         return geocodingService
-            .forwardGeocode({
-                query: query,
-                limit: 5,
-                types: types
-            })
+            .forwardGeocode(args)
             .send()
             .then(
                 response => _handleResponse(response),
@@ -87,11 +84,6 @@ const Mapbox = ReactMapboxGl({
 })
 
 export default function Map(props) {
-    const setMarker = (map, e) => {
-        var newCoord = [e.lngLat.lng, e.lngLat.lat]
-        props.setCoord(newCoord)
-    }
-
     const containerStyle = {
         height: '60vh',
         width: '100vw'
@@ -105,11 +97,10 @@ export default function Map(props) {
                     : 'mapbox://styles/mapbox/streets-v9?optimize=true'
             }
             containerStyle={containerStyle}
-            onClick={(map, e) => setMarker(map, e)}
             {...props.mapState}
         >
-            {props.coord && props.coord.length && (
-                <Marker coordinates={props.coord}>
+            {props.mapState && props.mapState.center && (
+                <Marker coordinates={props.mapState.center}>
                     <img
                         src={'http://maps.google.com/mapfiles/ms/icons/red.png'}
                         alt='marker-img'

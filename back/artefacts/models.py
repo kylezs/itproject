@@ -44,13 +44,7 @@ class Artefact(models.Model):
     belongs_to_families = models.ManyToManyField(Family,
                                                  related_name='has_artefacts', blank=True)
 
-    location = ArrayField(models.FloatField(), blank=True, null=True)
-    location_type = models.CharField(
-        max_length=9,
-        choices=[('place', 'place'), ('address', 'address')],
-        default='address',
-        blank=True
-    )
+    address = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name = _('artefact')
