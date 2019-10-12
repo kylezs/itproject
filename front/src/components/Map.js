@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import ReactMapboxGl, { Layer, Feature, Marker, Popup } from 'react-mapbox-gl'
 import { MY_ACCESS_TOKEN } from '../constants'
-import ArtefactCard from '../views/ArtefactCard'
+import ArtefactCard from '../components/ArtefactCard'
 
 const Mapbox = ReactMapboxGl({
     accessToken: MY_ACCESS_TOKEN,
