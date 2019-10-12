@@ -33,12 +33,13 @@ class Query(ObjectType):
 
     artefact = Field(ArtefactType, id=Argument(ID, required=True))
 
-    def resolve_artefacts_for_family(root, info, **kwargs):
-        return Artefact.objects.filter()
-
 
     def resolve_artefacts(root, info, **kwargs):
-        return Artefact.objects.all()
+        user = info.context.user
+        if user.is_superuser:
+            return Artefact.objects.all()
+        else:
+            raise Exception(AUTH_EXCEPTION)
 
     def resolve_artefact(root, info, **kwargs):
         user = info.context.user
@@ -89,7 +90,14 @@ class Query(ObjectType):
         if user.is_anonymous:
             raise Exception(AUTH_EXCEPTION)
 
-        return Family.objects.get(id=kwargs.get('id'))
+        family = Family.objects.get(id=kwargs.get('id'))
+        user_in_family = user in family.family_members.all()
+
+        if user.is_superuser or family.family_admin == user or user_in_family:
+            return family
+        else:
+            raise Exception(AUTH_EXCEPTION)
+
 
     def resolve_families(self, info, **kwargs):
         user = info.context.user
