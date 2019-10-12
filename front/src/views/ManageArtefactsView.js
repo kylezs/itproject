@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import { CssBaseline } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
-import ArtefactCard from './ArtefactCard'
+import ArtefactCard from '../components/ArtefactCard'
 
 const useStyles = makeStyles(theme => ({
     textField: {
