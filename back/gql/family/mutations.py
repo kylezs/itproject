@@ -36,3 +36,23 @@ class FamilyCreate(Mutation):
         family.family_members.set([user])
         
         return FamilyCreate(family=family)
+
+class FamilyJoin(Mutation):
+    class Arguments:
+        joinCode = String(required=True)
+    
+    family = Field(FamilyType)
+
+    @classmethod
+    def mutate(cls, root, info, **data):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception(AUTH_EXCEPTION)
+
+        # there should only ever be one family with a join code, but filter
+        # and not get, means it won't crash
+        to_join = Family.objects.filter(join_code=data.get("joinCode"))[0]
+
+        to_join.family_members.add(user)
+
+        return FamilyJoin(family=to_join)

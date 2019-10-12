@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import Layout from '../components/Layout';
 import authContext from '../authContext';
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -10,7 +9,8 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Typography, CssBaseline } from '@material-ui/core';
+import { Typography, CssBaseline, Button, TextField, Grid,
+FormControl } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import gql from "graphql-tag";
 import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks';
@@ -58,6 +58,7 @@ const HOMEPAGE_INFO = gql`
                 selectedFamily {
                     id
                     familyName
+                    joinCode
                         hasArtefacts {
                             edges {
                                 node {
@@ -71,7 +72,19 @@ const HOMEPAGE_INFO = gql`
                     }
                 }
         }
-        }`
+    }`
+
+const JOIN_FAMILY_MUTATION = gql`
+mutation JoinFamily($joinCode: String!) {
+  familyJoin(joinCode: $joinCode) {
+    family {
+      familyName
+      familyAdmin {
+          username
+      }
+    }
+  }
+}`
 
 const SELECT_FAMILY_MUTATION = gql`
 mutation SelectFamilyMutation($profileId: Int!, $toFamily: String!) {
@@ -89,6 +102,23 @@ function UserHomeView(props) {
 
     const context = useContext(authContext)
     const username = context.user.username
+    const [formJoinCode, setFormJoinCode] = useState("")
+
+    const [joinFamilyMutation, { data: join_mutation_data }] = useMutation(JOIN_FAMILY_MUTATION,
+        {
+            refetchQueries: (data) => [
+                { query: HOMEPAGE_INFO },
+            ],
+        });
+
+    const handleJoinFamily = () => {
+        if (formJoinCode.length === 0) {
+            console.error("Enter a valid joinCode");
+            return;
+        }
+
+        joinFamilyMutation({variables: {joinCode: formJoinCode }})
+    }
 
     const _homepageInfoCompleted = (data) => {
         const selectedFamily = data.me.profile.selectedFamily
@@ -129,17 +159,16 @@ function UserHomeView(props) {
     const profileId = home_data.me.profile.id;
     const artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges;
 
-    console.log("Artefacts")
-    console.log(artefacts)
-
-
     return (
         <Layout>
             <CssBaseline />
             <Grid container spacing={3}>
                 <Grid item xs={9}>
                     {selectedFamily && (
+                        <div>
                         <Typography variant="h1">{selectedFamily.familyName}</Typography>
+                        <Typography variant="h5">Join code: {selectedFamily.joinCode}</Typography>
+                        </div>
                     )}
                     {!selectedFamily && (
                         <Typography variant="h2">Join and/or Select a Family</Typography>
@@ -184,6 +213,25 @@ function UserHomeView(props) {
                         )
                         )}
                     </Select>
+                    <FormControl
+                    fullWidth
+                    >
+                    <TextField 
+                        id="joinCodeField"
+                        label="Join a family"
+                        value={formJoinCode}
+                        className={classes.textField}
+                        margin="normal"
+                        onChange={e => setFormJoinCode(e.target.value)}
+                        fullWidth
+                    />
+                    <Button
+                        variant="outlined" 
+                        onClick={handleJoinFamily}
+                    >
+                        Join Family
+                    </Button>
+                    </FormControl>
                 </Grid>
             </Grid>
         </Layout>

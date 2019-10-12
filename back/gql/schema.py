@@ -22,7 +22,7 @@ from .profiles.mutations import UpdateProfile
 # Family
 from family.models import Family
 from .family.types import FamilyType
-from .family.mutations import FamilyCreate
+from .family.mutations import FamilyCreate, FamilyJoin
 
 
 class Query(ObjectType):
@@ -123,6 +123,7 @@ class Mutation(ObjectType):
     # ==== Family mutation ====
     # Update and create
     family_create = FamilyCreate.Field()
+    family_join = FamilyJoin.Field()
 
 
 
