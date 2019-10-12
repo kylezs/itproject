@@ -6,7 +6,7 @@ import sys
 
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE",
-                          "family_artefacts_register.settings.development")
+                          "family_artefacts_register.settings.production")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
