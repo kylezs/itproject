@@ -1,31 +1,31 @@
 import React, { useState } from 'react'
-import { Container } from '@material-ui/core'
+import { CssBaseline } from '@material-ui/core'
 import Header from './Header'
 
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
+import blue from '@material-ui/core/colors/blue'
 
 import { THEME_TYPE } from '../constants.js'
 
 export default props => {
-    if (!localStorage.getItem(THEME_TYPE)){
+    if (!localStorage.getItem(THEME_TYPE)) {
         localStorage.setItem(THEME_TYPE, 'light')
-        console.log("here")
+        console.log('here')
     }
 
     const [theme, setTheme] = useState({
         palette: {
-            primary: {
-                light: '#757ce8',
-                main: '#3f50b5',
-                dark: '#002884',
-                contrastText: '#fff'
-            },
+            primary: blue,
             secondary: {
                 light: '#ff7961',
                 main: '#f44336',
                 dark: '#ba000d',
                 contrastText: '#000'
+            },
+            background: {
+                light: '#000000',
+                dark: '#121212'
             },
             type: localStorage.getItem(THEME_TYPE) || 'light'
         }
@@ -45,11 +45,10 @@ export default props => {
     const muiTheme = createMuiTheme(theme)
 
     return (
-        <div>
-            <ThemeProvider theme={muiTheme}>
-                <Header onToggleDarkTheme={toggleDarkTheme} />
-                <Container>{props.children}</Container>
-            </ThemeProvider>
-        </div>
-    )
+        <ThemeProvider theme={muiTheme}>
+            <CssBaseline />
+            <Header onToggleDarkTheme={toggleDarkTheme} />
+            {props.children}
+        </ThemeProvider>
+    )   
 }
