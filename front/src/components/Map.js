@@ -8,7 +8,8 @@ const Mapbox = ReactMapboxGl({
     accessToken: MY_ACCESS_TOKEN,
     interactive: true,
     attributionControl: false,
-    maxZoom: 18
+    maxZoom: 18,
+    minZoom: 2
 })
 
 export default function Map(props) {
@@ -16,7 +17,7 @@ export default function Map(props) {
     var artefacts = props.artefacts
     if (!artefacts) artefacts = []
 
-    const [popupOpen, setPopupOpen] = useState({})
+    const [openArtefactID, setOpenArtefactID] = useState('')
 
     return (
         <Mapbox
@@ -27,6 +28,7 @@ export default function Map(props) {
             }
             containerStyle={props.containerStyle}
             {...props.mapState}
+            onClick={e => setOpenArtefactID('')}
         >
             {artefacts.map(artefact => {
                 var { center, popup, ...rest } = artefact
@@ -38,13 +40,7 @@ export default function Map(props) {
                     <Fragment key={artefactID}>
                         <Marker
                             coordinates={center}
-                            onClick={e => {
-                                setPopupOpen({
-                                    ...popupOpen,
-                                    [artefactID]: !popupOpen[artefactID]
-                                })
-                            }
-                            }
+                            onClick={e => setOpenArtefactID(artefactID)}
                         >
                             <img
                                 src={
@@ -53,7 +49,7 @@ export default function Map(props) {
                                 alt='marker-img'
                             />
                         </Marker>
-                        {popup && popupOpen[artefact.id] && (
+                        {popup && openArtefactID === artefactID && (
                             <Popup
                                 coordinates={center}
                                 offset={{

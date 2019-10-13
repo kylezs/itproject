@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 This component is to present a summary of the artefact to a user, it's used in the homepage
 and manage page as a quick way to assist navigating through artefacts
 */
-function ArtefactCard({ mediaURI, title, description, id }) {
+function ArtefactCard({ mediaURI, name, description, id }) {
     const classes = useStyles()
 
     return (
@@ -52,7 +52,7 @@ function ArtefactCard({ mediaURI, title, description, id }) {
                 <CardMedia
                     className={classes.media}
                     image={"https://img1.cgtrader.com/items/995815/731bda0123/antique-old-clock-3d-model-low-poly-animated-obj-3ds-fbx-blend-dae-mtl.jpg"}
-                    title={title}
+                    title={name}
                 />
                 <CardContent>
                     <Grid item xs zeroMinWidth>
@@ -62,7 +62,7 @@ function ArtefactCard({ mediaURI, title, description, id }) {
                             component='h2'
                             noWrap
                         >
-                            {title}
+                            {name}
                         </Typography>
                     </Grid>
                     <Grid item xs zeroMinWidth>

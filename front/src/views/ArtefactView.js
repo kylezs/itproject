@@ -815,10 +815,6 @@ function ArtefactView(props) {
                                             readOnly: view
                                         }}
                                         onChange={e => {
-                                            // setState({
-                                            //     ...state,
-                                            //     address: e.target.value
-                                            // })
                                             handleSetField(
                                                 'address',
                                                 e.target.value

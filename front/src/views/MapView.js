@@ -1,36 +1,55 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment, useRef } from 'react'
 import { useTheme } from '@material-ui/styles'
-import { Popover } from '@material-ui/core'
-import { Loading, Map, geocodeQuery } from '../components'
+import {
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    TextField
+} from '@material-ui/core'
+import { Map } from '../components'
 import { artefactGeocodeQuery } from '../components/MapAPI'
 
 import { GetFamiliesWrapper, Layout } from '../components'
 
 import { GET_FAMILY_ARTEFACTS } from '../gqlQueriesMutations'
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
+
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles(theme => ({
+    map: {
+        position: 'relative'
+    },
+    overlay: {
+        position: 'absolute',
+        top: '70px',
+        right: '5px',
+        backgroundColor: 'transparent',
+        margin: theme.spacing(1),
+        minWidth: 120,
+    }
+}))
 
 function MapView(props) {
     const theme = useTheme()
+    const classes = useStyles()
     var mapStyle = 'mapbox://styles/mapbox/streets-v9?optimize=true'
     if (theme.palette.type === 'dark') {
         mapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
     }
 
-    const [getArtefacts, { called, loading, data }] = useLazyQuery(
-        GET_FAMILY_ARTEFACTS
-    )
     var { families, familiesLoading } = props
-    if (families.length && !called) {
-        getArtefacts({
-            variables: { id: families[0].id }
-        })
-    }
+    const target = useRef(null)
 
-    var artefacts = []
+    // initally query is run with invalid ID
+    const [state, setState] = useState({
+        value: {id: "-1"}
+    })
+
     const [mapArtefacts, setMapArtefacts] = useState([])
-    const [init, setInit] = useState(false)
-
-    if (data && data.family && !init) {
+    const getArtefactMapData = data => {
+        if (!data) return
         artefacts = data.family.hasArtefacts.edges.map(edge => edge.node)
 
         var promiseArr = []
@@ -53,23 +72,57 @@ function MapView(props) {
                 )
             }
         }
-
         Promise.all(promiseArr).then(result => setMapArtefacts(result))
-        setInit(true)
     }
 
-    // process artefacts into { center, showPopup, <artefact card props> }
+    useQuery(GET_FAMILY_ARTEFACTS, {
+        variables: { id: state.value.id },
+        onCompleted: getArtefactMapData,
+        onError: error => console.log(error)
+    })
+
+    var artefacts = []
+
+    const handleChange = event => {
+        if (event.target.value === state.value) return
+        setMapArtefacts([])
+        setState({
+            value: event.target.value,
+        })
+    }
+
     return (
-        <Map
-            // className={classes.map}
-            mapStyle={mapStyle}
-            mapState={{zoom: [0]}}
-            containerStyle={{
-                height: '91vh',
-                width: '100vw'
-            }}
-            artefacts={mapArtefacts}
-        />
+        <Fragment>
+            <Map
+                className={classes.map}
+                mapStyle={mapStyle}
+                mapState={{ zoom: [2] }}
+                containerStyle={{
+                    height: '100vh',
+                    width: '100vw'
+                }}
+                artefacts={mapArtefacts}
+            />
+            {!familiesLoading && (
+                <TextField
+                    className={classes.overlay}
+                    label='Select Family'
+                    variant='outlined'
+                    value={state.value || {}}
+                    select
+                    onChange={handleChange}
+                    SelectProps={{
+                        autoWidth: true
+                    }}
+                >
+                    {families.map(fam => (
+                        <MenuItem value={fam} key={fam.id}>
+                            {fam.familyName}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            )}
+        </Fragment>
     )
 }
 
