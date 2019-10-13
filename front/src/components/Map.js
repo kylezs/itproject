@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react'
-import ReactMapboxGl, { Layer, Feature, Marker, Popup } from 'react-mapbox-gl'
+import React, { Fragment, useState } from 'react'
+import ReactMapboxGl, { Marker, Popup } from 'react-mapbox-gl'
 import { MY_ACCESS_TOKEN } from '../constants'
 import ArtefactCard from '../components/ArtefactCard'
+import { useTheme } from '@material-ui/styles'
 
 const Mapbox = ReactMapboxGl({
     accessToken: MY_ACCESS_TOKEN,
@@ -11,6 +12,12 @@ const Mapbox = ReactMapboxGl({
 })
 
 export default function Map(props) {
+    const theme = useTheme()
+    var artefacts = props.artefacts
+    if (!artefacts) artefacts = []
+
+    const [popupOpen, setPopupOpen] = useState({})
+
     return (
         <Mapbox
             style={
@@ -21,15 +28,24 @@ export default function Map(props) {
             containerStyle={props.containerStyle}
             {...props.mapState}
         >
-            {props.artefacts.map(artefact => {
-                var { center, showPopup, ...rest } = artefact
-
-                if (!center || !center.length){
+            {artefacts.map(artefact => {
+                var { center, popup, ...rest } = artefact
+                if (!center || !center.length) {
                     return
                 }
+                var artefactID = artefact.id
                 return (
-                    <Fragment>
-                        <Marker coordinates={center}>
+                    <Fragment key={artefactID}>
+                        <Marker
+                            coordinates={center}
+                            onClick={e => {
+                                setPopupOpen({
+                                    ...popupOpen,
+                                    [artefactID]: !popupOpen[artefactID]
+                                })
+                            }
+                            }
+                        >
                             <img
                                 src={
                                     'http://maps.google.com/mapfiles/ms/icons/red.png'
@@ -37,7 +53,7 @@ export default function Map(props) {
                                 alt='marker-img'
                             />
                         </Marker>
-                        {showPopup && (
+                        {popup && popupOpen[artefact.id] && (
                             <Popup
                                 coordinates={center}
                                 offset={{

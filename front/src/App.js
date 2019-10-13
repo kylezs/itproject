@@ -20,6 +20,8 @@ import Error404View from './views/Error404View'
 
 import UserHomeView from './views/UserHomeView'
 
+import MapView from './views/MapView'
+
 function App(props) {
     return (
         <Router>
@@ -35,24 +37,8 @@ function App(props) {
                         landingPage
                     />
                     {/* User auth routes */}
-                    <Route
-                        exact
-                        path='/login/'
-                        render={props => (
-                            <Layout>
-                                <Login {...props} />
-                            </Layout>
-                        )}
-                    />
-                    <Route
-                        exact
-                        path='/signup/'
-                        render={props => (
-                            <Layout>
-                                <Signup {...props} />
-                            </Layout>
-                        )}
-                    />
+                    <Route exact path='/login/' component={Login} />
+                    <Route exact path='/signup/' component={Signup} />
                     <Route exact path='/logout/' component={Logout} />
 
                     {/* Artefact routes */}
@@ -84,10 +70,19 @@ function App(props) {
                     {/* Family routes */}
                     <PrivateRoute
                         exact
-                        path='/family/create'
+                        path='/family/create/'
                         loggedIn={CreateFamilyView}
                         landingPage
                     />
+
+                    {/* Map */}
+                    <PrivateRoute
+                        exact
+                        path='/map/'
+                        loggedIn={MapView}
+                        landingPage
+                    />
+
                     <Route component={Error404View} />
                 </Switch>
             </div>

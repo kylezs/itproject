@@ -16,7 +16,6 @@ import {
     ListItemIcon,
     ListSubheader,
     ListItemText,
-    Collapse,
     Checkbox,
     Paper,
     FormHelperText,
@@ -24,68 +23,23 @@ import {
     Popper
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
-import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'
-import { Loading, Map, geocodeQuery } from '../components'
+import {
+    Loading,
+    Map,
+    geocodeQuery,
+    artefactFamilyFormUseStyles
+} from '../components'
 import authContext from '../authContext'
 import { useMutation } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
 import SearchIcon from '@material-ui/icons/Search'
 
+import { Layout } from '../components'
 import {
     CREATE_ARTEFACT_MUTATION,
     UPDATE_ARTEFACT_MUTATION
 } from '../gqlQueriesMutations'
-
-const useStyles = makeStyles(theme => ({
-    root: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: theme.palette.background.paper,
-        justifyContent: 'center'
-    },
-    formControl: {
-        height: '100%',
-        justifyContent: 'center'
-    },
-    title: {
-        marginLeft: theme.spacing(3),
-        marginRight: theme.spacing(3),
-        padding: theme.spacing(1),
-        textAlign: 'center'
-    },
-    paper: {
-        padding: theme.spacing(1),
-        // textAlign: 'center',
-        backgroundColor: theme.palette.background.paper
-    },
-    paperTextWrapper: {
-        padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
-        height: '100%',
-        alignItems: 'center'
-    },
-    button: {
-        height: '100%'
-    },
-    map: {
-        height: '200px',
-        type: theme.palette.type
-    },
-    form: {
-        marginBottom: theme.spacing(10),
-        marginTop: theme.spacing(2),
-        display: 'flex',
-        flexWrap: 'wrap'
-    },
-    iconButton: {
-        padding: 10
-    },
-    dropzone: {
-        backgroundColor: theme.palette.background.paper,
-        minHeight: '80px'
-    }
-}))
 
 function ArtefactView(props) {
     const context = useContext(authContext)
@@ -111,7 +65,7 @@ function ArtefactView(props) {
     }
 
     const theme = useTheme()
-    const classes = useStyles()
+    const classes = artefactFamilyFormUseStyles()
 
     const [beingEdited, setBeingEdited] = useState('')
     const [prevValue, setPrevValue] = useState({})
@@ -256,7 +210,7 @@ function ArtefactView(props) {
     const _handleGeocodeQuery = query => {
         if (query) {
             console.log('Query run with argument: ', query)
-            return geocodeQuery(query, ['place', 'address']).then(response => {
+            return geocodeQuery(query).then(response => {
                 var errMsg = ''
                 if (response.error) {
                     errMsg = 'Unknown error occurred, check console for details'
@@ -510,7 +464,7 @@ function ArtefactView(props) {
                     {/* Left Pane */}
                     <Grid item xs={12} sm={6} container spacing={1}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -548,7 +502,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -603,7 +557,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -641,7 +595,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -683,7 +637,7 @@ function ArtefactView(props) {
                         alignContent='stretch'
                     >
                         <Grid item xs={12}>
-                            <Paper className={classes.paper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -733,7 +687,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -831,7 +785,7 @@ function ArtefactView(props) {
                         {/* TO DO: show images in different way on view page */}
                         {!view && (
                             <Grid item xs={12}>
-                                <Paper className={classes.paper}>
+                                <Paper className={classes.paperWrapper} elevation={3}>
                                     <DropzoneArea
                                         initialFiles={state.files || []}
                                         onChange={files =>
@@ -846,7 +800,7 @@ function ArtefactView(props) {
 
                     <Grid container item xs={12} spacing={1}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -1039,4 +993,23 @@ function ArtefactView(props) {
     )
 }
 
-export default withRouter(ArtefactView)
+function Wrapped(props) {
+    return (
+        <Layout>
+            <Grid
+                container
+                spacing={0}
+                direction='column'
+                alignItems='center'
+                justify='center'
+                style={{ minHeight: '80vh' }}
+            >
+                <Grid item xs={10}>
+                    <ArtefactView {...props} />
+                </Grid>
+            </Grid>
+        </Layout>
+    )
+}
+
+export default withRouter(Wrapped)

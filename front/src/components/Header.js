@@ -1,15 +1,17 @@
 import React, { useContext } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import {
     IconButton,
     Typography,
     Toolbar,
-    AppBar
+    AppBar,
+    Button,
+    makeStyles,
+    Grid
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 
-import Brightness3Icon from '@material-ui/icons/Brightness3';
-import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
+import Brightness3Icon from '@material-ui/icons/Brightness3'
+import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh'
 
 import LoggedInBar from './LoggedInBar'
 import NotLoggedInBar from './NotLoggedInBar'
@@ -27,7 +29,8 @@ const useStyles = makeStyles(theme => ({
         marginRight: theme.spacing(2)
     },
     title: {
-        flexGrow: 1
+        flexGrow: 1,
+        alignText: 'left'
     }
 }))
 
@@ -37,43 +40,50 @@ export default function MenuAppBar(props) {
     let loggedIn = context.authenticated
     let username = null
     const theme = useTheme()
-    const dark = (theme && theme.palette.type === 'dark')
+    const dark = theme && theme.palette.type === 'dark'
     return (
         <div className={classes.root}>
-            <AppBar position='static'>
+            <AppBar position='static' color={dark ? 'inherit' : 'primary'}>
                 <Toolbar>
-                    <IconButton
-                        edge='start'
-                        className={classes.menuButton}
-                        color='inherit'
-                        aria-label='menu'
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant='h6' className={classes.title}>
-                        <Link
-                            component={RouterLink}
-                            to='/'
-                            color='inherit'
-                            variant='inherit'
-                            underline='none'
-                        >
-                            Family AR
-                        </Link>
-                    </Typography>
+                    <Grid container>
+                        <Grid item xs={4} container>
+                            <IconButton
+                                edge='start'
+                                className={classes.menuButton}
+                                color='inherit'
+                                aria-label='menu'
+                            >
+                                <MenuIcon />
+                            </IconButton>
 
-                    <IconButton
-                        edge='start'
-                        className={classes.menuButton}
-                        color='inherit'
-                        aria-label='menu'
-                        onClick={props.onToggleDarkTheme}
-                    >
-                        {!dark ? <Brightness3Icon /> : <BrightnessHighIcon />}
-                    </IconButton>
+                            <Button
+                                className={classes.title}
+                                component={RouterLink}
+                                to='/'
+                                color='inherit'
+                            >
+                                Home
+                            </Button>
+                        </Grid>
 
-                    {loggedIn && <LoggedInBar username={username} />}
-                    {!loggedIn && <NotLoggedInBar />}
+                        <Grid item xs={8} container justify='flex-end' alignItems='center'>
+                            <IconButton
+                                className={classes.menuButton}
+                                color='inherit'
+                                aria-label='menu'
+                                onClick={props.onToggleDarkTheme}
+                            >
+                                {!dark ? (
+                                    <Brightness3Icon />
+                                ) : (
+                                    <BrightnessHighIcon />
+                                )}
+                            </IconButton>
+
+                            {loggedIn && <LoggedInBar username={username} />}
+                            {!loggedIn && <NotLoggedInBar />}
+                        </Grid>
+                    </Grid>
                 </Toolbar>
             </AppBar>
         </div>

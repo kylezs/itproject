@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, Fragment } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
+
 import {
     Button,
     TextField,
@@ -6,43 +8,20 @@ import {
     Link,
     Grid,
     Typography,
-    Paper,
-    Container
+    Paper
 } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { Link as RouterLink } from 'react-router-dom'
-import authContext from '../authContext'
+
 import { useMutation } from '@apollo/react-hooks'
+
+import authContext from '../authContext'
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from '../constants.js'
+import { Layout, formUseStyles } from '../components'
 
 import { LOGIN_MUTATION } from '../gqlQueriesMutations'
 
-const useStyles = makeStyles(theme => ({
-    '@global': {
-        body: {
-            backgroundColor: theme.palette.background.paper
-        }
-    },
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        backgroundColor: theme.palette.background.paper
-    },
-    form: {
-        width: '50%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
-        backgroundColor: theme.palette.background.paper
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2)
-    }
-}))
-
 function Login(props) {
     const context = useContext(authContext)
-    const classes = useStyles()
+    const classes = formUseStyles()
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -51,11 +30,8 @@ function Login(props) {
 
     const _confirm = async data => {
         const { token } = data.tokenAuth
-        console.log('getting token first in confirm mutation')
         context.handleAuthentication(token)
         localStorage.setItem(AUTH_TOKEN, token)
-
-        // this._saveUserData(token)
         props.history.push(`/`)
     }
 
@@ -85,82 +61,97 @@ function Login(props) {
     }
 
     return (
-        <form className={classes.form} onSubmit={submitForm}>
-            <Container justifyContent='center'>
-                <Paper className={classes.paper}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography component='h1' variant='h5'>
-                                Log In
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant='outlined'
-                                required
-                                fullWidth
-                                id='username'
-                                label='Username'
-                                autoFocus
-                                onChange={e => setUsername(e.target.value)}
-                                error={invalidCred}
-                            />
-                        </Grid>
+        <Paper className={classes.paper} elevation={6}>
+            <form onSubmit={submitForm} className={classes.form}>
+                <Typography
+                    component='h1'
+                    variant='h5'
+                    className={classes.root}
+                >
+                    Log In
+                </Typography>
+                <TextField
+                    className={classes.root}
+                    variant='outlined'
+                    required
+                    fullWidth
+                    id='username'
+                    label='Username'
+                    autoFocus
+                    onChange={e => setUsername(e.target.value)}
+                    error={invalidCred}
+                />
+                <TextField
+                    className={classes.root}
+                    variant='outlined'
+                    required
+                    fullWidth
+                    label='Password'
+                    type='password'
+                    id='password'
+                    onChange={e => setPassword(e.target.value)}
+                    error={invalidCred}
+                    helperText={invalidCred ? 'Please enter valid credentials' : ''}
+                />
 
-                        <Grid item xs={12}>
-                            <TextField
-                                variant='outlined'
-                                required
-                                fullWidth
-                                label='Password'
-                                type='password'
-                                id='password'
-                                onChange={e => setPassword(e.target.value)}
-                                error={invalidCred}
-                            />
-                            {invalidCred && (
-                                <FormHelperText
-                                    id='password'
-                                    error={invalidCred}
-                                >
-                                    Please enter valid credentials
-                                </FormHelperText>
-                            )}
-                        </Grid>
+                <Grid
+                    container
+                    justify='center'
+                    alignItems='center'
+                    spacing={3}
+                >
+                    <Grid item xs={6}>
+                        <Button
+                            className={classes.root}
+                            name='submit'
+                            label='Submit'
+                            type='submit'
+                            variant='contained'
+                            color='primary'
+                            fullWidth
+                        >
+                            Log In
+                        </Button>
 
-                        <Grid item xs={12}>
-                            <Button
-                                name='submit'
-                                label='Submit'
-                                type='submit'
-                                fullWidth
-                                variant='contained'
-                                color='primary'
+                        {unknownError && (
+                            <FormHelperText
+                                error={unknownError}
+                                className={classes.root}
                             >
-                                Log In
-                            </Button>
-                            {unknownError && (
-                                <FormHelperText
-                                    id='password'
-                                    error={unknownError}
-                                >
-                                    Unknown Error Occurred
-                                </FormHelperText>
-                            )}
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <Grid item>
-                                <Link component={RouterLink} to='/signup'>
-                                    Need an account? Sign up
-                                </Link>
-                            </Grid>
-                        </Grid>
+                                Unknown Error Occurred
+                            </FormHelperText>
+                        )}
                     </Grid>
-                </Paper>
-            </Container>
-        </form>
+
+                    <Grid item xs={6}>
+                        <Link
+                            component={RouterLink}
+                            to='/signup'
+                            className={classes.root}
+                            color='inherit'
+                        >
+                            Need an account? Sign up
+                        </Link>
+                    </Grid>
+                </Grid>
+            </form>
+        </Paper>
     )
 }
 
-export default Login
+export default props => (
+    <Layout>
+        <Grid
+            container
+            spacing={0}
+            direction='column'
+            alignItems='center'
+            justify='center'
+            style={{ minHeight: '80vh' }}
+        >
+            <Grid item xs={10} sm={8} md={6} lg={4}>
+                <Login {...props} />
+            </Grid>
+        </Grid>
+    </Layout>
+)

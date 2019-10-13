@@ -8,6 +8,7 @@ export default function GetArtefactWrapper({
     childProps,
     ...rest
 }) {
+    console.log("HERE")
     const context = useContext(authContext)
     const username = context.user.username
 

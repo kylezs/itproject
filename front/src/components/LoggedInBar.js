@@ -1,24 +1,24 @@
-import React, { useContext } from 'react';
-import { IconButton, Menu, MenuItem, Button } from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import authContext from '../authContext';
+import React, { useContext } from 'react'
+import { IconButton, Menu, MenuItem, Button } from '@material-ui/core'
+import AccountCircle from '@material-ui/icons/AccountCircle'
+import authContext from '../authContext'
 import { Link as RouterLink } from 'react-router-dom'
 
 export default props => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const context = useContext(authContext);
-    const open = Boolean(anchorEl);
+    const [anchorEl, setAnchorEl] = React.useState(null)
+    const context = useContext(authContext)
+    const open = Boolean(anchorEl)
 
     function handleMenu(event) {
-        setAnchorEl(event.currentTarget);
+        setAnchorEl(event.currentTarget)
     }
 
     function handleClose() {
-        setAnchorEl(null);
+        setAnchorEl(null)
     }
 
     function handleLogout() {
-        context.logout();
+        context.logout()
     }
 
     return (
@@ -39,6 +39,9 @@ export default props => {
                 color='inherit'
             >
                 Create Artefact
+            </Button>
+            <Button component={RouterLink} to='/map/' color='inherit'>
+                Artefact Map
             </Button>
             <IconButton
                 aria-label='account of current user'
@@ -70,4 +73,4 @@ export default props => {
             </Menu>
         </div>
     )
-};
+}
