@@ -65,7 +65,7 @@ function MapView(props) {
             mapStyle={mapStyle}
             mapState={{zoom: [0]}}
             containerStyle={{
-                height: '100vh',
+                height: '91vh',
                 width: '100vw'
             }}
             artefacts={mapArtefacts}

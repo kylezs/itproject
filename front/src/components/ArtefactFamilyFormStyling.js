@@ -20,9 +20,9 @@ export default makeStyles(theme => ({
     paper: {
         padding: theme.spacing(1),
         // textAlign: 'center',
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
     },
-    paperTextWrapper: {
+    paperWrapper: {
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
         height: '100%',

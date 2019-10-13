@@ -105,7 +105,7 @@ function CreateFamilyView(props) {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Paper className={classes.paper}>
+                    <Paper className={classes.paper} elevation={3}>
                         <FormControl className={classes.formControl} fullWidth>
                             <TextField
                                 variant='outlined'
@@ -120,7 +120,7 @@ function CreateFamilyView(props) {
                     </Paper>
                 </Grid>
                 <Grid item xs={12}>
-                    <Paper className={classes.paper}>
+                    <Paper className={classes.paper} elevation={3}>
                         <FormControl className={classes.formControl} fullWidth>
                             <TextField
                                 variant='outlined'
@@ -136,7 +136,7 @@ function CreateFamilyView(props) {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Paper className={classes.paper}>
+                    <Paper className={classes.paper} elevation={3}>
                         <FormControl className={classes.formControl} fullWidth>
                             <TextField
                                 variant='outlined'
@@ -159,6 +159,7 @@ function CreateFamilyView(props) {
                         fullWidth
                         variant='contained'
                         color='primary'
+                        elevation={10}
                     >
                         Create
                     </Button>

@@ -4,7 +4,7 @@ import Header from './Header'
 
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
-import blue from '@material-ui/core/colors/blue'
+import { deepPurple, lightBlue } from '@material-ui/core/colors'
 
 import { THEME_TYPE } from '../constants.js'
 
@@ -16,13 +16,8 @@ export default props => {
 
     const [theme, setTheme] = useState({
         palette: {
-            primary: blue,
-            secondary: {
-                light: '#ff7961',
-                main: '#f44336',
-                dark: '#ba000d',
-                contrastText: '#000'
-            },
+            primary: deepPurple,
+            secondary: lightBlue,
             background: {
                 light: '#000000',
                 dark: '#121212'

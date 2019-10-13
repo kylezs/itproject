@@ -464,7 +464,7 @@ function ArtefactView(props) {
                     {/* Left Pane */}
                     <Grid item xs={12} sm={6} container spacing={1}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -502,7 +502,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -557,7 +557,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -595,7 +595,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -637,7 +637,7 @@ function ArtefactView(props) {
                         alignContent='stretch'
                     >
                         <Grid item xs={12}>
-                            <Paper className={classes.paper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -687,7 +687,7 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -785,7 +785,7 @@ function ArtefactView(props) {
                         {/* TO DO: show images in different way on view page */}
                         {!view && (
                             <Grid item xs={12}>
-                                <Paper className={classes.paper}>
+                                <Paper className={classes.paperWrapper} elevation={3}>
                                     <DropzoneArea
                                         initialFiles={state.files || []}
                                         onChange={files =>
@@ -800,7 +800,7 @@ function ArtefactView(props) {
 
                     <Grid container item xs={12} spacing={1}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paperTextWrapper}>
+                            <Paper className={classes.paperWrapper} elevation={3}>
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
