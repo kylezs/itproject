@@ -8,8 +8,7 @@ import {
     Link,
     Grid,
     Typography,
-    Paper,
-    makeStyles
+    Paper
 } from '@material-ui/core'
 
 import { useMutation } from '@apollo/react-hooks'
@@ -92,44 +91,49 @@ function Login(props) {
                     id='password'
                     onChange={e => setPassword(e.target.value)}
                     error={invalidCred}
+                    helperText={invalidCred ? 'Please enter valid credentials' : ''}
                 />
 
-                <Button
-                    className={classes.root}
-                    name='submit'
-                    label='Submit'
-                    type='submit'
-                    variant='contained'
-                    color='primary'
+                <Grid
+                    container
+                    justify='center'
+                    alignItems='center'
+                    spacing={3}
                 >
-                    Log In
-                </Button>
+                    <Grid item xs={6}>
+                        <Button
+                            className={classes.root}
+                            name='submit'
+                            label='Submit'
+                            type='submit'
+                            variant='contained'
+                            color='primary'
+                            fullWidth
+                        >
+                            Log In
+                        </Button>
 
-                {invalidCred && (
-                    <FormHelperText
-                        error={invalidCred}
-                        className={classes.root}
-                    >
-                        Please enter valid credentials
-                    </FormHelperText>
-                )}
+                        {unknownError && (
+                            <FormHelperText
+                                error={unknownError}
+                                className={classes.root}
+                            >
+                                Unknown Error Occurred
+                            </FormHelperText>
+                        )}
+                    </Grid>
 
-                {unknownError && (
-                    <FormHelperText
-                        error={unknownError}
-                        className={classes.root}
-                    >
-                        Unknown Error Occurred
-                    </FormHelperText>
-                )}
-
-                <Link
-                    component={RouterLink}
-                    to='/signup'
-                    className={classes.root}
-                >
-                    Need an account? Sign up
-                </Link>
+                    <Grid item xs={6}>
+                        <Link
+                            component={RouterLink}
+                            to='/signup'
+                            className={classes.root}
+                            color='inherit'
+                        >
+                            Need an account? Sign up
+                        </Link>
+                    </Grid>
+                </Grid>
             </form>
         </Paper>
     )

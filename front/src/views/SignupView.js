@@ -166,27 +166,42 @@ function Signup(props) {
                     }
                 />
 
-                <Button
-                    className={classes.root}
-                    label='Submit'
-                    type='submit'
-                    variant='contained'
-                    color='primary'
-                    disabled={disableSubmit}
+                <Grid
+                    container
+                    justify='center'
+                    alignItems='center'
+                    spacing={3}
                 >
-                    Sign Up
-                </Button>
-                {unknownError && (
-                    <FormHelperText error={unknownError}></FormHelperText>
-                )}
+                    <Grid item xs={6}>
+                        <Button
+                            className={classes.root}
+                            fullWidth
+                            label='Submit'
+                            type='submit'
+                            variant='contained'
+                            color='primary'
+                            disabled={disableSubmit}
+                        >
+                            Sign Up
+                        </Button>
+                        {unknownError && (
+                            <FormHelperText
+                                error={unknownError}
+                            ></FormHelperText>
+                        )}
+                    </Grid>
 
-                <Link
-                    className={classes.root}
-                    component={RouterLink}
-                    to='/login'
-                >
-                    Already have an account? Log in
-                </Link>
+                    <Grid item xs={6}>
+                        <Link
+                            className={classes.root}
+                            component={RouterLink}
+                            to='/login'
+                            color='inherit'
+                        >
+                            Already have an account? Log in
+                        </Link>
+                    </Grid>
+                </Grid>
             </form>
         </Paper>
     )

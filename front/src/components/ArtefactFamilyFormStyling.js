@@ -5,7 +5,7 @@ export default makeStyles(theme => ({
         width: '100%',
         height: '100%',
         backgroundColor: theme.palette.background.paper,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     formControl: {
         height: '100%',
@@ -40,6 +40,7 @@ export default makeStyles(theme => ({
         marginTop: theme.spacing(2),
         display: 'flex',
         flexWrap: 'wrap',
+        textAlign: 'center'
     },
     iconButton: {
         padding: 10
