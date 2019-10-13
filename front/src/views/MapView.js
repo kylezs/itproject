@@ -44,7 +44,7 @@ function MapView(props) {
                         } else {
                             var mapArtefact = {
                                 ...artefact,
-                                showPopup: true,
+                                popup: true,
                                 center: response.results[0].mapState.center
                             }
                             return mapArtefact
@@ -63,7 +63,7 @@ function MapView(props) {
         <Map
             // className={classes.map}
             mapStyle={mapStyle}
-            // mapState={locationState.mapState}
+            mapState={{zoom: [0]}}
             containerStyle={{
                 height: '100vh',
                 width: '100vw'
