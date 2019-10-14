@@ -7,6 +7,7 @@ import {
     Paper,
     IconButton,
     Snackbar,
+    SnackbarContent,
     Button,
     Dialog,
     DialogActions,
@@ -15,6 +16,10 @@ import {
     DialogTitle
 } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/Help'
+import ErrorIcon from '@material-ui/icons/Error'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import { green } from '@material-ui/core/colors'
+
 import { Map } from '../components'
 import { artefactGeocodeQuery } from '../components/MapAPI'
 
@@ -45,6 +50,21 @@ const useStyles = makeStyles(theme => ({
     helpButton: {
         margin: theme.spacing(1),
         backgroundColor: theme.palette.background.paper
+    },
+    error: {
+        backgroundColor: theme.palette.error.dark
+    },
+    success: {
+        backgroundColor: green[600]
+    },
+    icon: {
+        opacity: 0.9,
+        marginRight: theme.spacing(1),
+        fontSize: 20
+    },
+    message: {
+        display: 'flex',
+        alignItems: 'center'
     }
 }))
 
@@ -84,6 +104,7 @@ function MapView(props) {
 
     const [mapArtefacts, setMapArtefacts] = useState([])
     const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const [errorSnackbar, setErrorSnackbar] = useState({ open: false, msg: '' })
     const [helpOpen, setHelpOpen] = useState(false)
     const getArtefactMapData = data => {
         if (!data) return
@@ -97,6 +118,10 @@ function MapView(props) {
                         var { response, artefact } = result
                         if (response.error) {
                             console.log(response.error)
+                            setErrorSnackbar({
+                                open: true,
+                                msg: 'Error loading artefacts'
+                            })
                         } else {
                             var mapArtefact = {
                                 ...artefact,
@@ -118,7 +143,11 @@ function MapView(props) {
     useQuery(GET_FAMILY_ARTEFACTS, {
         variables: { id: state.family.id },
         onCompleted: getArtefactMapData,
-        onError: error => console.log(error)
+        onError: error => {
+            if (!familiesLoading) {
+                setErrorSnackbar({ open: true, msg: 'Error loading family' })
+            }
+        }
     })
 
     var artefacts = []
@@ -269,7 +298,7 @@ function MapView(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-
+            
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -278,15 +307,42 @@ function MapView(props) {
                 open={snackbarOpen}
                 autoHideDuration={2000}
                 onClose={e => setSnackbarOpen(false)}
-                ContentProps={{
-                    'aria-describedby': 'message-id'
+            >
+                <SnackbarContent
+                    className={classes.success}
+                    aria-describedby='success-message-id'
+                    message={
+                        <span
+                            id='success-message-id'
+                            className={classes.message}
+                        >
+                            <CheckCircleIcon className={classes.icon} />
+                            {mapArtefacts.length} Artefacts Loaded
+                        </span>
+                    }
+                />
+            </Snackbar>
+
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
                 }}
-                message={
-                    <span id='message-id'>
-                        {mapArtefacts.length} Artefacts Loaded
-                    </span>
-                }
-            />
+                open={errorSnackbar.open}
+                autoHideDuration={2000}
+                onClose={e => setErrorSnackbar({ open: false, msg: '' })}
+            >
+                <SnackbarContent
+                    className={classes.error}
+                    aria-describedby='err-message-id'
+                    message={
+                        <span id='err-message-id' className={classes.message}>
+                            <ErrorIcon className={classes.icon} />
+                            {errorSnackbar.msg}
+                        </span>
+                    }
+                />
+            </Snackbar>
         </Fragment>
     )
 }
