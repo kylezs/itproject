@@ -5,11 +5,12 @@ export default makeStyles(theme => ({
         width: '100%',
         height: '100%',
         backgroundColor: theme.palette.background.paper,
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     formControl: {
         height: '100%',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        textAlign: 'left'
     },
     title: {
         marginLeft: theme.spacing(3),
@@ -20,13 +21,14 @@ export default makeStyles(theme => ({
     paper: {
         padding: theme.spacing(1),
         // textAlign: 'center',
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.background.paper
     },
     paperWrapper: {
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
         height: '100%',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderRadius: 10
     },
     button: {
         height: '100%'
@@ -47,6 +49,13 @@ export default makeStyles(theme => ({
     },
     dropzone: {
         backgroundColor: theme.palette.background.paper,
-        minHeight: '80px'
+        minHeight: '80px',
+        borderRadius: 10
+    },
+    outerContainer: {
+        spacing: theme.spacing(1),
+        alignItems: 'stretch',
+        alignContent: 'stretch',
+        justifyContent: 'center'
     }
 }))

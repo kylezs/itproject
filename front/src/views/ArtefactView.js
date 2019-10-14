@@ -269,7 +269,7 @@ function ArtefactView(props) {
     const handleUnselectedSearchField = () => {
         setLocationState({
             ...locationState,
-            locationError: 'Select a search result or clear search field'
+            locationError: 'Select a search result or clear search field before saving'
         })
     }
 
@@ -438,10 +438,8 @@ function ArtefactView(props) {
             <form onSubmit={submitHandler} className={classes.form}>
                 <Grid
                     container
+                    className={classes.outerContainer}
                     spacing={1}
-                    alignItems='stretch'
-                    alignContent='stretch'
-                    justify='space-evenly'
                 >
                     <Grid item xs={12} container justify='center'>
                         <Grid item xs={12} sm={8}>
@@ -926,7 +924,7 @@ function ArtefactView(props) {
                     </Grid>
 
                     {create && (
-                        <Grid item xs={6}>
+                        <Grid item xs={5}>
                             <Button
                                 name='create'
                                 label='Create'
