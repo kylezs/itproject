@@ -51,7 +51,9 @@ function ArtefactCard({ mediaURI, name, description, id }) {
             <CardActionArea>
                 <CardMedia
                     className={classes.media}
-                    image={"https://img1.cgtrader.com/items/995815/731bda0123/antique-old-clock-3d-model-low-poly-animated-obj-3ds-fbx-blend-dae-mtl.jpg"}
+                    image={
+                        'https://img1.cgtrader.com/items/995815/731bda0123/antique-old-clock-3d-model-low-poly-animated-obj-3ds-fbx-blend-dae-mtl.jpg'
+                    }
                     title={name}
                 />
                 <CardContent>
@@ -88,7 +90,7 @@ function ArtefactCard({ mediaURI, name, description, id }) {
                 </Button>
                 <Button
                     size='small'
-                    color='primary'
+                    color='secondary'
                     component={RouterLink}
                     to={`/artefacts/edit/${id}`}
                 >

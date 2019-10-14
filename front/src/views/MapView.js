@@ -137,8 +137,9 @@ function MapView(props) {
         variables: { id: state.family.id },
         onCompleted: getArtefactMapData,
         onError: error => {
-            if (!familiesLoading) {
+            if (state.family.id > 0) {
                 setErrorSnackbar({ open: true, msg: 'Error loading family' })
+                console.log(error)
             }
         }
     })
