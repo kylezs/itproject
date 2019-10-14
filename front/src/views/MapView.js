@@ -36,7 +36,8 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         padding: theme.spacing(1),
-        margin: theme.spacing(1)
+        margin: theme.spacing(1),
+        borderRadius: 10
     },
     menuButton: {
         // margin: theme.spacing(2)
@@ -57,8 +58,25 @@ function MapView(props) {
     // initally query is run with invalid ID
     const [state, setState] = useState({
         family: { id: '-1' },
+        defaultMapStyle: defaultMapStyle,
         mapStyle: defaultMapStyle
     })
+
+    if (state.defaultMapStyle !== defaultMapStyle){
+        // avoid unnecessary rerender of map
+        if (state.mapStyle !== defaultMapStyle){
+            setState({
+                ...state,
+                defaultMapStyle: defaultMapStyle,
+                mapStyle: defaultMapStyle
+            })
+        } else {
+            setState({
+                ...state,
+                defaultMapStyle: defaultMapStyle,
+            })
+        }
+    }
 
     const [mapArtefacts, setMapArtefacts] = useState([])
     const getArtefactMapData = data => {
@@ -115,7 +133,7 @@ function MapView(props) {
                 mapStyle={state.mapStyle}
                 mapState={{ zoom: [2] }}
                 containerStyle={{
-                    height: '100vh',
+                    height: '90vh',
                     width: '100vw'
                 }}
                 artefacts={mapArtefacts}

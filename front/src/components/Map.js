@@ -40,7 +40,13 @@ export default function Map(props) {
                     <Fragment key={artefactID}>
                         <Marker
                             coordinates={center}
-                            onClick={e => setOpenArtefactID(artefactID)}
+                            onClick={e => {
+                                if (openArtefactID === artefactID){
+                                    setOpenArtefactID('')
+                                } else {
+                                    setOpenArtefactID(artefactID)
+                                }
+                            }}
                         >
                             <img
                                 src={
