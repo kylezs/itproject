@@ -65,7 +65,9 @@ export default props => {
         <ThemeProvider theme={muiTheme}>
             <CssBaseline />
             <Header onToggleDarkTheme={toggleDarkTheme} />
+            <div style={{padding: '30px'}}>
             {props.children}
+            </div>
         </ThemeProvider>
     )
 }

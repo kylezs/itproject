@@ -4,9 +4,6 @@ import authContext from '../authContext';
 import { makeStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Typography, CssBaseline, Button, TextField, Grid,
@@ -23,10 +20,6 @@ const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         overflow: 'hidden',
-        backgroundColor: theme.palette.background.paper
-    },
-    gridList: {
-        width: '80%',
         backgroundColor: theme.palette.background.paper
     },
     icon: {
@@ -180,7 +173,7 @@ function UserHomeView(props) {
                         <Typography variant="h2">Join and/or Select a Family</Typography>
                     )}
                     <h4>Your username is (temp, for testing): {username}</h4>
-                    <GridList cellHeight={"auto"} className={classes.gridList} cols={2}>
+                    <GridList cellHeight={"auto"} cols={2}>
                         {artefacts.map((artefact, key) => (
                             <GridListTile
                                 key={key}>
@@ -201,14 +194,13 @@ function UserHomeView(props) {
                     <Select
                         variant='outlined'
                         fullWidth
+                        disabled={families.length <= 1}
                         value={selectedFamily ? selectedFamily.id : null}
                         onChange={handleChange}
                         inputProps={{
                             name: 'age',
                             id: 'outlined-age-simple',
-                            styles: { padding: '4px' }
                         }}
-                        padding="5px"
                     >
                         {families && (families.map((item, key) =>
                             <MenuItem
