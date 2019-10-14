@@ -5,8 +5,13 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    TextField
+    TextField,
+    Grid,
+    Paper,
+    Container,
+    IconButton
 } from '@material-ui/core'
+import HelpIcon from '@material-ui/icons/Help'
 import { Map } from '../components'
 import { artefactGeocodeQuery } from '../components/MapAPI'
 
@@ -25,18 +30,25 @@ const useStyles = makeStyles(theme => ({
         position: 'absolute',
         top: '70px',
         right: '5px',
-        backgroundColor: 'transparent',
+        // backgroundColor: theme.palette.background.paper,
         margin: theme.spacing(1),
-        minWidth: 120,
+        minWidth: 120
+    },
+    paper: {
+        padding: theme.spacing(1),
+        margin: theme.spacing(1)
+    },
+    menuButton: {
+        // margin: theme.spacing(2)
     }
 }))
 
 function MapView(props) {
     const theme = useTheme()
     const classes = useStyles()
-    var mapStyle = 'mapbox://styles/mapbox/streets-v9?optimize=true'
+    var defaultMapStyle = 'mapbox://styles/mapbox/streets-v9?optimize=true'
     if (theme.palette.type === 'dark') {
-        mapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
+        defaultMapStyle = 'mapbox://styles/mapbox/dark-v10?optimize=true'
     }
 
     var { families, familiesLoading } = props
@@ -44,7 +56,8 @@ function MapView(props) {
 
     // initally query is run with invalid ID
     const [state, setState] = useState({
-        value: {id: "-1"}
+        family: { id: '-1' },
+        mapStyle: defaultMapStyle
     })
 
     const [mapArtefacts, setMapArtefacts] = useState([])
@@ -76,7 +89,7 @@ function MapView(props) {
     }
 
     useQuery(GET_FAMILY_ARTEFACTS, {
-        variables: { id: state.value.id },
+        variables: { id: state.family.id },
         onCompleted: getArtefactMapData,
         onError: error => console.log(error)
     })
@@ -84,10 +97,14 @@ function MapView(props) {
     var artefacts = []
 
     const handleChange = event => {
-        if (event.target.value === state.value) return
-        setMapArtefacts([])
+        if (event.target.value === state.family) return
+
+        if (event.target.name === 'family') {
+            setMapArtefacts([])
+        }
         setState({
-            value: event.target.value,
+            ...state,
+            [event.target.name]: event.target.value
         })
     }
 
@@ -95,7 +112,7 @@ function MapView(props) {
         <Fragment>
             <Map
                 className={classes.map}
-                mapStyle={mapStyle}
+                mapStyle={state.mapStyle}
                 mapState={{ zoom: [2] }}
                 containerStyle={{
                     height: '100vh',
@@ -103,25 +120,89 @@ function MapView(props) {
                 }}
                 artefacts={mapArtefacts}
             />
-            {!familiesLoading && (
-                <TextField
-                    className={classes.overlay}
-                    label='Select Family'
-                    variant='outlined'
-                    value={state.value || {}}
-                    select
-                    onChange={handleChange}
-                    SelectProps={{
-                        autoWidth: true
-                    }}
+            <Grid
+                container
+                item
+                xs={4}
+                sm={1}
+                className={classes.overlay}
+                justify='flex-end'
+            >
+                {!familiesLoading && (
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            <TextField
+                                fullWidth
+                                label='Family'
+                                variant='outlined'
+                                value={state.family || {}}
+                                select
+                                onChange={handleChange}
+                                SelectProps={{
+                                    name: 'family',
+                                    autoWidth: true
+                                }}
+                            >
+                                {families.map(fam => (
+                                    <MenuItem value={fam} key={fam.id}>
+                                        {fam.familyName}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Paper>
+                    </Grid>
+                )}
+                <Grid item xs={12}>
+                    <Paper className={classes.paper}>
+                        <TextField
+                            fullWidth
+                            label='Map Style'
+                            variant='outlined'
+                            value={state.mapStyle}
+                            select
+                            onChange={handleChange}
+                            SelectProps={{
+                                name: 'mapStyle',
+                                autoWidth: true
+                            }}
+                        >
+                            <MenuItem value={defaultMapStyle}>Default</MenuItem>
+                            <MenuItem
+                                value={'mapbox://styles/mapbox/streets-v11'}
+                            >
+                                Streets
+                            </MenuItem>
+                            <MenuItem
+                                value={'mapbox://styles/mapbox/outdoors-v11'}
+                            >
+                                Outdoors
+                            </MenuItem>
+                            <MenuItem
+                                value={'mapbox://styles/mapbox/satellite-v9'}
+                            >
+                                Satellite
+                            </MenuItem>
+                            <MenuItem
+                                value={'mapbox://styles/mapbox/light-v10'}
+                            >
+                                Light
+                            </MenuItem>
+                            <MenuItem value={'mapbox://styles/mapbox/dark-v10'}>
+                                Dark
+                            </MenuItem>
+                        </TextField>
+                    </Paper>
+                </Grid>
+
+                <IconButton
+                    edge='start'
+                    className={classes.menuButton}
+                    color='inherit'
+                    aria-label='menu'
                 >
-                    {families.map(fam => (
-                        <MenuItem value={fam} key={fam.id}>
-                            {fam.familyName}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            )}
+                    <HelpIcon />
+                </IconButton>
+            </Grid>
         </Fragment>
     )
 }
