@@ -269,7 +269,8 @@ function ArtefactView(props) {
     const handleUnselectedSearchField = () => {
         setLocationState({
             ...locationState,
-            locationError: 'Select a search result or clear search field before saving'
+            locationError:
+                'Select a search result or clear search field before saving'
         })
     }
 
@@ -436,11 +437,7 @@ function ArtefactView(props) {
         <Fragment>
             <CssBaseline />
             <form onSubmit={submitHandler} className={classes.form}>
-                <Grid
-                    container
-                    className={classes.outerContainer}
-                    spacing={1}
-                >
+                <Grid container className={classes.outerContainer} spacing={1}>
                     <Grid item xs={12} container justify='center'>
                         <Grid item xs={12} sm={8}>
                             <Typography variant='h4' className={classes.title}>
@@ -462,7 +459,10 @@ function ArtefactView(props) {
                     {/* Left Pane */}
                     <Grid item xs={12} sm={6} container spacing={1}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -473,6 +473,7 @@ function ArtefactView(props) {
                                         id='artefact-name'
                                         label='Artefact name'
                                         variant='outlined'
+                                        autoFocus={!view}
                                         required
                                         fullWidth
                                         value={state.name || ''}
@@ -500,7 +501,10 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -555,7 +559,10 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -593,7 +600,10 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -635,7 +645,10 @@ function ArtefactView(props) {
                         alignContent='stretch'
                     >
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -685,7 +698,10 @@ function ArtefactView(props) {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -783,7 +799,10 @@ function ArtefactView(props) {
                         {/* TO DO: show images in different way on view page */}
                         {!view && (
                             <Grid item xs={12}>
-                                <Paper className={classes.paperWrapper} elevation={3}>
+                                <Paper
+                                    className={classes.paperWrapper}
+                                    elevation={3}
+                                >
                                     <DropzoneArea
                                         initialFiles={state.files || []}
                                         onChange={files =>
@@ -798,7 +817,10 @@ function ArtefactView(props) {
 
                     <Grid container item xs={12} spacing={1}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paperWrapper} elevation={3}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
                                 <FormControl
                                     className={classes.formControl}
                                     fullWidth
@@ -902,12 +924,15 @@ function ArtefactView(props) {
 
                                     <Grid container style={{ marginTop: 1 }}>
                                         <Map
+                                            interactive={false}
                                             className={classes.map}
                                             mapStyle={mapStyle}
                                             mapState={locationState.mapState}
                                             containerStyle={{
                                                 height: '60vh',
-                                                width: '100vw'
+                                                width: '100vw',
+                                                borderRadius: 10,
+                                                marginTop: 5
                                             }}
                                             artefacts={[
                                                 {

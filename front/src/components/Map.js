@@ -4,23 +4,32 @@ import { MY_ACCESS_TOKEN } from '../constants'
 import ArtefactCard from '../components/ArtefactCard'
 import { useTheme } from '@material-ui/styles'
 
-const Mapbox = ReactMapboxGl({
+const mapProps = {
     accessToken: MY_ACCESS_TOKEN,
-    interactive: true,
     attributionControl: false,
     maxZoom: 18,
     minZoom: 2
+}
+const Mapbox = ReactMapboxGl({
+    ...mapProps,
+    interactive: false
+})
+
+const InteractiveMapbox = ReactMapboxGl({
+    ...mapProps,
+    interactive: true
 })
 
 export default function Map(props) {
     const theme = useTheme()
+    const MapType = props.interactive ? InteractiveMapbox : Mapbox
     var artefacts = props.artefacts
     if (!artefacts) artefacts = []
 
     const [openArtefactID, setOpenArtefactID] = useState('')
 
     return (
-        <Mapbox
+        <MapType
             style={
                 props.mapStyle
                     ? props.mapStyle
@@ -70,6 +79,6 @@ export default function Map(props) {
                     </Fragment>
                 )
             })}
-        </Mapbox>
+        </MapType>
     )
 }

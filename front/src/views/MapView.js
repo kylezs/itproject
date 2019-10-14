@@ -161,6 +161,7 @@ function MapView(props) {
     return (
         <Fragment>
             <Map
+                interactive
                 mapStyle={state.mapStyle}
                 mapState={{ zoom: [2] }}
                 containerStyle={{
