@@ -41,7 +41,7 @@ export default function Map(props) {
                         <Marker
                             coordinates={center}
                             onClick={e => {
-                                if (openArtefactID === artefactID){
+                                if (openArtefactID === artefactID) {
                                     setOpenArtefactID('')
                                 } else {
                                     setOpenArtefactID(artefactID)

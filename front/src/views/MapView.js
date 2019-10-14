@@ -31,9 +31,6 @@ import { useQuery } from '@apollo/react-hooks'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
-    map: {
-        position: 'relative'
-    },
     overlay: {
         position: 'absolute',
         top: '70px',
@@ -45,11 +42,7 @@ const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(1),
         margin: theme.spacing(1),
-        borderRadius: 10
-    },
-    helpButton: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper
+        borderRadius: 10,
     },
     error: {
         backgroundColor: theme.palette.error.dark
@@ -167,12 +160,13 @@ function MapView(props) {
     return (
         <Fragment>
             <Map
-                className={classes.map}
                 mapStyle={state.mapStyle}
                 mapState={{ zoom: [2] }}
                 containerStyle={{
                     height: '90vh',
-                    width: '100vw'
+                    width: '100vw',
+                    position: 'relative',
+                    zIndex: 0
                 }}
                 artefacts={mapArtefacts}
             />
@@ -254,7 +248,6 @@ function MapView(props) {
 
                 <IconButton
                     edge='start'
-                    className={classes.helpButton}
                     color='inherit'
                     aria-label='menu'
                     onClick={() => setHelpOpen(true)}
@@ -298,7 +291,7 @@ function MapView(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            
+
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
