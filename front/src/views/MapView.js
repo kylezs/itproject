@@ -1,15 +1,18 @@
 import React, { useState, Fragment, useRef } from 'react'
 import { useTheme } from '@material-ui/styles'
 import {
-    FormControl,
-    InputLabel,
-    Select,
     MenuItem,
     TextField,
     Grid,
     Paper,
-    Container,
-    IconButton
+    IconButton,
+    Snackbar,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/Help'
 import { Map } from '../components'
@@ -39,8 +42,9 @@ const useStyles = makeStyles(theme => ({
         margin: theme.spacing(1),
         borderRadius: 10
     },
-    menuButton: {
-        // margin: theme.spacing(2)
+    helpButton: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper
     }
 }))
 
@@ -62,9 +66,9 @@ function MapView(props) {
         mapStyle: defaultMapStyle
     })
 
-    if (state.defaultMapStyle !== defaultMapStyle){
+    if (state.defaultMapStyle !== defaultMapStyle) {
         // avoid unnecessary rerender of map
-        if (state.mapStyle !== defaultMapStyle){
+        if (state.mapStyle !== defaultMapStyle) {
             setState({
                 ...state,
                 defaultMapStyle: defaultMapStyle,
@@ -73,12 +77,14 @@ function MapView(props) {
         } else {
             setState({
                 ...state,
-                defaultMapStyle: defaultMapStyle,
+                defaultMapStyle: defaultMapStyle
             })
         }
     }
 
     const [mapArtefacts, setMapArtefacts] = useState([])
+    const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const [helpOpen, setHelpOpen] = useState(false)
     const getArtefactMapData = data => {
         if (!data) return
         artefacts = data.family.hasArtefacts.edges.map(edge => edge.node)
@@ -103,7 +109,10 @@ function MapView(props) {
                 )
             }
         }
-        Promise.all(promiseArr).then(result => setMapArtefacts(result))
+        Promise.all(promiseArr).then(result => {
+            setMapArtefacts(result)
+            setSnackbarOpen(true)
+        })
     }
 
     useQuery(GET_FAMILY_ARTEFACTS, {
@@ -191,11 +200,6 @@ function MapView(props) {
                                 Streets
                             </MenuItem>
                             <MenuItem
-                                value={'mapbox://styles/mapbox/outdoors-v11'}
-                            >
-                                Outdoors
-                            </MenuItem>
-                            <MenuItem
                                 value={'mapbox://styles/mapbox/satellite-v9'}
                             >
                                 Satellite
@@ -208,19 +212,81 @@ function MapView(props) {
                             <MenuItem value={'mapbox://styles/mapbox/dark-v10'}>
                                 Dark
                             </MenuItem>
+                            <MenuItem
+                                value={
+                                    'mapbox://styles/zduffield/ck1q1hwgo2idy1cl3jt3rh1vk'
+                                }
+                            >
+                                Ugly
+                            </MenuItem>
                         </TextField>
                     </Paper>
                 </Grid>
 
                 <IconButton
                     edge='start'
-                    className={classes.menuButton}
+                    className={classes.helpButton}
                     color='inherit'
                     aria-label='menu'
+                    onClick={() => setHelpOpen(true)}
                 >
                     <HelpIcon />
                 </IconButton>
             </Grid>
+
+            <Dialog
+                fullWidth
+                maxWidth='sm'
+                open={helpOpen}
+                onClose={() => setHelpOpen(false)}
+                aria-labelledby='help-title'
+            >
+                <DialogTitle id='help-title'>Help</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Select from your families in the corner to view their
+                        artefacts
+                    </DialogContentText>
+                    <DialogContentText>
+                        Only artefacts with a location will be shown
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogTitle id='help-title'>Map Controls</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Scroll to zoom</DialogContentText>
+                    <DialogContentText>
+                        Click and drag to move
+                    </DialogContentText>
+                    <DialogContentText>
+                        Click on an artefact to open a popup
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={() => setHelpOpen(false)} color='primary'>
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                }}
+                open={snackbarOpen}
+                autoHideDuration={2000}
+                onClose={e => setSnackbarOpen(false)}
+                ContentProps={{
+                    'aria-describedby': 'message-id'
+                }}
+                message={
+                    <span id='message-id'>
+                        {mapArtefacts.length} Artefacts Loaded
+                    </span>
+                }
+            />
         </Fragment>
     )
 }
