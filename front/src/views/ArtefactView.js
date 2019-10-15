@@ -150,7 +150,7 @@ function ArtefactView(props) {
         var belong = {}
         families.map(val => (belong[val.id] = false))
 
-        setState({ belongsToFamiliesBools: belong })
+        setState({ belongsToFamiliesBools: belong, date: null })
     }
 
     // handler for setting the state object
