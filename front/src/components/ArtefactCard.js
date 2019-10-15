@@ -30,7 +30,8 @@ const useStyles = makeStyles(theme => ({
     },
     card: {
         backgroundColor: theme.palette.background.paper,
-        maxWidth: 345
+        maxWidth: 345,
+        borderRadius: 10
     },
     media: {
         backgroundColor: theme.palette.background.paper,

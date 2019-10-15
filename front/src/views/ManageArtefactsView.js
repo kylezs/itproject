@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import Layout from '../components/Layout'
 import { makeStyles } from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
-import { CssBaseline } from '@material-ui/core'
+import { CssBaseline, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import ArtefactCard from '../components/ArtefactCard'
@@ -16,11 +15,9 @@ const useStyles = makeStyles(theme => ({
         textAlign: 'center',
         marginTop: theme.spacing(1)
     },
-    paper: {
-        marginTop: theme.spacing(1),
+    container: {
         padding: theme.spacing(1),
-        backgroundColor: theme.palette.background.paper,
-        textAlign: 'center'
+        margin: theme.spacing(1),
     },
     button: {
         margin: theme.spacing(1)
@@ -56,7 +53,8 @@ function ManageArtefactsView(props) {
         variables: {
             first: numArtefactsFetched
         },
-        onCompleted: data => SetArtefactEdges(data.me.artefactAdministratorOf.edges)
+        onCompleted: data =>
+            SetArtefactEdges(data.me.artefactAdministratorOf.edges)
     })
 
     console.log('The data is: ', data)
@@ -67,7 +65,7 @@ function ManageArtefactsView(props) {
     return (
         <Layout>
             <CssBaseline />
-            <Grid container spacing={2}>
+            <Grid container spacing={2} className={classes.container}>
                 <Grid item xs={12}>
                     <Grid container justify='center' spacing={2}>
                         {artefactEdges.map(edge => (

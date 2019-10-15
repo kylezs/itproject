@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(1),
         margin: theme.spacing(1),
-        borderRadius: 10,
+        borderRadius: 10
     },
     error: {
         backgroundColor: theme.palette.error.dark
@@ -60,6 +60,40 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center'
     }
 }))
+
+const MyDialogContent = () => (
+    <Fragment>
+        <DialogTitle id='help-title'>Help</DialogTitle>
+        <DialogContent>
+            <DialogContentText>
+                Select from your families in the corner to view their artefacts
+            </DialogContentText>
+            <DialogContentText>
+                Only artefacts with a location will be shown
+            </DialogContentText>
+        </DialogContent>
+
+        <DialogTitle id='help-title'>Map Controls</DialogTitle>
+        <DialogContent>
+            <DialogContentText>Scroll to zoom</DialogContentText>
+            <DialogContentText>Click and drag to move</DialogContentText>
+            <DialogContentText>
+                Click on an artefact to open a popup
+            </DialogContentText>
+        </DialogContent>
+    </Fragment>
+)
+
+const MapStyles = [
+    { value: 'mapbox://styles/mapbox/streets-v11', name: 'Streets' },
+    { value: 'mapbox://styles/mapbox/satellite-v9', name: 'Satellite' },
+    { value: 'mapbox://styles/mapbox/light-v10', name: 'Light' },
+    { value: 'mapbox://styles/mapbox/dark-v10', name: 'Dark' },
+    {
+        value: 'mapbox://styles/zduffield/ck1q1hwgo2idy1cl3jt3rh1vk',
+        name: 'Ugly'
+    }
+]
 
 function MapView(props) {
     const theme = useTheme()
@@ -159,19 +193,22 @@ function MapView(props) {
     }
 
     return (
-        <Fragment>
-            <Map
-                interactive
-                mapStyle={state.mapStyle}
-                mapState={{ zoom: [2] }}
-                containerStyle={{
-                    height: '90vh',
-                    width: '100vw',
-                    position: 'relative',
-                    zIndex: 0
-                }}
-                artefacts={mapArtefacts}
-            />
+        <Paper className={classes.paper} elevation={10}>
+            <Grid container>
+                <Map
+                    interactive
+                    mapStyle={state.mapStyle}
+                    mapState={{ zoom: [2] }}
+                    containerStyle={{
+                        height: '87vh',
+                        width: '100vw',
+                        position: 'relative',
+                        zIndex: 0,
+                        borderRadius: 10
+                    }}
+                    artefacts={mapArtefacts}
+                />
+            </Grid>
             <Grid
                 container
                 item
@@ -219,31 +256,11 @@ function MapView(props) {
                             }}
                         >
                             <MenuItem value={defaultMapStyle}>Default</MenuItem>
-                            <MenuItem
-                                value={'mapbox://styles/mapbox/streets-v11'}
-                            >
-                                Streets
-                            </MenuItem>
-                            <MenuItem
-                                value={'mapbox://styles/mapbox/satellite-v9'}
-                            >
-                                Satellite
-                            </MenuItem>
-                            <MenuItem
-                                value={'mapbox://styles/mapbox/light-v10'}
-                            >
-                                Light
-                            </MenuItem>
-                            <MenuItem value={'mapbox://styles/mapbox/dark-v10'}>
-                                Dark
-                            </MenuItem>
-                            <MenuItem
-                                value={
-                                    'mapbox://styles/zduffield/ck1q1hwgo2idy1cl3jt3rh1vk'
-                                }
-                            >
-                                Ugly
-                            </MenuItem>
+                            {MapStyles.map(style => (
+                                <MenuItem value={style.value}>
+                                    {style.name}
+                                </MenuItem>
+                            ))}
                         </TextField>
                     </Paper>
                 </Grid>
@@ -265,28 +282,7 @@ function MapView(props) {
                 onClose={() => setHelpOpen(false)}
                 aria-labelledby='help-title'
             >
-                <DialogTitle id='help-title'>Help</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Select from your families in the corner to view their
-                        artefacts
-                    </DialogContentText>
-                    <DialogContentText>
-                        Only artefacts with a location will be shown
-                    </DialogContentText>
-                </DialogContent>
-
-                <DialogTitle id='help-title'>Map Controls</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Scroll to zoom</DialogContentText>
-                    <DialogContentText>
-                        Click and drag to move
-                    </DialogContentText>
-                    <DialogContentText>
-                        Click on an artefact to open a popup
-                    </DialogContentText>
-                </DialogContent>
-
+                <MyDialogContent />
                 <DialogActions>
                     <Button onClick={() => setHelpOpen(false)} color='primary'>
                         Close
@@ -338,7 +334,7 @@ function MapView(props) {
                     }
                 />
             </Snackbar>
-        </Fragment>
+        </Paper>
     )
 }
 

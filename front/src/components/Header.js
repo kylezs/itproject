@@ -43,7 +43,8 @@ export default function MenuAppBar(props) {
     const dark = theme && theme.palette.type === 'dark'
     return (
         <div className={classes.root}>
-            <AppBar position='static' color={dark ? 'inherit' : 'primary'} elevation={6}>
+            <AppBar position='static' color='primary' elevation={6}>
+            {/* <AppBar position='static' color={dark ? 'inherit' : 'primary'} elevation={6}> */}
                 <Toolbar>
                     <Grid container>
                         <Grid item xs={2} container>

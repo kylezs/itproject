@@ -14,55 +14,51 @@ import {
 
 import { THEME_TYPE } from '../constants.js'
 
+const lightPalette = {
+    primary: indigo,
+    secondary: {
+        main: teal[400]
+    },
+    type: 'light'
+}
+
+const darkPalette = {
+    primary: {
+        // light: deepPurple[100],
+        main: deepPurple['A100'],
+        // dark: deepPurple[500]
+    },
+    secondary: teal,
+    error: {
+        main: '#CF6679'
+    },
+    background: {
+        paper: '#303030',
+        default: '#121212'
+    },
+    type: 'dark'
+}
+
+const lightTheme = createMuiTheme({ palette: lightPalette, type: 'light' })
+const darkTheme = createMuiTheme({ palette: darkPalette, type: 'dark' })
+
 export default props => {
     if (!localStorage.getItem(THEME_TYPE)) {
         localStorage.setItem(THEME_TYPE, 'light')
     }
 
-    const lightPalette = {
-        primary: indigo,
-        secondary: {
-            main: teal[400]
-        },
-        type: 'light'
-    }
-
-    const darkPalette = {
-        primary: {
-            light: deepPurple[100],
-            main: deepPurple['A100'],
-            dark: deepPurple[500]
-        },
-        secondary: teal,
-        error: {
-            main: '#CF6679'
-        },
-        background: {
-            paper: '#303030',
-            default: '#121212'
-        },
-        type: 'dark'
-    }
-
-    const [theme, setTheme] = useState({
-        palette:
-            localStorage.getItem(THEME_TYPE) === 'light'
-                ? lightPalette
-                : darkPalette
-    })
+    const [theme, setTheme] = useState(
+        localStorage.getItem(THEME_TYPE) === 'light' ? lightTheme : darkTheme
+    )
 
     const toggleDarkTheme = () => {
-        var newPaletteType = theme.palette.type === 'light' ? 'dark' : 'light'
-        localStorage.setItem(THEME_TYPE, newPaletteType)
-        setTheme({
-            palette: newPaletteType === 'light' ? lightPalette : darkPalette
-        })
+        var newTheme = theme.palette.type === 'light' ? 'dark' : 'light'
+        localStorage.setItem(THEME_TYPE, newTheme)
+        setTheme(newTheme === 'light' ? lightTheme : darkTheme)
     }
 
-    const muiTheme = createMuiTheme(theme)
-
     return (
-        <ThemeProvider theme={muiTheme}>
+        <ThemeProvider theme={theme}>
             <CssBaseline />
             <Header onToggleDarkTheme={toggleDarkTheme} />
             {props.children}

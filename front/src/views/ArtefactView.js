@@ -931,7 +931,7 @@ function ArtefactView(props) {
                                             containerStyle={{
                                                 height: '60vh',
                                                 width: '100vw',
-                                                borderRadius: 10,
+                                                borderRadius: 20,
                                                 marginTop: 5
                                             }}
                                             artefacts={[
