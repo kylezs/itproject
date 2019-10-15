@@ -110,7 +110,8 @@ function MapView(props) {
     const [state, setState] = useState({
         family: { id: '-1' },
         defaultMapStyle: defaultMapStyle,
-        mapStyle: defaultMapStyle
+        mapStyle: defaultMapStyle,
+        selectedArtefact: {}
     })
 
     if (state.defaultMapStyle !== defaultMapStyle) {
@@ -130,6 +131,9 @@ function MapView(props) {
     }
 
     const [mapArtefacts, setMapArtefacts] = useState([])
+    const [mapState, setMapState] = useState({
+        zoom: [2]
+    })
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [errorSnackbar, setErrorSnackbar] = useState({ open: false, msg: '' })
     const [helpOpen, setHelpOpen] = useState(false)
@@ -153,7 +157,8 @@ function MapView(props) {
                             var mapArtefact = {
                                 ...artefact,
                                 popup: true,
-                                center: response.results[0].mapState.center
+                                center: response.results[0].mapState.center,
+                                initPopupOpen: false
                             }
                             return mapArtefact
                         }
@@ -186,6 +191,14 @@ function MapView(props) {
         if (event.target.name === 'family') {
             setMapArtefacts([])
         }
+
+        if (event.target.name === 'selectedArtefact'){
+            setMapState({
+                ...mapState,
+                center: event.target.value.center
+            })
+            event.target.value.initPopupOpen = true
+        }
         setState({
             ...state,
             [event.target.name]: event.target.value
@@ -198,7 +211,7 @@ function MapView(props) {
                 <Map
                     interactive
                     mapStyle={state.mapStyle}
-                    mapState={{ zoom: [2] }}
+                    mapState={mapState}
                     containerStyle={{
                         height: '87vh',
                         width: '100vw',
@@ -264,6 +277,32 @@ function MapView(props) {
                         </TextField>
                     </Paper>
                 </Grid>
+
+                {/* {mapArtefacts && (
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            <TextField
+                                fullWidth
+                                label='Go to artefact'
+                                variant='outlined'
+                                value={state.selectedArtefact}
+                                select
+                                onChange={handleChange}
+                                SelectProps={{
+                                    name: 'selectedArtefact',
+                                    autoWidth: true
+                                }}
+                            >
+                                <MenuItem value={{}}>None</MenuItem>
+                                {mapArtefacts.map(artefact => (
+                                    <MenuItem value={artefact}>
+                                        {artefact.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Paper>
+                    </Grid>
+                )} */}
 
                 <IconButton
                     edge='start'

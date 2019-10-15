@@ -5,7 +5,6 @@ import ArtefactCard from '../components/ArtefactCard'
 import { useTheme } from '@material-ui/styles'
 import { makeStyles } from '@material-ui/core/styles'
 
-
 const useStyles = makeStyles(theme => ({
     popup: {
         // color: theme.palette.background.default,
@@ -52,7 +51,7 @@ export default function Map(props) {
             onClick={e => setOpenArtefactID('')}
         >
             {artefacts.map(artefact => {
-                var { center, popup, ...rest } = artefact
+                var { center, popup, initPopupOpen, ...rest } = artefact
                 if (!center || !center.length) {
                     return
                 }
@@ -67,6 +66,9 @@ export default function Map(props) {
                                 } else {
                                     setOpenArtefactID(artefactID)
                                 }
+                                if (artefact.initPopupOpen){
+                                    artefact.initPopupOpen = false
+                                }
                             }}
                         >
                             <img
@@ -76,20 +78,22 @@ export default function Map(props) {
                                 alt='marker-img'
                             />
                         </Marker>
-                        {popup && openArtefactID === artefactID && (
-                            <Popup
-                                coordinates={center}
-                                className={classes.popup}
-                                offset={{
-                                    'bottom-left': [12, -38],
-                                    bottom: [0, -38],
-                                    'bottom-right': [-12, -38]
-                                }}
-                                // style={{color: '#000000'}}
-                            >
-                                <ArtefactCard {...rest} />
-                            </Popup>
-                        )}
+                        {popup &&
+                            (openArtefactID === artefactID ||
+                                initPopupOpen) && (
+                                <Popup
+                                    coordinates={center}
+                                    className={classes.popup}
+                                    offset={{
+                                        'bottom-left': [12, -38],
+                                        bottom: [0, -38],
+                                        'bottom-right': [-12, -38]
+                                    }}
+                                    // style={{color: '#000000'}}
+                                >
+                                    <ArtefactCard {...rest} />
+                                </Popup>
+                            )}
                     </Fragment>
                 )
             })}
