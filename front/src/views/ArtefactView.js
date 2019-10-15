@@ -24,6 +24,13 @@ import {
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import { useTheme } from '@material-ui/styles'
+import 'date-fns'
+import DateFnsUtils from '@date-io/date-fns'
+import {
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker
+} from '@material-ui/pickers'
+
 import {
     Loading,
     Map,
@@ -130,7 +137,7 @@ function ArtefactView(props) {
         var belong = {}
         families.map(val => (belong[val.id] = false))
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
-
+        
         setState({
             ...artefact,
             belongsToFamiliesBools: belong
@@ -246,6 +253,10 @@ function ArtefactView(props) {
         }
     )
 
+    const parseDate = date => {
+        return date ? date.toISOString().slice(0, -1) : null
+    }
+
     // for creation of a new artefact
     const submitForm = async event => {
         if (!addressIsSearchResult) {
@@ -284,6 +295,9 @@ function ArtefactView(props) {
             belongsToFamilies: famIDs,
             address: state.address ? state.address : ''
         }
+        if (state.date) {
+            input.date = parseDate(state.date)
+        }
         console.log('Input to GQL creation mutation:', input)
 
         createArtefact({
@@ -302,6 +316,8 @@ function ArtefactView(props) {
                 input['belongsToFamilies'] = Object.keys(
                     state.belongsToFamiliesBools
                 ).filter(id => state.belongsToFamiliesBools[id])
+            } else if (beingEdited === 'date') {
+                input[beingEdited] = parseDate(state[beingEdited])
             } else {
                 input[beingEdited] = state[beingEdited]
             }
@@ -588,6 +604,38 @@ function ArtefactView(props) {
                                 </FormControl>
                             </Paper>
                         </Grid>
+
+                        <Grid item xs={12}>
+                            <Paper
+                                className={classes.paperWrapper}
+                                elevation={3}
+                            >
+                                <FormControl
+                                    className={classes.formControl}
+                                    fullWidth
+                                >
+                                    <KeyboardDatePicker
+                                        disabled={view}
+                                        clearable
+                                        // variant='inline'
+                                        inputVariant='outlined'
+                                        format='dd/MM/yyyy'
+                                        openTo='year'
+                                        label='Date'
+                                        value={state.date}
+                                        onChange={date =>
+                                            handleSetField('date', date)
+                                        }
+                                        KeyboardButtonProps={{
+                                            'aria-label': 'change date'
+                                        }}
+                                    />
+                                    {edit && beingEdited === 'date' && (
+                                        <EditButtons />
+                                    )}
+                                </FormControl>
+                            </Paper>
+                        </Grid>
                     </Grid>
                     {/* Right Pane */}
                     <Grid
@@ -700,7 +748,8 @@ function ArtefactView(props) {
                                                                             .belongsToFamiliesBools[
                                                                             family
                                                                                 .id
-                                                                        ] || false
+                                                                        ] ||
+                                                                        false
                                                                     }
                                                                     onClick={e =>
                                                                         handleSetField(
@@ -969,18 +1018,20 @@ function ArtefactView(props) {
 function Wrapped(props) {
     return (
         <Layout>
-            <Grid
-                container
-                spacing={0}
-                direction='column'
-                alignItems='center'
-                justify='center'
-                style={{ minHeight: '80vh' }}
-            >
-                <Grid item xs={10}>
-                    <ArtefactView {...props} />
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <Grid
+                    container
+                    spacing={0}
+                    direction='column'
+                    alignItems='center'
+                    justify='center'
+                    style={{ minHeight: '80vh' }}
+                >
+                    <Grid item xs={10}>
+                        <ArtefactView {...props} />
+                    </Grid>
                 </Grid>
-            </Grid>
+            </MuiPickersUtilsProvider>
         </Layout>
     )
 }
