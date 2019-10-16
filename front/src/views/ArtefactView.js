@@ -48,7 +48,7 @@ import {
     CREATE_ARTEFACT_MUTATION_STR,
     UPDATE_ARTEFACT_MUTATION
 } from '../gqlQueriesMutations'
-import { AUTH_TOKEN } from '../constants'
+import { AUTH_TOKEN, config } from '../constants'
 
 function ArtefactView(props) {
     // get the mode
@@ -258,8 +258,7 @@ function ArtefactView(props) {
         form_data.append('itemImage', state.files[0]);
         form_data.append('query', CREATE_ARTEFACT_MUTATION_STR);
         form_data.append('variables', JSON.stringify(variables));
-        // Need to make dynamic
-        let url = 'http://localhost:8000/graphql/';
+        let url = config.uri;
         axios.post(url, form_data, {
             headers: {
                 'Authorization': "JWT " + localStorage.getItem(AUTH_TOKEN),
