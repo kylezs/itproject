@@ -1,10 +1,13 @@
 from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float, Scalar
+from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float
+from graphene.types.datetime import Date
 from rest_framework import serializers
 from graphene_django.rest_framework.mutation import SerializerMutation
 from artefacts.models import Artefact
 from .types import ArtefactType
 from ..family.types import Family
 from gql.errors import *
+import datetime
 
 
 class ArtefactSerializer(serializers.ModelSerializer):
@@ -31,6 +34,7 @@ class ArtefactInputType(InputObjectType):
     is_public = Boolean()
     belongs_to_families = List(ID)
     address = String()
+    date = String()
 
 # For file uploads
 
@@ -61,7 +65,8 @@ class ArtefactCreate(Mutation):
             state=input.state,
             is_public=input.is_public,
             admin=user,
-            address=input.address
+            address=input.address,
+            date=input.date
         )
 
         # image file upload (see item_image = Upload() above)
