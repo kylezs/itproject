@@ -5,6 +5,7 @@ import { CssBaseline, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import ArtefactCard from '../components/ArtefactCard'
+import { config } from '../constants'
 
 const useStyles = makeStyles(theme => ({
     textField: {
@@ -42,8 +43,6 @@ const LIST_OF_ARTEFACTS = gql`
 `
 
 function ManageArtefactsView(props) {
-    const tempImgURI =
-        'https://assets.pernod-ricard.com/nz/media_images/test.jpg?hUV74FvXQrWUBk1P2.fBvzoBUmjZ1wct'
 
     const classes = useStyles()
     const numArtefactsFetched = 10
@@ -71,7 +70,7 @@ function ManageArtefactsView(props) {
                         {artefactEdges.map(edge => (
                             <Grid item key={edge.node.id}>
                                 <ArtefactCard
-                                    mediaURI={"/media/" + edge.node.upload}
+                                    mediaURI={config.mediaRoot + edge.node.upload}
                                     title={edge.node.name}
                                     description={edge.node.description}
                                     id={edge.node.id}

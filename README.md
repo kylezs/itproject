@@ -49,6 +49,12 @@ So that the heroku/python build can occur.
 
 You can also change it in manage.py AND wsgi.py to development while developing so you don't have to type that each time.
 
+## To note: Some differences between "production" and "development" and media files
+The React "production" build, i.e. what is run on localhost:8000 (from an npm run build), in build folder, serves media
+files from s3
+The React "development" build i.e. npm start, serves media files from localhost:8000.
+These can be configured in `front/constants.js`
+
 # Deploying to heroku
 Heroku always runs it's root url from the master branch. Thus deploying must be to the master branch.
 
