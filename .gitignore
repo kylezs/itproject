@@ -8,6 +8,8 @@
 # static files, should be built on deploy
 staticfiles/
 
+# media files are only stored locally for dev/testing purposes
+media/
 
 # Created by https://www.gitignore.io
 

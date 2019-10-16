@@ -73,7 +73,7 @@ function ManageArtefactsView(props) {
                         {artefactEdges.map(edge => (
                             <Grid item key={edge.node.id}>
                                 <ArtefactCard
-                                    mediaURI={tempImgURI}
+                                    mediaURI={"/media/" + edge.node.upload}
                                     title={edge.node.name}
                                     description={edge.node.description}
                                     id={edge.node.id}

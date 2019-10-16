@@ -46,12 +46,13 @@ and manage page as a quick way to assist navigating through artefacts
 function ArtefactCard({ mediaURI, title, description, id }) {
     const classes = useStyles()
 
+    console.log("here's the mediaURI: " + mediaURI)
     return (
         <Card className={classes.card} elevation={3}>
             <CardActionArea>
                 <CardMedia
                     className={classes.media}
-                    image={"https://img1.cgtrader.com/items/995815/731bda0123/antique-old-clock-3d-model-low-poly-animated-obj-3ds-fbx-blend-dae-mtl.jpg"}
+                    image={mediaURI}
                     title={title}
                 />
                 <CardContent>
