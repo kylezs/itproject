@@ -54,7 +54,7 @@ function ArtefactCard({ mediaURI, name, description, id }) {
                 <CardMedia
                     className={classes.media}
                     image={mediaURI}
-                    title={title}
+                    title={name}
                 />
                 <CardContent>
                     <Grid item xs zeroMinWidth>

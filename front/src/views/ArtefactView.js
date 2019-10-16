@@ -41,12 +41,14 @@ import authContext from '../authContext'
 import { useMutation } from '@apollo/react-hooks'
 import { DropzoneArea } from 'material-ui-dropzone'
 import SearchIcon from '@material-ui/icons/Search'
+import axios from 'axios';
 
 import { Layout } from '../components'
 import {
-    CREATE_ARTEFACT_MUTATION,
+    CREATE_ARTEFACT_MUTATION_STR,
     UPDATE_ARTEFACT_MUTATION
 } from '../gqlQueriesMutations'
+import { AUTH_TOKEN } from '../constants'
 
 function ArtefactView(props) {
     // get the mode
@@ -59,6 +61,8 @@ function ArtefactView(props) {
     // if viewing an existing artefact get the details (potentially unloaded)
     const context = useContext(authContext)
     const username = context.user.username
+    let creationErrors, creationLoading;
+
     if (!create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
         var isAdmin = !artefactLoading
@@ -221,29 +225,58 @@ function ArtefactView(props) {
     }
 
     // handlers for GQL mutations
-
     const creationCompleted = async data => {
         var id = data.artefactCreate.artefact.id
         pushViewArtefactURL(id)
     }
+
     const updateCompleted = async data => {
         setBeingEdited('')
         setSnackbarOpen(true)
     }
     const handleCreationError = async errors => {
-        console.log('Creation errors occurred:', errors)
+        console.error('Creation errors occurred:', errors)
     }
     const handleUpdateError = async errors => {
-        console.log('Update errors occured: ', errors)
+        console.error('Update errors occured: ', errors)
     }
 
-    const [
-        createArtefact,
-        { error: creationErrors, loading: creationLoading }
-    ] = useMutation(CREATE_ARTEFACT_MUTATION, {
-        onCompleted: creationCompleted,
-        onError: handleCreationError
-    })
+    // const [
+    //     createArtefact,
+    //     { error: creationErrors, loading: creationLoading }
+    // ] = useMutation(CREATE_ARTEFACT_MUTATION, {
+    //     onCompleted: creationCompleted,
+    //     onError: handleCreationError
+    // })
+
+    const createArtefact = (variables) => {
+        console.log("here's input from call")
+        console.log(variables);
+        // const input = "hello"
+        let form_data = new FormData();
+        // Image not passed through by variables
+        form_data.append('itemImage', state.files[0]);
+        form_data.append('query', CREATE_ARTEFACT_MUTATION_STR);
+        form_data.append('variables', JSON.stringify(variables));
+        // Need to make dynamic
+        let url = 'http://localhost:8000/graphql/';
+        axios.post(url, form_data, {
+            headers: {
+                'Authorization': "JWT " + localStorage.getItem(AUTH_TOKEN),
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "Content-Transfer-Encoding": "multipart/form-data",
+            },
+        })
+            .then(data => {
+                console.log("Success, run some stuff")
+                console.log(data)
+                // _creationCompleted(data)
+            })
+            .catch(err => {
+                console.error(err);
+                // _handleCreationError(err)
+            })
+    };
 
     const [updateArtefact, { error: updateErrors }] = useMutation(
         UPDATE_ARTEFACT_MUTATION,
@@ -264,22 +297,6 @@ function ArtefactView(props) {
             return
         }
 
-        // read image files
-        // TO DO
-        const reader = new FileReader()
-
-        reader.onabort = () => console.log('file reading was aborted')
-        reader.onerror = () => console.log('file reading has failed')
-        reader.onload = () => {
-            // Do whatever you want with the file contents
-            const binaryStr = reader.result
-            console.log(binaryStr)
-        }
-
-        if (state.files) {
-            state.files.forEach(file => reader.readAsArrayBuffer(file))
-        }
-
         var famIDs = []
         if (state.belongsToFamiliesBools) {
             famIDs = Object.keys(state.belongsToFamiliesBools).filter(
@@ -287,22 +304,21 @@ function ArtefactView(props) {
             )
         }
 
+        // File/uploaded included directly from state, multipart request
+        // in createArtefact
         var input = {
             name: state.name,
             description: state.description,
             state: state.state,
             isPublic: state.isPublic ? state.isPublic : false,
             belongsToFamilies: famIDs,
-            address: state.address ? state.address : ''
+            address: state.address ? state.address : '',
         }
         if (state.date) {
             input.date = parseDate(state.date)
         }
-        console.log('Input to GQL creation mutation:', input)
 
-        createArtefact({
-            variables: input
-        })
+        createArtefact(input)
     }
 
     // for updating an existing artefact
@@ -323,6 +339,12 @@ function ArtefactView(props) {
             }
 
             console.log('Input to GQL update mutation: input', input)
+            // TODO:
+            const variables = {
+                "name": "hello",
+                "state": "OKY",
+                "description": "here's a short desc"
+            }
             updateArtefact({
                 variables: {
                     id: artefact.id,

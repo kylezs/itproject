@@ -29,6 +29,34 @@ export const CREATE_ARTEFACT_MUTATION = gql`
     }
 `
 
+export const CREATE_ARTEFACT_MUTATION_STR = `
+mutation CreateArtefactMutation(
+        $name: String!
+        $state: String!
+        $isPublic: Boolean
+        $description: String!
+        $belongsToFamilies: [ID]
+        $address: String
+        $date: String
+    ) {
+        artefactCreate(
+            input: {
+                name: $name
+                state: $state
+                description: $description
+                isPublic: $isPublic
+                belongsToFamilies: $belongsToFamilies
+                address: $address
+                date: $date
+            }
+        ) {
+            artefact {
+                id
+            }
+        }
+    }
+`
+
 export const GET_ARTEFACT_STATES_QUERY = gql`
     query ArtefactStatesQuery($name: String!) {
         __type(name: $name) {
