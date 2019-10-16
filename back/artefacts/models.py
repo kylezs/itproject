@@ -36,15 +36,15 @@ class Artefact(models.Model):
 
     is_public = models.BooleanField(default=False, blank=True)
 
-    # upload image file to AWS S3 bucket
-    upload = models.FileField(default=False, blank=True)
+    # upload image file to AWS S3 bucket or local, depending on settings
+    upload = models.FileField(default=False, blank=True, upload_to="artefact/images")
 
     added_at = models.DateTimeField(auto_now_add=True)
 
     belongs_to_families = models.ManyToManyField(Family,
                                                  related_name='has_artefacts', blank=True)
 
-    address = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = _('artefact')

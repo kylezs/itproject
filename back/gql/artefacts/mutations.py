@@ -1,4 +1,4 @@
-from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float
+from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float, Scalar
 from rest_framework import serializers
 from graphene_django.rest_framework.mutation import SerializerMutation
 from artefacts.models import Artefact
@@ -32,24 +32,29 @@ class ArtefactInputType(InputObjectType):
     belongs_to_families = List(ID)
     address = String()
 
+# For file uploads
+
+
+class Upload(Scalar):
+    def serialize(self):
+        pass
+
 
 class ArtefactCreate(Mutation):
     class Arguments:
         input = ArtefactInputType(required=True)
+        item_image = Upload()
 
     artefact = Field(ArtefactType)
 
     @classmethod
     def mutate(cls, root, info, **data):
+        
         user = info.context.user
         if user.is_anonymous:
             raise Exception(AUTH_EXCEPTION)
-
         input = data.get('input')
-
-        family_ids = input.belongs_to_families
-        families = Family.objects.filter(id__in=family_ids)
-
+        
         artefact = Artefact(
             name=input.name,
             description=input.description,
@@ -58,13 +63,24 @@ class ArtefactCreate(Mutation):
             admin=user,
             address=input.address
         )
+
+        # image file upload (see item_image = Upload() above)
+        if info.context.FILES and info.context.method == 'POST':
+            thefile = info.context.FILES['itemImage']
+            artefact.upload = thefile
+
+
         # Create the artefact so it has an id to be used for ManyToMany
         artefact.save()
 
-        # ManyToMany can do direct assignment so do it this way
-        artefact.belongs_to_families.set(families)
-
+        # ManyToMany can't do direct assignment so do it this way
+        family_ids = input.belongs_to_families
+        if family_ids:
+            families = Family.objects.filter(id__in=family_ids)
+            artefact.belongs_to_families.set(families)
+        
         return ArtefactCreate(artefact=artefact)
+
 
 
 class ArtefactUpdate(Mutation):

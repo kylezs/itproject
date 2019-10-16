@@ -19,3 +19,6 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BACK_DIR, 'media')
