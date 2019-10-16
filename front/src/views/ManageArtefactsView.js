@@ -71,7 +71,7 @@ function ManageArtefactsView(props) {
                             <Grid item key={edge.node.id}>
                                 <ArtefactCard
                                     mediaURI={config.mediaRoot + edge.node.upload}
-                                    title={edge.node.name}
+                                    name={edge.node.name}
                                     description={edge.node.description}
                                     id={edge.node.id}
                                 />

@@ -180,7 +180,7 @@ function UserHomeView(props) {
                                 <ArtefactCard
                                     key={key}
                                     mediaURI={artefact.node.upload}
-                                    title={artefact.node.name}
+                                    name={artefact.node.name}
                                     description={artefact.node.description}
                                     id={artefact.node.id} />
                             </GridListTile>
