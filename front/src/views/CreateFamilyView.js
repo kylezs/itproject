@@ -192,7 +192,7 @@ export default props => (
             justify='center'
             style={{ minHeight: '80vh' }}
         >
-            <Grid item xs={6}>
+            <Grid item xs={11} md={6}>
                 <CreateFamilyView {...props} />
             </Grid>
         </Grid>

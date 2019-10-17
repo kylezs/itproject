@@ -2,6 +2,16 @@ import React, { Fragment, useState } from 'react'
 import ReactMapboxGl, { Marker, Popup } from 'react-mapbox-gl'
 import { MY_ACCESS_TOKEN } from '../constants'
 import ArtefactCard from '../components/ArtefactCard'
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles(theme => ({
+    popup: {
+        // backgroundColor: theme.palette.background.paper + '!important',
+        // background: theme.palette.background.paper + '!important',
+        zIndex: '50 !important'
+    }
+}))
+
 
 const mapProps = {
     accessToken: MY_ACCESS_TOKEN,
@@ -20,6 +30,8 @@ const InteractiveMapbox = ReactMapboxGl({
 })
 
 export default function Map(props) {
+    const classes = useStyles()
+    
     const MapType = props.interactive ? InteractiveMapbox : Mapbox
     var artefacts = props.artefacts
     if (!artefacts) artefacts = []
@@ -75,7 +87,8 @@ export default function Map(props) {
                                         bottom: [0, -38],
                                         'bottom-right': [-12, -38]
                                     }}
-                                    // style={{color: '#000000'}}
+                                    style={{backgroundColor: '#000000 !important'}}
+                                    className={classes.popup}
                                 >
                                     <ArtefactCard {...rest} />
                                 </Popup>

@@ -1,59 +1,80 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import {
     List,
-    ListSubheader,
     ListItem,
-    Checkbox,
     ListItemIcon,
-    ListItemText
+    ListItemText,
+    Checkbox,
+    Typography
 } from '@material-ui/core'
 
-export default ({ mode, states, setters, families, disabled, name }) => {
+export default ({
+    mode,
+    states,
+    setters,
+    families,
+    disabled,
+    name,
+    classes
+}) => {
     var { view } = mode
     var { state } = states
     var { handleSetField } = setters
+
+    if (
+        view && state.belongsToFamiliesBools &&
+        Object.values(state.belongsToFamiliesBools).filter(value => value)
+            .length === 0
+    ) {
+        return (
+            <Typography variant='h6' className={classes.fieldTitle}>
+                This artefact doesn't belong to any of your families
+            </Typography>
+        )
+    }
+
     return (
-        <List
-            subheader={
-                <ListSubheader component='div'>
-                    {!view
-                        ? 'Select which of your families the artefact belongs to'
-                        : 'Belongs to'}
-                </ListSubheader>
-            }
-        >
-            {families.map(family => {
-                if (
-                    state.belongsToFamiliesBools &&
-                    (!view || state.belongsToFamiliesBools[family.id])
-                ) {
-                    return (
-                        <ListItem key={family.id} dense disabled={disabled}>
-                            {!view && (
-                                <ListItemIcon>
-                                    <Checkbox
-                                        edge='start'
-                                        checked={
-                                            state.belongsToFamiliesBools[
-                                                family.id
-                                            ] || false
-                                        }
-                                        onClick={e =>
-                                            handleSetField(name, {
-                                                ...state.belongsToFamiliesBools,
-                                                [family.id]: e.target.checked
-                                            })
-                                        }
-                                        tabIndex={-1}
-                                    />
-                                </ListItemIcon>
-                            )}
-                            <ListItemText primary={family.familyName} />
-                        </ListItem>
-                    )
-                }
-                return null
-            })}
-        </List>
+        <Fragment>
+            <Typography variant='h6' className={classes.fieldTitle}>
+                {!view
+                    ? 'Families the artefact belongs to'
+                    : 'Belongs to your families'}
+            </Typography>
+            <List disablePadding>
+                {families.map(family => {
+                    if (
+                        state.belongsToFamiliesBools &&
+                        (!view || state.belongsToFamiliesBools[family.id])
+                    ) {
+                        return (
+                            <ListItem key={family.id} dense disabled={disabled}>
+                                {!view && (
+                                    <ListItemIcon>
+                                        <Checkbox
+                                            edge='start'
+                                            checked={
+                                                state.belongsToFamiliesBools[
+                                                    family.id
+                                                ] || false
+                                            }
+                                            onClick={e =>
+                                                handleSetField(name, {
+                                                    ...state.belongsToFamiliesBools,
+                                                    [family.id]:
+                                                        e.target.checked
+                                                })
+                                            }
+                                            tabIndex={-1}
+                                        />
+                                    </ListItemIcon>
+                                )}
+                                <ListItemText primary={family.familyName} />
+                            </ListItem>
+                        )
+                    }
+                    return null
+                })}
+            </List>
+        </Fragment>
     )
 }

@@ -298,7 +298,7 @@ function ArtefactView(props) {
             state: state.state,
             isPublic: state.isPublic ? state.isPublic : false,
             belongsToFamilies: famIDs,
-            address: state.address ? state.address : '',
+            address: state.address ? state.address : ''
         }
         if (state.date) {
             input.date = parseDate(state.date)
@@ -356,7 +356,6 @@ function ArtefactView(props) {
     const componentProps = {
         beingEdited: beingEdited,
         mode: mode,
-        classes: classes,
         artefactStates: artefactStates,
         username: context.user.username,
         families: families,
@@ -389,7 +388,7 @@ function ArtefactView(props) {
     ]
 
     const RightPaneComponents = [
-        { comp: Privacy, name: 'isPublic' },
+        { comp: view ? null : Privacy, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         { comp: Images, name: 'files' }
     ]
@@ -404,8 +403,9 @@ function ArtefactView(props) {
                 </Grid>
 
                 {Panes.map(pane => (
-                    <Grid item xs={12} sm={6} container spacing={1} key={pane}>
+                    <Grid item xs={12} sm={6} container spacing={1} key={pane} alignContent='flex-start'>
                         {pane.map(({ comp, name }) => {
+                            if (comp === null) return null
                             return (
                                 <FieldWrapper
                                     key={comp}
@@ -460,7 +460,7 @@ function Wrapped(props) {
                     justify='center'
                     style={{ minHeight: '80vh' }}
                 >
-                    <Grid item xs={10}>
+                    <Grid item xs={11} md={8}>
                         <CssBaseline />
                         <ArtefactView {...props} />
                     </Grid>

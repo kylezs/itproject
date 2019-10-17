@@ -21,6 +21,7 @@ export default ({
                         {...childProps}
                         disabled={someBeingEdited && !thisBeingEdited}
                         name={name}
+                        classes={classes}
                     />
 
                     {thisBeingEdited && <EditButtons {...editButtonProps} />}

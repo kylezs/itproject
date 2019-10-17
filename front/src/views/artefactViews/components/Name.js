@@ -16,9 +16,7 @@ export default ({ mode, states, setters, disabled, name }) => {
             required
             fullWidth
             value={state.name || ''}
-            inputProps={{
-                readOnly: view
-            }}
+            inputProps={{ readOnly: view }}
             onChange={e => handleSetField(name, e.target.value)}
             disabled={disabled}
         />

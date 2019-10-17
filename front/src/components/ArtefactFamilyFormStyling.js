@@ -18,6 +18,12 @@ export default makeStyles(theme => ({
         padding: theme.spacing(1),
         textAlign: 'center'
     },
+    fieldTitle: {
+        textAlign: 'left',
+        // marginTop: theme.spacing(1),
+        marginLeft: theme.spacing(2),
+        margin: theme.spacing(1)
+    },
     paper: {
         padding: theme.spacing(1),
         // textAlign: 'center',
@@ -48,14 +54,23 @@ export default makeStyles(theme => ({
         padding: 10
     },
     dropzone: {
-        backgroundColor: theme.palette.background.paper,
-        minHeight: '80px',
-        borderRadius: 10
+        backgroundColor: theme.palette.background.paper + '!important',
+        minHeight: '70px !important',
+        borderRadius: 10,
+        alignItems: 'flex-start !important'
+    },
+    dropzoneText: {
+        fontSize: 'large !important'
+        // margin: '0 !important'
     },
     outerContainer: {
         spacing: theme.spacing(1),
         alignItems: 'stretch',
         alignContent: 'stretch',
         justifyContent: 'center'
+    },
+    switch: {
+        justifyContent: 'center',
+        textAlign: 'center'
     }
 }))

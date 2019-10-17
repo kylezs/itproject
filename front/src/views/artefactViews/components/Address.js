@@ -18,7 +18,8 @@ export default ({
     setters,
     classes,
     name,
-    handleGeocodeQuery
+    handleGeocodeQuery,
+    disabled
 }) => {
     var { view } = mode
     var {
@@ -44,6 +45,7 @@ export default ({
                 label='Address'
                 variant='outlined'
                 fullWidth
+                disabled={disabled}
                 value={state.address || ''}
                 inputProps={{
                     readOnly: view
