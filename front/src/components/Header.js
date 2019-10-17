@@ -1,14 +1,13 @@
 import React, { useContext } from 'react'
 import {
     IconButton,
-    Typography,
     Toolbar,
     AppBar,
     Button,
     makeStyles,
     Grid
 } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Menu'
+// import MenuIcon from '@material-ui/icons/Menu'
 
 import Brightness3Icon from '@material-ui/icons/Brightness3'
 import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh'
@@ -16,7 +15,6 @@ import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh'
 import LoggedInBar from './LoggedInBar'
 import NotLoggedInBar from './NotLoggedInBar'
 import { Link as RouterLink } from 'react-router-dom'
-import { Link } from '@material-ui/core'
 import { useTheme } from '@material-ui/styles'
 
 import authContext from '../authContext'

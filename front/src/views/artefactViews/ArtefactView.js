@@ -52,7 +52,7 @@ function ArtefactView(props) {
     // if viewing an existing artefact get the details (potentially unloaded)
     const context = useContext(authContext)
     const username = context.user.username
-    let creationErrors, creationLoading
+    let creationErrors
 
     if (!create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
@@ -128,7 +128,7 @@ function ArtefactView(props) {
         Object.keys(state).length === 0 &&
         families
     ) {
-        var belong = {}
+        let belong = {}
         families.map(val => (belong[val.id] = false))
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
 
@@ -141,7 +141,7 @@ function ArtefactView(props) {
 
     // if in create mode, initialise the booleans for the family checkboxes to false
     if (create && families && !state.belongsToFamiliesBools) {
-        var belong = {}
+        let belong = {}
         families.map(val => (belong[val.id] = false))
 
         setState({ belongsToFamiliesBools: belong, date: null })
