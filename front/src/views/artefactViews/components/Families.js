@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 
 export default ({ mode, states, setters, families, disabled, name }) => {
-    var { create, edit, view } = mode
+    var { view } = mode
     var { state } = states
     var { handleSetField } = setters
     return (
@@ -23,11 +23,10 @@ export default ({ mode, states, setters, families, disabled, name }) => {
             }
         >
             {families.map(family => {
-                if (!state.belongsToFamiliesBools) {
-                    return
-                }
-
-                if (!view || state.belongsToFamiliesBools[family.id]) {
+                if (
+                    state.belongsToFamiliesBools &&
+                    (!view || state.belongsToFamiliesBools[family.id])
+                ) {
                     return (
                         <ListItem key={family.id} dense disabled={disabled}>
                             {!view && (
@@ -53,6 +52,7 @@ export default ({ mode, states, setters, families, disabled, name }) => {
                         </ListItem>
                     )
                 }
+                return null
             })}
         </List>
     )

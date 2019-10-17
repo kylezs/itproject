@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import ArtefactView from '../views/ArtefactView'
-import { Layout } from '../components'
 import { useQuery } from '@apollo/react-hooks'
 
 import { GET_ARTEFACT_STATES_QUERY } from '../gqlQueriesMutations'

@@ -6,10 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('artefacts', '0002_auto_20191016_0947'),
+        ('artefacts', '0002_auto_20191015_2310'),
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='artefact',
+            name='date',
+            field=models.DateField(auto_now=True),
+        ),
         migrations.AlterField(
             model_name='artefact',
             name='date',

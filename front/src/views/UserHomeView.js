@@ -10,7 +10,7 @@ import { Typography, CssBaseline, Button, TextField, Grid,
 FormControl } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import gql from "graphql-tag";
-import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import ArtefactCard from '../components/ArtefactCard';
 
 
@@ -180,7 +180,7 @@ function UserHomeView(props) {
                                 <ArtefactCard
                                     key={key}
                                     mediaURI={artefact.node.upload}
-                                    title={artefact.node.name}
+                                    name={artefact.node.name}
                                     description={artefact.node.description}
                                     id={artefact.node.id} />
                             </GridListTile>

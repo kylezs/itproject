@@ -9,12 +9,14 @@ export const MY_ACCESS_TOKEN =
 
 // Whatever server the app is on, /graphql/
 const prod = {
-    uri: '/graphql/'
+    uri: '/graphql/',
+    mediaRoot: 'https://artefact-picture.s3.amazonaws.com/media/'
 }
 
 // In case running dev on either :8000 or :3000, this must be specified as full path
 const dev = {
-    uri: 'http://localhost:8000/graphql/'
+    uri: 'http://localhost:8000/graphql/',
+    mediaRoot: 'http://localhost:8000/media/'
 }
 
 // If npm run build => production, if npm start => development (built into react)

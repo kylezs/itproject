@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useRef } from 'react'
+import React, { useState, Fragment } from 'react'
 import { useTheme } from '@material-ui/styles'
 import {
     MenuItem,
@@ -104,7 +104,6 @@ function MapView(props) {
     }
 
     var { families, familiesLoading } = props
-    const target = useRef(null)
 
     // initally query is run with invalid ID
     const [state, setState] = useState({

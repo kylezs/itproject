@@ -7,7 +7,6 @@ import { CssBaseline } from '@material-ui/core'
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
 import Logout from './components/Logout'
-import Layout from './components/Layout'
 
 // Family views
 import CreateFamilyView from './views/CreateFamilyView'
