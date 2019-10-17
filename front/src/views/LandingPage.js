@@ -4,13 +4,13 @@ import Layout from '../components/Layout'
 // NB: REMOVE THE LAYOUT, THIS SHOULD NOT HAVE THE APP BAR, THIS SHOULD BE EXTRA COOL DESIGNED PAGE
 function LandingPage(props) {
     return (
-        <Layout>
-            This is some cool landing page yo. Welcome!
-            <br />
-            Also, in the future, this page should not have a navigation bar,
-            it'll have cooler design stuff. It only has the nav bar for easier
-            linking to signup / login for now
-        </Layout>
+        <div>
+            <div id="particles-js"></div>
+            <div class="count-particles"></div>
+            <span class="js-count-particles"></span>
+            <script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+            <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+        </div>
     )
 }
 export default LandingPage
