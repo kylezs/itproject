@@ -177,8 +177,8 @@ function LandingPage(props) {
                     position: "absolute",
                     right: 0
                 }}>
-            <HomePageButton linkTo="/login">Login</HomePageButton>
             <HomePageButton linkTo="/signup">Sign up</HomePageButton>
+            <HomePageButton linkTo="/login">Login</HomePageButton>
             </div>
         </div>
     )
