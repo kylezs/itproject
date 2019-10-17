@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import Layout from '../components/Layout'
+import Layout from '../../components/Layout'
 import { makeStyles } from '@material-ui/core/styles'
 import { CssBaseline, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
-import ArtefactCard from '../components/ArtefactCard'
+import ArtefactCard from '../../components/ArtefactCard'
 
 const useStyles = makeStyles(theme => ({
     textField: {

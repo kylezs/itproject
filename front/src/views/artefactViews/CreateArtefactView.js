@@ -4,7 +4,7 @@ import {
     GetArtefactWrapper,
     GetFamiliesWrapper,
     GetStatesWrapper
-} from '../components'
+} from '../../components'
 
 export default function CreateArtefactView(props) {
     const childProps = {

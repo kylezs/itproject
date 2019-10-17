@@ -4,7 +4,7 @@ import {
     GetArtefactWrapper,
     GetFamiliesWrapper,
     GetStatesWrapper
-} from '../components'
+} from '../../components'
 
 export default function EditArtefactView(props) {
     const thisChildProps = {
@@ -12,14 +12,13 @@ export default function EditArtefactView(props) {
         childProps: {
             child: ArtefactView
         },
-        edit: true
+        view: true
     }
-
     return (
-            <GetStatesWrapper
-                {...props}
-                child={GetFamiliesWrapper}
-                childProps={thisChildProps}
-            />
+        <GetStatesWrapper
+            {...props}
+            child={GetFamiliesWrapper}
+            childProps={thisChildProps}
+        />
     )
 }
