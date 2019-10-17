@@ -43,21 +43,13 @@ export default function MenuAppBar(props) {
     const dark = theme && theme.palette.type === 'dark'
     return (
         <div className={classes.root}>
-            <AppBar position='static' color={dark ? 'inherit' : 'primary'}>
+            <AppBar position='static' color='primary' elevation={6}>
+            {/* <AppBar position='static' color={dark ? 'inherit' : 'primary'} elevation={6}> */}
                 <Toolbar>
                     <Grid container>
-                        <Grid item xs={4} container>
-                            <IconButton
-                                edge='start'
-                                className={classes.menuButton}
-                                color='inherit'
-                                aria-label='menu'
-                            >
-                                <MenuIcon />
-                            </IconButton>
-
+                        <Grid item xs={2} container>
                             <Button
-                                className={classes.title}
+                                fullWidth
                                 component={RouterLink}
                                 to='/'
                                 color='inherit'
@@ -66,7 +58,7 @@ export default function MenuAppBar(props) {
                             </Button>
                         </Grid>
 
-                        <Grid item xs={8} container justify='flex-end' alignItems='center'>
+                        <Grid item xs={10} container justify='flex-end' alignItems='center'>
                             <IconButton
                                 className={classes.menuButton}
                                 color='inherit'

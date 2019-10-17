@@ -19,11 +19,13 @@ const _handleResponse = response => {
 
         if (feature.place_type[0] === 'place') {
             const bboxCoords = feature.bbox
-            const bbox = [
-                [bboxCoords[0], bboxCoords[1]],
-                [bboxCoords[2], bboxCoords[3]]
-            ]
-            result.mapState.fitBounds = bbox
+            if (bboxCoords) {
+                const bbox = [
+                    [bboxCoords[0], bboxCoords[1]],
+                    [bboxCoords[2], bboxCoords[3]]
+                ]
+                result.mapState.fitBounds = bbox
+            }
         } else if (feature.place_type[0] === 'address') {
             result.mapState.zoom = [15]
         }
@@ -52,7 +54,6 @@ export default function geocodeQuery(query, types) {
     var args = {
         query: query,
         limit: 5,
-        types: ['place', 'address']
     }
     if (types) args.types = types
 

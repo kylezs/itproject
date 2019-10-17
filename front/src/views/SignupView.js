@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core'
 
 import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
 
 import { Layout, formUseStyles } from '../components'
 import { USERNAME_TAKEN_ERR_MSG } from '../constants.js'

@@ -30,7 +30,8 @@ const useStyles = makeStyles(theme => ({
     },
     card: {
         backgroundColor: theme.palette.background.paper,
-        maxWidth: 345
+        maxWidth: 345,
+        borderRadius: 10
     },
     media: {
         backgroundColor: theme.palette.background.paper,
@@ -43,16 +44,17 @@ const useStyles = makeStyles(theme => ({
 This component is to present a summary of the artefact to a user, it's used in the homepage
 and manage page as a quick way to assist navigating through artefacts
 */
-function ArtefactCard({ mediaURI, title, description, id }) {
+function ArtefactCard({ mediaURI, name, description, id }) {
     const classes = useStyles()
 
+    console.log("here's the mediaURI: " + mediaURI)
     return (
         <Card className={classes.card} elevation={3}>
             <CardActionArea>
                 <CardMedia
                     className={classes.media}
-                    image={"https://img1.cgtrader.com/items/995815/731bda0123/antique-old-clock-3d-model-low-poly-animated-obj-3ds-fbx-blend-dae-mtl.jpg"}
-                    title={title}
+                    image={mediaURI}
+                    title={name}
                 />
                 <CardContent>
                     <Grid item xs zeroMinWidth>
@@ -62,7 +64,7 @@ function ArtefactCard({ mediaURI, title, description, id }) {
                             component='h2'
                             noWrap
                         >
-                            {title}
+                            {name}
                         </Typography>
                     </Grid>
                     <Grid item xs zeroMinWidth>
@@ -88,7 +90,7 @@ function ArtefactCard({ mediaURI, title, description, id }) {
                 </Button>
                 <Button
                     size='small'
-                    color='primary'
+                    color='secondary'
                     component={RouterLink}
                     to={`/artefacts/edit/${id}`}
                 >

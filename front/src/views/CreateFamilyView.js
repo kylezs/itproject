@@ -84,11 +84,9 @@ function CreateFamilyView(props) {
         <form className={classes.form} onSubmit={submitForm}>
             <Grid
                 container
-                spacing={2}
-                direction='row'
-                alignItems='stretch'
-                alignContent='stretch'
-                justify='space-evenly'
+                spacing={1}
+                className={classes.outerContainer}
+                spacing={1}
             >
                 <Grid item xs={12} container justify='center'>
                     <Typography variant='h4' className={classes.title}>
@@ -105,7 +103,7 @@ function CreateFamilyView(props) {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Paper className={classes.paper} elevation={3}>
+                    <Paper className={classes.paperWrapper} elevation={3}>
                         <FormControl className={classes.formControl} fullWidth>
                             <TextField
                                 variant='outlined'
@@ -120,7 +118,7 @@ function CreateFamilyView(props) {
                     </Paper>
                 </Grid>
                 <Grid item xs={12}>
-                    <Paper className={classes.paper} elevation={3}>
+                    <Paper className={classes.paperWrapper} elevation={3}>
                         <FormControl className={classes.formControl} fullWidth>
                             <TextField
                                 variant='outlined'
@@ -136,7 +134,7 @@ function CreateFamilyView(props) {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Paper className={classes.paper} elevation={3}>
+                    <Paper className={classes.paperWrapper} elevation={3}>
                         <FormControl className={classes.formControl} fullWidth>
                             <TextField
                                 variant='outlined'
@@ -151,7 +149,7 @@ function CreateFamilyView(props) {
                     </Paper>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                     <Button
                         name='create'
                         label='Create'
@@ -159,7 +157,6 @@ function CreateFamilyView(props) {
                         fullWidth
                         variant='contained'
                         color='primary'
-                        elevation={10}
                     >
                         Create
                     </Button>

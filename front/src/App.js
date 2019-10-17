@@ -7,15 +7,14 @@ import { CssBaseline } from '@material-ui/core'
 import Login from './views/LoginView'
 import Signup from './views/SignupView'
 import Logout from './components/Logout'
-import Layout from './components/Layout'
 
 // Family views
 import CreateFamilyView from './views/CreateFamilyView'
 // Artefact Views
-import CreateArtefactView from './views/CreateArtefactView'
-import DetailView from './views/DetailView'
-import ManageArtefactsView from './views/ManageArtefactsView'
-import EditArtefactView from './views/EditArtefactView'
+import CreateArtefactView from './views/artefactViews/CreateArtefactView'
+import DetailView from './views/artefactViews/DetailView'
+import ManageArtefactsView from './views/artefactViews/ManageArtefactsView'
+import EditArtefactView from './views/artefactViews/EditArtefactView'
 import Error404View from './views/Error404View'
 
 import UserHomeView from './views/UserHomeView'

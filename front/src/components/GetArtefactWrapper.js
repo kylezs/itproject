@@ -1,22 +1,17 @@
-import React, { useState, useContext } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { ARTEFACT_DETAIL } from '../gqlQueriesMutations'
-import authContext from '../authContext'
 
 export default function GetArtefactWrapper({
     child: Child,
     childProps,
     ...rest
 }) {
-    console.log("HERE")
-    const context = useContext(authContext)
-    const username = context.user.username
-
     const { data, loading } = useQuery(ARTEFACT_DETAIL, {
         variables: {
             id: rest.match.params.id
         },
-        onError: error => console.log(error)
+        onError: error => console.error(error)
     })
 
     var thisChildProps = {

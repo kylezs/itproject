@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+from corsheaders.defaults import default_headers
 import os
 
 # django-environ package, allows usage of a .env file
@@ -99,6 +100,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.media',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -163,3 +165,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Location Info
 MAPBOX_KEY = 'pk.eyJ1Ijoiemh1b3BpbmdtIiwiYSI6ImNrMHowaXN1YzA0MmQzY29kbTdlbXJzOWIifQ.eEx-9GUiucpOMEYVVh7Ztg'
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'content-transfer-encoding',
+]
+
+CORS_ALLOW_CREDENTIALS = True

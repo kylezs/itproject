@@ -9,6 +9,7 @@ export const CREATE_ARTEFACT_MUTATION = gql`
         $description: String!
         $belongsToFamilies: [ID]
         $address: String
+        $date: String
     ) {
         artefactCreate(
             input: {
@@ -18,6 +19,35 @@ export const CREATE_ARTEFACT_MUTATION = gql`
                 isPublic: $isPublic
                 belongsToFamilies: $belongsToFamilies
                 address: $address
+                date: $date
+            }
+        ) {
+            artefact {
+                id
+            }
+        }
+    }
+`
+
+export const CREATE_ARTEFACT_MUTATION_STR = `
+mutation CreateArtefactMutation(
+        $name: String!
+        $state: String!
+        $isPublic: Boolean
+        $description: String!
+        $belongsToFamilies: [ID]
+        $address: String
+        $date: String
+    ) {
+        artefactCreate(
+            input: {
+                name: $name
+                state: $state
+                description: $description
+                isPublic: $isPublic
+                belongsToFamilies: $belongsToFamilies
+                address: $address
+                date: $date
             }
         ) {
             artefact {
@@ -75,6 +105,7 @@ export const ARTEFACT_DETAIL = gql`
             }
             addedAt
             address
+            date
         }
     }
 `

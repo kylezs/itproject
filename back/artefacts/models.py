@@ -20,7 +20,7 @@ class Artefact(models.Model):
 
     # test field now: later, override __init__ to update this whenever a field changes.
     # also, used timezone.now() for migration when prompted default value.. change later
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(null=True)
 
     state_options = [
         ('OKY', 'No Problem'),
@@ -36,15 +36,15 @@ class Artefact(models.Model):
 
     is_public = models.BooleanField(default=False, blank=True)
 
-    # upload image file to AWS S3 bucket
-    upload = models.FileField(default=False, blank=True)
+    # upload image file to AWS S3 bucket or local, depending on settings
+    upload = models.FileField(default=False, blank=True, upload_to="artefact/images")
 
     added_at = models.DateTimeField(auto_now_add=True)
 
     belongs_to_families = models.ManyToManyField(Family,
                                                  related_name='has_artefacts', blank=True)
 
-    address = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = _('artefact')

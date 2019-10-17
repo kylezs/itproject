@@ -3,23 +3,44 @@ import ReactMapboxGl, { Marker, Popup } from 'react-mapbox-gl'
 import { MY_ACCESS_TOKEN } from '../constants'
 import ArtefactCard from '../components/ArtefactCard'
 import { useTheme } from '@material-ui/styles'
+import { makeStyles } from '@material-ui/core/styles'
 
-const Mapbox = ReactMapboxGl({
+const useStyles = makeStyles(theme => ({
+    popup: {
+        // color: theme.palette.background.default,
+        // background: theme.palette.background.default,
+        // background: '#000 !important',
+        // color: '#000 !important'
+    }
+}))
+
+const mapProps = {
     accessToken: MY_ACCESS_TOKEN,
-    interactive: true,
     attributionControl: false,
-    maxZoom: 18
+    maxZoom: 18,
+    minZoom: 2
+}
+const Mapbox = ReactMapboxGl({
+    ...mapProps,
+    interactive: false
+})
+
+const InteractiveMapbox = ReactMapboxGl({
+    ...mapProps,
+    interactive: true
 })
 
 export default function Map(props) {
     const theme = useTheme()
+    const classes = useStyles()
+    const MapType = props.interactive ? InteractiveMapbox : Mapbox
     var artefacts = props.artefacts
     if (!artefacts) artefacts = []
 
-    const [popupOpen, setPopupOpen] = useState({})
+    const [openArtefactID, setOpenArtefactID] = useState('')
 
     return (
-        <Mapbox
+        <MapType
             style={
                 props.mapStyle
                     ? props.mapStyle
@@ -27,9 +48,10 @@ export default function Map(props) {
             }
             containerStyle={props.containerStyle}
             {...props.mapState}
+            onClick={e => setOpenArtefactID('')}
         >
             {artefacts.map(artefact => {
-                var { center, popup, ...rest } = artefact
+                var { center, popup, initPopupOpen, ...rest } = artefact
                 if (!center || !center.length) {
                     return
                 }
@@ -39,12 +61,15 @@ export default function Map(props) {
                         <Marker
                             coordinates={center}
                             onClick={e => {
-                                setPopupOpen({
-                                    ...popupOpen,
-                                    [artefactID]: !popupOpen[artefactID]
-                                })
-                            }
-                            }
+                                if (openArtefactID === artefactID) {
+                                    setOpenArtefactID('')
+                                } else {
+                                    setOpenArtefactID(artefactID)
+                                }
+                                if (artefact.initPopupOpen){
+                                    artefact.initPopupOpen = false
+                                }
+                            }}
                         >
                             <img
                                 src={
@@ -53,21 +78,25 @@ export default function Map(props) {
                                 alt='marker-img'
                             />
                         </Marker>
-                        {popup && popupOpen[artefact.id] && (
-                            <Popup
-                                coordinates={center}
-                                offset={{
-                                    'bottom-left': [12, -38],
-                                    bottom: [0, -38],
-                                    'bottom-right': [-12, -38]
-                                }}
-                            >
-                                <ArtefactCard {...rest} />
-                            </Popup>
-                        )}
+                        {popup &&
+                            (openArtefactID === artefactID ||
+                                initPopupOpen) && (
+                                <Popup
+                                    coordinates={center}
+                                    className={classes.popup}
+                                    offset={{
+                                        'bottom-left': [12, -38],
+                                        bottom: [0, -38],
+                                        'bottom-right': [-12, -38]
+                                    }}
+                                    // style={{color: '#000000'}}
+                                >
+                                    <ArtefactCard {...rest} />
+                                </Popup>
+                            )}
                     </Fragment>
                 )
             })}
-        </Mapbox>
+        </MapType>
     )
 }

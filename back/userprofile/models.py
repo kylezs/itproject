@@ -8,10 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 # This class handles everything about the user that's not authentication later
 # Some fields, such as firstname and lastname are handled already by Django, so
 # we just let Django handle them
-# Families foreign key to profile, rather than other way around
 # NB: You may need to update the graphql logic if you are updating this
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     bio = models.TextField(max_length=600, blank=True)
     birth_date = models.DateField(null=True, blank=True)
 
