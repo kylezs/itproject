@@ -1,16 +1,17 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
     IconButton,
     Toolbar,
     AppBar,
     Button,
     makeStyles,
-    Grid
+    Grid,
+    Typography,
+    Link
 } from '@material-ui/core'
 // import MenuIcon from '@material-ui/icons/Menu'
 
-import Brightness3Icon from '@material-ui/icons/Brightness3'
-import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh'
+import { Home, Menu, Brightness3, BrightnessHigh } from '@material-ui/icons'
 
 import LoggedInBar from './LoggedInBar'
 import NotLoggedInBar from './NotLoggedInBar'
@@ -23,8 +24,8 @@ const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1
     },
-    menuButton: {
-        marginRight: theme.spacing(2)
+    iconButton: {
+        marginRight: theme.spacing(1)
     },
     title: {
         flexGrow: 1,
@@ -34,46 +35,62 @@ const useStyles = makeStyles(theme => ({
 
 export default function MenuAppBar(props) {
     const classes = useStyles()
+
     const context = useContext(authContext)
     let loggedIn = context.authenticated
     let username = null
+
     const theme = useTheme()
     const dark = theme && theme.palette.type === 'dark'
+
+    const [open, setOpen] = useState(false)
     return (
         <div className={classes.root}>
             <AppBar position='static' color='primary' elevation={6}>
-            {/* <AppBar position='static' color={dark ? 'inherit' : 'primary'} elevation={6}> */}
                 <Toolbar>
-                    <Grid container>
-                        <Grid item xs={2} container>
-                            <Button
-                                fullWidth
-                                component={RouterLink}
-                                to='/'
-                                color='inherit'
-                            >
-                                Home
-                            </Button>
-                        </Grid>
+                    <IconButton
+                        className={classes.iconButton}
+                        edge='start'
+                        color='inherit'
+                        aria-label='menu'
+                        onClick={e => setOpen(true)}
+                    >
+                        <Menu />
+                    </IconButton>
 
-                        <Grid item xs={10} container justify='flex-end' alignItems='center'>
-                            <IconButton
-                                className={classes.menuButton}
-                                color='inherit'
-                                aria-label='menu'
-                                onClick={props.onToggleDarkTheme}
-                            >
-                                {!dark ? (
-                                    <Brightness3Icon />
-                                ) : (
-                                    <BrightnessHighIcon />
-                                )}
-                            </IconButton>
+                    <IconButton
+                        className={classes.iconButton}
+                        color='inherit'
+                        aria-label='home'
+                        component={RouterLink}
+                        to='/'
+                    >
+                        <Home />
+                    </IconButton>
 
-                            {loggedIn && <LoggedInBar username={username} />}
-                            {!loggedIn && <NotLoggedInBar />}
-                        </Grid>
-                    </Grid>
+                    <Typography variant='h6' className={classes.title}>
+                        Family Artefacts Register
+                    </Typography>
+
+
+                    <IconButton
+                        className={classes.iconButton}
+                        color='inherit'
+                        aria-label='theme-toggle'
+                        onClick={props.onToggleDarkTheme}
+                    >
+                        {!dark ? <Brightness3 /> : <BrightnessHigh />}
+                    </IconButton>
+
+                    {loggedIn ? (
+                        <LoggedInBar
+                            username={username}
+                            drawerOpen={open}
+                            setDrawerOpen={setOpen}
+                        />
+                    ) : (
+                        <NotLoggedInBar />
+                    )}
                 </Toolbar>
             </AppBar>
         </div>

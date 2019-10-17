@@ -1,18 +1,23 @@
-import React, { useContext, useState } from 'react';
-import Layout from '../components/Layout';
-import authContext from '../authContext';
-import { makeStyles } from '@material-ui/core/styles';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import { Typography, CssBaseline, Button, TextField, Grid,
-FormControl } from '@material-ui/core';
-import Select from '@material-ui/core/Select';
-import gql from "graphql-tag";
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import ArtefactCard from '../components/ArtefactCard';
-
+import React, { useContext, useState } from 'react'
+import Layout from '../components/Layout'
+import authContext from '../authContext'
+import { makeStyles } from '@material-ui/core/styles'
+import GridList from '@material-ui/core/GridList'
+import GridListTile from '@material-ui/core/GridListTile'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import {
+    Typography,
+    CssBaseline,
+    Button,
+    TextField,
+    Grid,
+    FormControl
+} from '@material-ui/core'
+import Select from '@material-ui/core/Select'
+import gql from 'graphql-tag'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import ArtefactCard from '../components/ArtefactCard'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -28,23 +33,23 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const HOMEPAGE_INFO = gql`
-        query {
-            me {
+    query {
+        me {
             isMemberOf {
-            id
-            familyName
-            joinCode
-            hasArtefacts {
-                edges {
-                node {
-                    id
-                    name
-                    admin {
-                    username
+                id
+                familyName
+                joinCode
+                hasArtefacts {
+                    edges {
+                        node {
+                            id
+                            name
+                            admin {
+                                username
+                            }
+                        }
                     }
                 }
-                }
-            }
             }
             profile {
                 id
@@ -52,112 +57,116 @@ const HOMEPAGE_INFO = gql`
                     id
                     familyName
                     joinCode
-                        hasArtefacts {
-                            edges {
-                                node {
-                                    id
-                                    name
-                                    description
-                                    upload
-                                }
+                    hasArtefacts {
+                        edges {
+                            node {
+                                id
+                                name
+                                description
+                                upload
                             }
                         }
                     }
                 }
+            }
         }
-    }`
+    }
+`
 
 const JOIN_FAMILY_MUTATION = gql`
-mutation JoinFamily($joinCode: String!) {
-  familyJoin(joinCode: $joinCode) {
-    family {
-      familyName
-      familyAdmin {
-          username
-      }
+    mutation JoinFamily($joinCode: String!) {
+        familyJoin(joinCode: $joinCode) {
+            family {
+                familyName
+                familyAdmin {
+                    username
+                }
+            }
+        }
     }
-  }
-}`
+`
 
 const SELECT_FAMILY_MUTATION = gql`
-mutation SelectFamilyMutation($profileId: Int!, $toFamily: String!) {
-    updateProfile(input: {
-        id: $profileId,
-        selectedFamily: $toFamily
-    }) {
-        id
-        selectedFamily
+    mutation SelectFamilyMutation($profileId: Int!, $toFamily: String!) {
+        updateProfile(input: { id: $profileId, selectedFamily: $toFamily }) {
+            id
+            selectedFamily
+        }
     }
-}`
+`
 
 function UserHomeView(props) {
     const classes = useStyles()
 
     const context = useContext(authContext)
     const username = context.user.username
-    const [formJoinCode, setFormJoinCode] = useState("")
+    const [formJoinCode, setFormJoinCode] = useState('')
 
-    const [joinFamilyMutation, { data: join_mutation_data }] = useMutation(JOIN_FAMILY_MUTATION,
+    const [joinFamilyMutation, { data: join_mutation_data }] = useMutation(
+        JOIN_FAMILY_MUTATION,
         {
-            refetchQueries: (data) => [
-                { query: HOMEPAGE_INFO },
-            ],
-        });
+            refetchQueries: data => [{ query: HOMEPAGE_INFO }]
+        }
+    )
 
     const handleJoinFamily = () => {
         if (formJoinCode.length === 0) {
-            console.error("Enter a valid joinCode");
-            return;
+            console.error('Enter a valid joinCode')
+            return
         }
 
-        joinFamilyMutation({variables: {joinCode: formJoinCode }})
+        joinFamilyMutation({ variables: { joinCode: formJoinCode } })
     }
 
-    const _homepageInfoCompleted = (data) => {
+    const _homepageInfoCompleted = data => {
         const selectedFamily = data.me.profile.selectedFamily
         if (!selectedFamily) {
-            console.error("User has not selected a family");
-            return;
+            console.error('User has not selected a family')
+            return
         }
     }
 
-    let { data: home_data, loading, called: home_page_info_called } = useQuery(HOMEPAGE_INFO, {
-        onCompleted: (data) => {
-            _homepageInfoCompleted(data)
-        }
-    })
-
-
-    const [selectFamily, { data: mutation_data }] = useMutation(SELECT_FAMILY_MUTATION,
+    let { data: home_data, loading, called: home_page_info_called } = useQuery(
+        HOMEPAGE_INFO,
         {
-            refetchQueries: (data) => [
-                { query: HOMEPAGE_INFO },
-            ],
-        });
+            onCompleted: data => {
+                _homepageInfoCompleted(data)
+            }
+        }
+    )
 
-    const inputLabel = React.useRef(null);
+    const [selectFamily, { data: mutation_data }] = useMutation(
+        SELECT_FAMILY_MUTATION,
+        {
+            refetchQueries: data => [{ query: HOMEPAGE_INFO }]
+        }
+    )
+
+    const inputLabel = React.useRef(null)
 
     const handleChange = event => {
         event.preventDefault()
-        const newFamily = event.target.value;
-        selectFamily({ variables: { profileId: profileId, toFamily: newFamily } })
-    };
+        const newFamily = event.target.value
+        selectFamily({
+            variables: { profileId: profileId, toFamily: newFamily }
+        })
+    }
 
     if (loading) {
         return <p>Loading...</p>
     }
 
     const selectedFamily = home_data.me.profile.selectedFamily
-    const families = home_data.me.isMemberOf;
-    const profileId = home_data.me.profile.id;
+    const families = home_data.me.isMemberOf
+    const profileId = home_data.me.profile.id
     let artefacts = []
-    
+
     // If the user has selected a family there will be a list of artefacts
     // Though the list may be empty
     if (selectedFamily) {
-        artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges;
+        artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges
     }
-    
+
     return (
         <Layout>
             <CssBaseline />
@@ -165,30 +174,33 @@ function UserHomeView(props) {
                 <Grid item xs={9}>
                     {selectedFamily && (
                         <div>
-                        <Typography variant="h1">{selectedFamily.familyName}</Typography>
-                        <Typography variant="h5">Join code: {selectedFamily.joinCode}</Typography>
+                            <Typography variant='h1'>
+                                {selectedFamily.familyName}
+                            </Typography>
+                            <Typography variant='h5'>
+                                Join code: {selectedFamily.joinCode}
+                            </Typography>
                         </div>
                     )}
                     {!selectedFamily && (
-                        <Typography variant="h2">Join and/or Select a Family</Typography>
+                        <Typography variant='h2'>
+                            Join and/or Select a Family
+                        </Typography>
                     )}
                     <h4>Your username is (temp, for testing): {username}</h4>
-                    <GridList cellHeight={"auto"} cols={2}>
+                    <GridList cellHeight={'auto'} cols={2}>
                         {artefacts.map((artefact, key) => (
-                            <GridListTile
-                                key={key}>
+                            <GridListTile key={key}>
                                 <ArtefactCard
                                     key={key}
-                                    mediaURI={artefact.node.upload}
-                                    name={artefact.node.name}
-                                    description={artefact.node.description}
-                                    id={artefact.node.id} />
+                                    artefact={artefact.node}
+                                />
                             </GridListTile>
                         ))}
                     </GridList>
                 </Grid>
                 <Grid item xs={3}>
-                    <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
+                    <InputLabel ref={inputLabel} htmlFor='outlined-age-simple'>
                         Select Family
                     </InputLabel>
                     <Select
@@ -199,37 +211,29 @@ function UserHomeView(props) {
                         onChange={handleChange}
                         inputProps={{
                             name: 'age',
-                            id: 'outlined-age-simple',
+                            id: 'outlined-age-simple'
                         }}
                     >
-                        {families && (families.map((item, key) =>
-                            <MenuItem
-                                key={item.id}
-                                value={item.id}
-                            >
-                                {item.familyName}
-                            </MenuItem>
-                        )
-                        )}
+                        {families &&
+                            families.map((item, key) => (
+                                <MenuItem key={item.id} value={item.id}>
+                                    {item.familyName}
+                                </MenuItem>
+                            ))}
                     </Select>
-                    <FormControl
-                    fullWidth
-                    >
-                    <TextField 
-                        id="joinCodeField"
-                        label="Join a family"
-                        value={formJoinCode}
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={e => setFormJoinCode(e.target.value)}
-                        fullWidth
-                    />
-                    <Button
-                        variant="outlined" 
-                        onClick={handleJoinFamily}
-                    >
-                        Join Family
-                    </Button>
+                    <FormControl fullWidth>
+                        <TextField
+                            id='joinCodeField'
+                            label='Join a family'
+                            value={formJoinCode}
+                            className={classes.textField}
+                            margin='normal'
+                            onChange={e => setFormJoinCode(e.target.value)}
+                            fullWidth
+                        />
+                        <Button variant='outlined' onClick={handleJoinFamily}>
+                            Join Family
+                        </Button>
                     </FormControl>
                 </Grid>
             </Grid>

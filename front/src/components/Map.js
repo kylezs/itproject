@@ -37,7 +37,6 @@ export default function Map(props) {
     if (!artefacts) artefacts = []
 
     const [openArtefactID, setOpenArtefactID] = useState('')
-
     return (
         <MapType
             style={
@@ -65,7 +64,7 @@ export default function Map(props) {
                                 } else {
                                     setOpenArtefactID(artefactID)
                                 }
-                                if (artefact.initPopupOpen){
+                                if (artefact.initPopupOpen) {
                                     artefact.initPopupOpen = false
                                 }
                             }}
@@ -87,10 +86,12 @@ export default function Map(props) {
                                         bottom: [0, -38],
                                         'bottom-right': [-12, -38]
                                     }}
-                                    style={{backgroundColor: '#000000 !important'}}
+                                    style={{
+                                        backgroundColor: '#000000 !important'
+                                    }}
                                     className={classes.popup}
                                 >
-                                    <ArtefactCard {...rest} />
+                                    <ArtefactCard artefact={artefact} />
                                 </Popup>
                             )}
                     </Fragment>
