@@ -2,7 +2,8 @@ import React, { Fragment } from 'react'
 import {
     Switch,
     FormHelperText,
-    Typography
+    Typography,
+    FormControlLabel
 } from '@material-ui/core'
 
 export default ({ mode, states, setters, disabled, name, classes }) => {
@@ -16,17 +17,24 @@ export default ({ mode, states, setters, disabled, name, classes }) => {
                 <Typography variant='h6' className={classes.fieldTitle}>
                     Privacy
                 </Typography>
-                <Switch
-                    checked={state.isPublic || false}
-                    onChange={e => handleSetField(name, e.target.checked)}
-                    edge='end'
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={state.isPublic || false}
+                            onChange={e =>
+                                handleSetField(name, e.target.checked)
+                            }
+                            // edge='end'
+                            disabled={disabled}
+                        />
+                    }
                     style={{ marginLeft: 3 }}
-                    disabled={disabled}
+                    label='Public'
                 />
                 <FormHelperText className={classes.fieldTitle}>
                     {state.isPublic
-                        ? 'This artefact will be viewable by anyone'
-                        : 'This artefact will be viewable by family members'}
+                        ? 'Viewable by anyone'
+                        : 'Viewable by family members only'}
                 </FormHelperText>
             </Fragment>
         )

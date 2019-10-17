@@ -26,7 +26,8 @@ import {
     FieldWrapper,
     Address,
     SuccessSnackbar,
-    CreateButton
+    CreateButton,
+    DeleteDialog
 } from './components'
 import authContext from '../../authContext'
 
@@ -34,7 +35,8 @@ import { Layout } from '../../components'
 
 import {
     CREATE_ARTEFACT_MUTATION_STR,
-    UPDATE_ARTEFACT_MUTATION
+    UPDATE_ARTEFACT_MUTATION,
+    DELETE_ARTEFACT_MUTATION
 } from '../../gqlQueriesMutations'
 
 import { AUTH_TOKEN, config } from '../../constants'
@@ -76,6 +78,7 @@ function ArtefactView(props) {
     const [prevValue, setPrevValue] = useState({})
     // a message indicating successful edit
     const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
 
     // state variables for the map
     const [locationState, setLocationState] = useState({
@@ -214,6 +217,22 @@ function ArtefactView(props) {
         }
     }
 
+    // send user to edit the specified artefact
+    const pushEditArtefactURL = id => {
+        const { history } = props
+        if (history) {
+            history.push(`/artefacts/edit/${id}`)
+        }
+    }
+
+    // send user to home
+    const pushHomeURL = () => {
+        const { history } = props
+        if (history) {
+            history.push(`/`)
+        }
+    }
+
     // handlers for GQL mutations
     const handleCreationCompleted = data => {
         console.log("here's the data")
@@ -225,11 +244,17 @@ function ArtefactView(props) {
         setBeingEdited('')
         setSnackbarOpen(true)
     }
+    const deleteCompleted = async data => {
+        pushHomeURL()
+    }
     const handleCreationError = async errors => {
         console.error('Creation errors occurred:', errors)
     }
     const handleUpdateError = async errors => {
         console.error('Update errors occured: ', errors)
+    }
+    const handleDeleteError = async errors => {
+        console.error('Deletion errors occured: ', errors)
     }
 
     const createArtefact = async (
@@ -270,6 +295,14 @@ function ArtefactView(props) {
         {
             onCompleted: updateCompleted,
             onError: handleUpdateError
+        }
+    )
+
+    const [deleteArtefact, { error: deleteErrors }] = useMutation(
+        DELETE_ARTEFACT_MUTATION,
+        {
+            onCompleted: deleteCompleted,
+            onError: handleDeleteError
         }
     )
 
@@ -398,12 +431,33 @@ function ArtefactView(props) {
     return (
         <form onSubmit={submitHandler} className={classes.form}>
             <Grid container className={classes.outerContainer} spacing={1}>
-                <Grid item xs={12} container justify='center'>
-                    <Title mode={mode} classes={classes} />
+                <Grid
+                    item
+                    xs={12}
+                    container
+                    justify='center'
+                    alignItems='center'
+                    spacing={1}
+                >
+                    <Title
+                        mode={mode}
+                        classes={classes}
+                        isAdmin={isAdmin}
+                        goToEdit={() => pushEditArtefactURL(artefact.id)}
+                        openDelete={() => setDeleteOpen(true)}
+                    />
                 </Grid>
 
                 {Panes.map(pane => (
-                    <Grid item xs={12} sm={6} container spacing={1} key={pane} alignContent='flex-start'>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        container
+                        spacing={1}
+                        key={pane}
+                        alignContent='flex-start'
+                    >
                         {pane.map(({ comp, name }) => {
                             if (comp === null) return null
                             return (
@@ -442,6 +496,13 @@ function ArtefactView(props) {
                     viewArtefact={pushViewArtefactURL}
                     classes={classes}
                     id={artefact ? artefact.id : '-1'}
+                />
+
+                <DeleteDialog
+                    open={deleteOpen}
+                    setOpen={setDeleteOpen}
+                    deleteArtefact={deleteArtefact}
+                    id={artefact.id}
                 />
             </Grid>
         </form>

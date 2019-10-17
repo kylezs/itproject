@@ -195,7 +195,7 @@ function UserHomeView(props) {
                                     key={key}
                                     artefact={artefact.node}
                                 />
-                            </GridListTile>
+                            </GridListTile> 
                         ))}
                     </GridList>
                 </Grid>

@@ -17,6 +17,7 @@ export default makeStyles(theme => ({
         marginRight: theme.spacing(3),
         padding: theme.spacing(1),
         textAlign: 'center'
+        // flexGrow: 1
     },
     fieldTitle: {
         textAlign: 'left',
@@ -38,6 +39,11 @@ export default makeStyles(theme => ({
     },
     button: {
         height: '100%'
+    },
+    editLinkButton: {
+        width: '60px',
+        height: '30px',
+        margin: theme.spacing(1),
     },
     map: {
         height: '200px',

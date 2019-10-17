@@ -11,6 +11,7 @@ export default ({ mode, states, setters, disabled, name }) => {
         <KeyboardDatePicker
             disabled={view || disabled}
             clearable
+            minDate={'1500-01-01'}
             // variant='inline'
             inputVariant='outlined'
             format='dd/MM/yyyy'

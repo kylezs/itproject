@@ -177,3 +177,11 @@ export const CREATE_FAMILY_MUTATION = gql`
         }
     }
 `
+
+export const DELETE_ARTEFACT_MUTATION = gql`
+    mutation ArtefactDelete($id: ID!) {
+        artefactDelete(id: $id) {
+            ok
+        }
+    }
+`

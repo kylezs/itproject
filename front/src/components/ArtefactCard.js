@@ -85,20 +85,21 @@ function ArtefactCard({ artefact }) {
             <CardActions>
                 <Button
                     size='small'
+                    fullWidth
                     color='primary'
                     component={RouterLink}
                     to={`/artefacts/${id}`}
                 >
                     View
                 </Button>
-                <Button
+                {/* <Button
                     size='small'
                     color='secondary'
                     component={RouterLink}
                     to={`/artefacts/edit/${id}`}
                 >
                     Edit
-                </Button>
+                </Button> */}
             </CardActions>
         </Card>
     )

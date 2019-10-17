@@ -133,7 +133,8 @@ export default ({
                     }}
                     artefacts={[
                         {
-                            center: locationState.mapState.center
+                            center: locationState.mapState.center,
+                            id: -1
                         }
                     ]}
                 />
