@@ -15,7 +15,7 @@ export default function GetArtefactWrapper({
         variables: {
             id: rest.match.params.id
         },
-        onError: error => console.log(error)
+        onError: error => console.error(error)
     })
 
     var thisChildProps = {

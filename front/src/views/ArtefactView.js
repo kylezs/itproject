@@ -225,8 +225,10 @@ function ArtefactView(props) {
     }
 
     // handlers for GQL mutations
-    const creationCompleted = async data => {
-        var id = data.artefactCreate.artefact.id
+    const handleCreationCompleted = data => {
+        console.log("here's the data")
+        console.log(data)
+        var id = data.data.artefactCreate.artefact.id
         pushViewArtefactURL(id)
     }
 
@@ -241,21 +243,15 @@ function ArtefactView(props) {
         console.error('Update errors occured: ', errors)
     }
 
-    // const [
-    //     createArtefact,
-    //     { error: creationErrors, loading: creationLoading }
-    // ] = useMutation(CREATE_ARTEFACT_MUTATION, {
-    //     onCompleted: creationCompleted,
-    //     onError: handleCreationError
-    // })
-
-    const createArtefact = (variables) => {
+    const createArtefact = async (variables, successCallback, errorCallback) => {
         console.log("here's input from call")
         console.log(variables);
         // const input = "hello"
         let form_data = new FormData();
         // Image not passed through by variables
-        form_data.append('itemImage', state.files[0]);
+        if (state.files && state.files.length) {
+            form_data.append('itemImage', state.files[0]);
+        }
         form_data.append('query', CREATE_ARTEFACT_MUTATION_STR);
         form_data.append('variables', JSON.stringify(variables));
         let url = config.uri;
@@ -265,16 +261,14 @@ function ArtefactView(props) {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 "Content-Transfer-Encoding": "multipart/form-data",
             },
+        }).then(res => {
+            successCallback(res.data)
         })
-            .then(data => {
-                console.log("Success, run some stuff")
-                console.log(data)
-                // _creationCompleted(data)
-            })
-            .catch(err => {
-                console.error(err);
-                // _handleCreationError(err)
-            })
+        .catch((err) => {
+            // console.error(err);
+            errorCallback(err)
+        })
+
     };
 
     const [updateArtefact, { error: updateErrors }] = useMutation(
@@ -317,7 +311,7 @@ function ArtefactView(props) {
             input.date = parseDate(state.date)
         }
 
-        createArtefact(input)
+        createArtefact(input, handleCreationCompleted, handleCreationError);
     }
 
     // for updating an existing artefact
