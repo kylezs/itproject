@@ -1,4 +1,4 @@
-export { default as Title } from './Title'
+export { default as Head } from './Head'
 export { default as Name } from './Name'
 export { default as State } from './State'
 export { default as Description } from './Description'

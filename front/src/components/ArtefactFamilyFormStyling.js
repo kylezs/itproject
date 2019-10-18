@@ -43,7 +43,13 @@ export default makeStyles(theme => ({
     editLinkButton: {
         width: '60px',
         height: '30px',
+        margin: theme.spacing(1)
+    },
+    deleteButton: {
+        width: '60px',
+        height: '30px',
         margin: theme.spacing(1),
+        backgroundColor: theme.palette.error.main
     },
     map: {
         height: '200px',

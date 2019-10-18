@@ -8,7 +8,7 @@ import {
     Button
 } from '@material-ui/core'
 
-export default ({ open, setOpen, deleteArtefact, id }) => {
+export default ({ open, setOpen, deleteArtefact, artefact }) => {
     return (
         <Dialog
             fullWidth
@@ -26,7 +26,7 @@ export default ({ open, setOpen, deleteArtefact, id }) => {
                     Cancel
                 </Button>
                 <Button
-                    onClick={() => deleteArtefact({ variables: { id: id } })}
+                    onClick={() => deleteArtefact({ variables: { id: artefact.id } })}
                     color='primary'
                 >
                     Delete

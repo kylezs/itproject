@@ -14,7 +14,7 @@ import {
 } from '../../components'
 
 import {
-    Title,
+    Head,
     Name,
     State,
     Description,
@@ -26,7 +26,6 @@ import {
     FieldWrapper,
     Address,
     SuccessSnackbar,
-    CreateButton,
     DeleteDialog
 } from './components'
 import authContext from '../../authContext'
@@ -439,12 +438,13 @@ function ArtefactView(props) {
                     alignItems='center'
                     spacing={1}
                 >
-                    <Title
+                    <Head
                         mode={mode}
                         classes={classes}
                         isAdmin={isAdmin}
                         goToEdit={() => pushEditArtefactURL(artefact.id)}
                         openDelete={() => setDeleteOpen(true)}
+                        noErrors={noErrors}
                     />
                 </Grid>
 
@@ -484,12 +484,6 @@ function ArtefactView(props) {
                     />
                 </Grid>
 
-                {create && (
-                    <Grid item xs={5}>
-                        <CreateButton noErrors={noErrors} />
-                    </Grid>
-                )}
-
                 <SuccessSnackbar
                     open={snackbarOpen}
                     setOpen={setSnackbarOpen}
@@ -502,7 +496,7 @@ function ArtefactView(props) {
                     open={deleteOpen}
                     setOpen={setDeleteOpen}
                     deleteArtefact={deleteArtefact}
-                    id={artefact.id}
+                    artefact={artefact}
                 />
             </Grid>
         </form>

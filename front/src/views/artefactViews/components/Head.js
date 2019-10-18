@@ -1,15 +1,15 @@
 import React, { Fragment } from 'react'
 import { Grid, Typography, Button } from '@material-ui/core'
-import { Link as RouterLink } from 'react-router-dom'
+import CreateButton from './CreateButton'
 
-export default ({ mode, classes, isAdmin, goToEdit, openDelete }) => {
+export default ({ mode, classes, isAdmin, goToEdit, openDelete, noErrors }) => {
     const { create, edit, view } = mode
     const showEditButton = view && isAdmin
     const showDeleteButton = edit && isAdmin
 
     return (
         <Fragment>
-            {(showEditButton || showDeleteButton) && (
+            {(showEditButton || showDeleteButton || create) && (
                 <div
                     className={classes.editLinkButton}
                     style={{
@@ -26,7 +26,7 @@ export default ({ mode, classes, isAdmin, goToEdit, openDelete }) => {
             {showEditButton && (
                 <Button
                     color='secondary'
-                    variant='outlined'
+                    variant='contained'
                     onClick={goToEdit}
                     className={classes.editLinkButton}
                     style={{ marginLeft: 'auto' }}
@@ -37,13 +37,24 @@ export default ({ mode, classes, isAdmin, goToEdit, openDelete }) => {
             {showDeleteButton && (
                 <Button
                     color='default'
-                    variant='outlined'
+                    variant='contained'
                     onClick={openDelete}
                     className={classes.editLinkButton}
                     style={{ marginLeft: 'auto' }}
                 >
                     Delete
                 </Button>
+            )}
+
+            {create && (
+                <CreateButton
+                    noErrors={noErrors}
+                    color='primary'
+                    variant='contained'
+                    type='submit'
+                    className={classes.editLinkButton}
+                    style={{ marginLeft: 'auto' }}
+                />
             )}
             {create && (
                 <Grid item xs={12}>
