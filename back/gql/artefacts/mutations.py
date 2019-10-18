@@ -121,7 +121,13 @@ class ArtefactDelete(Mutation):
 
     @classmethod
     def mutate(cls, root, info, **data):
+        user = info.context.user
+        if user.is_anonymous:
+            raise(AUTH_EXCEPTION)
+        
         artefact = Artefact.objects.get(id=data.get('id'))
-        artefact.delete()
-
-        return ArtefactDelete(ok=True)
+        if artefact.admin == user:
+            artefact.delete()
+            return ArtefactDelete(ok=True)
+        else:
+            raise(AUTH_EXCEPTION)
