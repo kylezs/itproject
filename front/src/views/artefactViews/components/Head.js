@@ -49,7 +49,7 @@ export default ({ mode, classes, isAdmin, goToEdit, openDelete, noErrors }) => {
             {create && (
                 <CreateButton
                     noErrors={noErrors}
-                    color='primary'
+                    color='secondary'
                     variant='contained'
                     type='submit'
                     className={classes.editLinkButton}

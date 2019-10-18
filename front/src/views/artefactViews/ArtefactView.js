@@ -426,6 +426,17 @@ function ArtefactView(props) {
         { comp: Images, name: 'files' }
     ]
 
+    const components = [
+        { comp: Name, name: 'name' },
+        { comp: State, name: 'state' },
+        { comp: Admin, name: 'admin' },
+        { comp: Date, name: 'date' },
+        { comp: Families, name: 'belongsToFamiliesBools' },
+        { comp: Description, name: 'description' },
+        { comp: view ? null : Privacy, name: 'isPublic' },
+        { comp: Images, name: 'files', widthProps: {xs: 7} }
+    ]
+
     const Panes = [LeftPaneComponents, RightPaneComponents]
 
     return (
@@ -449,31 +460,22 @@ function ArtefactView(props) {
                     />
                 </Grid>
 
-                {Panes.map(pane => (
-                    <Grid
-                        item
-                        xs={12}
-                        sm={6}
-                        container
-                        spacing={1}
-                        key={pane}
-                        alignContent='flex-start'
-                    >
-                        {pane.map(({ comp, name }) => {
-                            if (comp === null) return null
-                            return (
-                                <FieldWrapper
-                                    key={comp}
-                                    child={comp}
-                                    name={name}
-                                    childProps={componentProps}
-                                    editButtonProps={editButtonProps}
-                                    classes={classes}
-                                />
-                            )
-                        })}
-                    </Grid>
-                ))}
+                {components.map(({ comp, name, widthProps }) => {
+                    if (comp === null) return null
+                    if (!widthProps) widthProps = {xs:12, md:6}
+                    return (
+                        <Grid container item {...widthProps}>
+                            <FieldWrapper
+                                key={comp}
+                                child={comp}
+                                name={name}
+                                childProps={componentProps}
+                                editButtonProps={editButtonProps}
+                                classes={classes}
+                            />
+                        </Grid>
+                    )
+                })}
 
                 <Grid item xs={12}>
                     <FieldWrapper

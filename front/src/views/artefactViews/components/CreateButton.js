@@ -7,7 +7,7 @@ export default ({ noErrors, ...rest }) => (
         <Button
             {...rest}
         >
-            Create
+            Save
         </Button>
         {!noErrors && (
             <FormHelperText error={!noErrors}>

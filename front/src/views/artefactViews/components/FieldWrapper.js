@@ -14,19 +14,17 @@ export default ({
     var thisBeingEdited = beingEdited === name
     var someBeingEdited = edit && !!beingEdited
     return (
-        <Grid item xs={12}>
-            <Paper className={classes.paperWrapper} elevation={3}>
-                <FormControl className={classes.formControl} fullWidth>
-                    <Child
-                        {...childProps}
-                        disabled={someBeingEdited && !thisBeingEdited}
-                        name={name}
-                        classes={classes}
-                    />
+        <Paper className={classes.paperWrapper} elevation={3}>
+            <FormControl className={classes.formControl} fullWidth>
+                <Child
+                    {...childProps}
+                    disabled={someBeingEdited && !thisBeingEdited}
+                    name={name}
+                    classes={classes}
+                />
 
-                    {thisBeingEdited && <EditButtons {...editButtonProps} />}
-                </FormControl>
-            </Paper>
-        </Grid>
+                {thisBeingEdited && <EditButtons {...editButtonProps} />}
+            </FormControl>
+        </Paper>
     )
 }

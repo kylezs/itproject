@@ -31,7 +31,7 @@ export default makeStyles(theme => ({
     paperWrapper: {
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
-        height: '100%',
+        width: '100%',
         alignItems: 'center',
         borderRadius: 10
     },
