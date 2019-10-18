@@ -1,16 +1,186 @@
 import React from 'react'
-import Layout from '../components/Layout'
+import Particles from 'react-particles-js'
+import { Typography, Button } from '@material-ui/core'
+import Typist from 'react-typist';
+import { Link as RouterLink } from 'react-router-dom'
 
-// NB: REMOVE THE LAYOUT, THIS SHOULD NOT HAVE THE APP BAR, THIS SHOULD BE EXTRA COOL DESIGNED PAGE
+/*
+The page that users come to when they first encounter our app. It's a marketing page basically
+
+*/
+
+function HomePageButton(props) {
+    const {linkTo} = props;
+    return (
+        <Button style={{ 
+            color: "#f0f0f0",
+            padding: "12px",
+            margin: "5px"
+            }}
+            component={RouterLink}
+            to={linkTo}>
+            {props.children}
+        </Button>
+    )
+}
+
 function LandingPage(props) {
     return (
-        <Layout>
-            This is some cool landing page yo. Welcome!
-            <br />
-            Also, in the future, this page should not have a navigation bar,
-            it'll have cooler design stuff. It only has the nav bar for easier
-            linking to signup / login for now
-        </Layout>
+        <div>
+            <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet"></link>
+            <Typography variant="h1" 
+            style={{
+                padding: "5rem",
+                zIndex: 3,
+                position: "absolute",
+                fontWeight: "lighter",
+                fontFamily: "Dosis",
+                color: "#f0f0f0",
+            }}>
+                Family Artefacts Register
+            </Typography>
+            <Typography variant="h2"
+                style={{
+                    padding: "5rem",
+                    zIndex: 3,
+                    position: "absolute",
+                    top: "8rem",
+                    fontWeight: "lighter",
+                    fontFamily: "Dosis",
+                    color: "#f0f0f0",
+                }}>
+            <Typist>
+                Connecting you to your family <br />and your family's history.
+            </Typist>
+            </Typography>
+            <Particles
+                style = {{
+                    position: "fixed",
+                    left: 0,
+                    top: 0,
+                    background: "rgb(103, 58, 183)",
+                    background: "linear-gradient(90deg, rgba(103, 58, 183, 1) 25%, rgba(63, 81, 181, 1) 100%, rgba(255, 255, 255, 1) 100%)"
+        }}
+                params={{
+                    "particles": {
+                        "number": {
+                            "value": 120,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#ffffff"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#FFFFFF"
+                            },
+                            "polygon": {
+                                "nb_sides": 5
+                            },
+                            "image": {
+                                "src": "img/github.svg",
+                                "width": 100,
+                                "height": 100
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.44093831673801875,
+                            "random": false,
+                            "anim": {
+                                "enable": false,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 4.008530152163807,
+                            "random": true,
+                            "anim": {
+                                "enable": false,
+                                "speed": 40,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#ffffff",
+                            "opacity": 0.4,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 6,
+                            "direction": "none",
+                            "random": false,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": false,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 400,
+                                "line_linked": {
+                                    "opacity": 1
+                                }
+                            },
+                            "bubble": {
+                                "distance": 400,
+                                "size": 40,
+                                "duration": 2,
+                                "opacity": 8,
+                                "speed": 3
+                            },
+                            "repulse": {
+                                "distance": 200,
+                                "duration": 0.4
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            },
+                            "remove": {
+                                "particles_nb": 2
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                }}
+            />
+            <div
+                style={{
+                    position: "absolute",
+                    right: 0
+                }}>
+            <HomePageButton linkTo="/signup">Sign up</HomePageButton>
+            <HomePageButton linkTo="/login">Login</HomePageButton>
+            </div>
+        </div>
     )
 }
 export default LandingPage

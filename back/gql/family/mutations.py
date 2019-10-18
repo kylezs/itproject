@@ -3,6 +3,9 @@ from graphene import Field, ID, InputObjectType, Mutation, String
 from rest_framework import serializers
 from family.models import Family
 from .types import FamilyType
+from userprofile.models import Profile
+from django.contrib.auth.models import User
+
 
 from gql.errors import *
 
@@ -33,6 +36,12 @@ class FamilyCreate(Mutation):
 
         family.save()
 
+        # Default the selected family to the one being created if the
+        # user does not have a family selected already
+        if not user.profile.selected_family:
+            user.profile.selected_family = family
+        user.save()
+
         family.family_members.set([user])
         
         return FamilyCreate(family=family)
@@ -54,5 +63,11 @@ class FamilyJoin(Mutation):
         to_join = Family.objects.filter(join_code=data.get("joinCode"))[0]
 
         to_join.family_members.add(user)
+
+        # Default the selected family to the one being joined if the
+        # user does not have a family selected already
+        if not user.profile.selected_family:
+            user.profile.selected_family = to_join
+        user.profile.save()
 
         return FamilyJoin(family=to_join)
