@@ -8,9 +8,19 @@ import {
     Drawer,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    ListItemIcon
 } from '@material-ui/core'
-import AccountCircle from '@material-ui/icons/AccountCircle'
+
+import {
+    Home,
+    Group,
+    Create,
+    Map,
+    Apps,
+    AccountCircle
+} from '@material-ui/icons'
+
 import authContext from '../authContext'
 import { Link as RouterLink } from 'react-router-dom'
 
@@ -55,32 +65,34 @@ export default ({ drawerOpen, setDrawerOpen }) => {
                 >
                     <List>
                         {[
-                            { name: 'Home', path: '/' },
-                            { name: 'Create Family', path: '/family/create/' },
+                            { name: 'Home', path: '/', icon: Home },
+                            {
+                                name: 'Create Family',
+                                path: '/family/create/',
+                                icon: Group
+                            },
                             {
                                 name: 'Manage Artefacts',
-                                path: '/artefacts/manage/'
+                                path: '/artefacts/manage/',
+                                icon: Apps
                             },
                             {
                                 name: 'Create Artefact',
-                                path: '/artefacts/create/'
+                                path: '/artefacts/create/',
+                                icon: Create
                             },
-                            { name: 'Artefact Map', path: '/map/' }
-                        ].map(({ name, path }) => (
+                            { name: 'Artefact Map', path: '/map/', icon: Map }
+                        ].map(({ name, path, icon: Icon }) => (
                             <ListItem
                                 button
                                 key={path}
                                 component={RouterLink}
                                 to={path}
-                                style={{borderRadius: 10}}
+                                style={{ borderRadius: 10 }}
                             >
-                                {/* <ListItemIcon>
-                                    {index % 2 === 0 ? (
-                                        <InboxIcon />
-                                    ) : (
-                                        <MailIcon />
-                                    )}
-                                </ListItemIcon> */}
+                                <ListItemIcon>
+                                    <Icon />
+                                </ListItemIcon>
                                 <ListItemText
                                     primary={name}
                                     // primaryTypographyProps={{variant: 'h6'}}

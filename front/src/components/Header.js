@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 // import MenuIcon from '@material-ui/icons/Menu'
 
-import { Home, Menu, Brightness3, BrightnessHigh } from '@material-ui/icons'
+import { Home, Menu, Brightness4, Brightness7 } from '@material-ui/icons'
 
 import LoggedInBar from './LoggedInBar'
 import NotLoggedInBar from './NotLoggedInBar'
@@ -79,7 +79,7 @@ export default function MenuAppBar(props) {
                         aria-label='theme-toggle'
                         onClick={props.onToggleDarkTheme}
                     >
-                        {!dark ? <Brightness3 /> : <BrightnessHigh />}
+                        {!dark ? <Brightness4 /> : <Brightness7 />}
                     </IconButton>
 
                     {loggedIn ? (
