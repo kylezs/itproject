@@ -7,7 +7,8 @@ export default ({
     childProps,
     name,
     classes,
-    editButtonProps
+    editButtonProps,
+    ...rest
 }) => {
     var { beingEdited, mode } = childProps
     var { edit } = mode
@@ -21,6 +22,7 @@ export default ({
                     disabled={someBeingEdited && !thisBeingEdited}
                     name={name}
                     classes={classes}
+                    {...rest}
                 />
 
                 {thisBeingEdited && <EditButtons {...editButtonProps} />}

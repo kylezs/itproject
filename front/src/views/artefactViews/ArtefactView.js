@@ -398,8 +398,9 @@ function ArtefactView(props) {
         },
         setters: {
             handleSetField: handleSetField
-        }
+        },
     }
+    const numFams = state.families ? state.families.length : 0
 
     const addressProps = {
         ...componentProps,
@@ -464,7 +465,7 @@ function ArtefactView(props) {
                     if (comp === null) return null
                     if (!widthProps) widthProps = {xs:12, md:6}
                     return (
-                        <Grid container item {...widthProps}>
+                        <Grid container item {...widthProps} key={name}>
                             <FieldWrapper
                                 key={comp}
                                 child={comp}
@@ -472,6 +473,7 @@ function ArtefactView(props) {
                                 childProps={componentProps}
                                 editButtonProps={editButtonProps}
                                 classes={classes}
+                                numFams={numFams}
                             />
                         </Grid>
                     )
