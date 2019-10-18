@@ -1,18 +1,29 @@
 import React, { Fragment } from 'react'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { Typography } from '@material-ui/core'
+import Image from 'material-ui-image'
+import { useTheme } from '@material-ui/styles'
+
+import { config } from '../../../constants'
+import { Loading } from '../../../components'
 
 export default ({ mode, classes, states, setters, name }) => {
-    var { create } = mode
+    const theme = useTheme()
+    var { edit, create, view } = mode
     var { state } = states
     var { handleSetField } = setters
-
-    if (create) {
-        return (
-            <Fragment>
-                <Typography variant='h6' className={classes.fieldTitle}>
-                    Images
+    return (
+        <Fragment>
+            <Typography variant='h6' className={classes.fieldTitle}>
+                Images
+            </Typography>
+            {edit && (
+                <Typography variant='caption' className={classes.fieldTitle}>
+                    Editing coming soon...
                 </Typography>
+            )}
+
+            {create && (
                 <DropzoneArea
                     initialFiles={state.files || []}
                     acceptedFiles={['image/*']}
@@ -25,9 +36,15 @@ export default ({ mode, classes, states, setters, name }) => {
                         dropzoneParagraph: classes.fieldTitle
                     }}
                 />
-            </Fragment>
-        )
-    } else {
-        return <div> render image here, editing coming soon...</div>
-    }
+            )}
+            {(view || edit) && state.upload !== 'False' && (
+                <Image
+                    src={config.mediaRoot + state.upload}
+                    loading={<Loading />}
+                    color={theme.palette.background.paper}
+                    imageStyle={{ borderRadius: 10 }}
+                />
+            )}
+        </Fragment>
+    )
 }

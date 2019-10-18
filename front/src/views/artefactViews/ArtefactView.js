@@ -133,6 +133,7 @@ function ArtefactView(props) {
         let belong = {}
         families.map(val => (belong[val.id] = false))
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        console.log(artefact)
 
         setState({
             ...artefact,

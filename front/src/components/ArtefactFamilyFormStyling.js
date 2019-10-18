@@ -21,9 +21,7 @@ export default makeStyles(theme => ({
     },
     fieldTitle: {
         textAlign: 'left',
-        // marginTop: theme.spacing(1),
-        marginLeft: theme.spacing(2),
-        margin: theme.spacing(1)
+        marginLeft: theme.spacing(1),
     },
     paper: {
         padding: theme.spacing(1),
