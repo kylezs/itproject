@@ -26,7 +26,9 @@ export default ({ open, setOpen, deleteArtefact, artefact }) => {
                     Cancel
                 </Button>
                 <Button
-                    onClick={() => deleteArtefact({ variables: { id: artefact.id } })}
+                    onClick={() =>
+                        deleteArtefact({ variables: { id: artefact.id } })
+                    }
                     color='primary'
                 >
                     Delete

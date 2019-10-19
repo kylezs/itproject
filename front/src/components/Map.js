@@ -12,7 +12,6 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-
 const mapProps = {
     accessToken: MY_ACCESS_TOKEN,
     attributionControl: false,
@@ -31,12 +30,28 @@ const InteractiveMapbox = ReactMapboxGl({
 
 export default function Map(props) {
     const classes = useStyles()
-    
+
     const MapType = props.interactive ? InteractiveMapbox : Mapbox
     var artefacts = props.artefacts
     if (!artefacts) artefacts = []
 
     const [openArtefactID, setOpenArtefactID] = useState('')
+
+    const handleSetOpenArtefact = id => {
+        if (openArtefactID === id) {
+            setOpenArtefactID('')
+        } else {
+            setOpenArtefactID(id)
+        }
+    }
+
+    const onMapClick = () => {
+        handleSetOpenArtefact('')
+        if (props.onClick){
+            props.onClick()
+        }
+    }
+
     return (
         <MapType
             style={
@@ -46,28 +61,22 @@ export default function Map(props) {
             }
             containerStyle={props.containerStyle}
             {...props.mapState}
-            onClick={e => setOpenArtefactID('')}
+            onClick={onMapClick}
         >
             {artefacts.map(artefact => {
-                var { center, popup, initPopupOpen, ...rest } = artefact
+                var { center, popup, initPopupOpen, id, ...rest } = artefact
+                if (initPopupOpen) {
+                    artefact.initPopupOpen = false
+                    setOpenArtefactID(id)
+                }
                 if (!center || !center.length) {
                     return null
                 }
-                var artefactID = artefact.id
                 return (
-                    <Fragment key={artefactID}>
+                    <Fragment key={id}>
                         <Marker
                             coordinates={center}
-                            onClick={e => {
-                                if (openArtefactID === artefactID) {
-                                    setOpenArtefactID('')
-                                } else {
-                                    setOpenArtefactID(artefactID)
-                                }
-                                if (artefact.initPopupOpen) {
-                                    artefact.initPopupOpen = false
-                                }
-                            }}
+                            onClick={e => handleSetOpenArtefact(id)}
                         >
                             <img
                                 src={
@@ -76,24 +85,22 @@ export default function Map(props) {
                                 alt='marker-img'
                             />
                         </Marker>
-                        {popup &&
-                            (openArtefactID === artefactID ||
-                                initPopupOpen) && (
-                                <Popup
-                                    coordinates={center}
-                                    offset={{
-                                        'bottom-left': [12, -38],
-                                        bottom: [0, -38],
-                                        'bottom-right': [-12, -38]
-                                    }}
-                                    style={{
-                                        backgroundColor: '#000000 !important'
-                                    }}
-                                    className={classes.popup}
-                                >
-                                    <ArtefactCard artefact={artefact} />
-                                </Popup>
-                            )}
+                        {popup && openArtefactID === id && (
+                            <Popup
+                                coordinates={center}
+                                offset={{
+                                    'bottom-left': [12, -38],
+                                    bottom: [0, -38],
+                                    'bottom-right': [-12, -38]
+                                }}
+                                style={{
+                                    backgroundColor: '#000000 !important'
+                                }}
+                                className={classes.popup}
+                            >
+                                <ArtefactCard artefact={artefact} />
+                            </Popup>
+                        )}
                     </Fragment>
                 )
             })}

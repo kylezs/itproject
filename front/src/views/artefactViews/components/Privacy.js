@@ -6,8 +6,8 @@ import {
     FormControlLabel
 } from '@material-ui/core'
 
-export default ({ mode, states, setters, disabled, name, classes }) => {
-    var { create, edit } = mode
+export default ({ states, setters, disabled, name, classes }) => {
+    var { create, edit } = states.mode
     var { state } = states
     var { handleSetField } = setters
 

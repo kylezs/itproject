@@ -13,7 +13,6 @@ import SearchIcon from '@material-ui/icons/Search'
 import { Map } from '../../../components'
 
 export default ({
-    mode,
     states,
     setters,
     classes,
@@ -21,7 +20,7 @@ export default ({
     handleGeocodeQuery,
     disabled
 }) => {
-    var { view } = mode
+    var { view } = states.mode
     var {
         handleSetField,
         setAddressIsSearchResult,

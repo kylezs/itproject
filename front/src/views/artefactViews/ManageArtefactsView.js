@@ -52,7 +52,8 @@ function ManageArtefactsView(props) {
             first: numArtefactsFetched
         },
         onCompleted: data =>
-            SetArtefactEdges(data.me.artefactAdministratorOf.edges)
+            SetArtefactEdges(data.me.artefactAdministratorOf.edges),
+        fetchPolicy: 'network-only'
     })
 
     console.log('The data is: ', data)

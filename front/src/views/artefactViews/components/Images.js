@@ -7,9 +7,9 @@ import { useTheme } from '@material-ui/styles'
 import { config } from '../../../constants'
 import { Loading } from '../../../components'
 
-export default ({ mode, classes, states, setters, name }) => {
+export default ({ classes, states, setters, name }) => {
     const theme = useTheme()
-    var { edit, create, view } = mode
+    var { edit, create, view } = states.mode
     var { state } = states
     var { handleSetField } = setters
     return (

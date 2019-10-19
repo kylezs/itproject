@@ -6,6 +6,7 @@ export default ({ noErrors, ...rest }) => (
     <Fragment>
         <Button
             {...rest}
+            type='submit'
         >
             Save
         </Button>

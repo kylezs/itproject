@@ -131,7 +131,8 @@ function UserHomeView(props) {
         {
             onCompleted: data => {
                 _homepageInfoCompleted(data)
-            }
+            },
+            fetchPolicy: 'network-only'
         }
     )
 

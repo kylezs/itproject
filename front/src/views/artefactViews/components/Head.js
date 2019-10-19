@@ -2,8 +2,15 @@ import React, { Fragment } from 'react'
 import { Grid, Typography, Button } from '@material-ui/core'
 import CreateButton from './CreateButton'
 
-export default ({ mode, classes, isAdmin, goToEdit, openDelete, noErrors }) => {
-    const { create, edit, view } = mode
+export default ({
+    states,
+    setters,
+    classes,
+    isAdmin,
+    openDelete,
+    noErrors
+}) => {
+    const { create, edit, view } = states.mode
     const showEditButton = view && isAdmin
     const showDeleteButton = edit && isAdmin
 
@@ -27,7 +34,7 @@ export default ({ mode, classes, isAdmin, goToEdit, openDelete, noErrors }) => {
                 <Button
                     color='secondary'
                     variant='contained'
-                    onClick={goToEdit}
+                    onClick={e => setters.setMode({ edit: true })}
                     className={classes.editLinkButton}
                     style={{ marginLeft: 'auto' }}
                 >

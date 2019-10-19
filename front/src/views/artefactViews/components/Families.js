@@ -8,21 +8,14 @@ import {
     Typography
 } from '@material-ui/core'
 
-export default ({
-    mode,
-    states,
-    setters,
-    families,
-    disabled,
-    name,
-    classes
-}) => {
-    var { view } = mode
+export default ({ states, setters, families, disabled, name, classes }) => {
+    var { view } = states.mode
     var { state } = states
     var { handleSetField } = setters
 
     if (
-        view && state.belongsToFamiliesBools &&
+        view &&
+        state.belongsToFamiliesBools &&
         Object.values(state.belongsToFamiliesBools).filter(value => value)
             .length === 0
     ) {

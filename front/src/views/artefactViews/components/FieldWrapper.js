@@ -10,8 +10,8 @@ export default ({
     editButtonProps,
     ...rest
 }) => {
-    var { beingEdited, mode } = childProps
-    var { edit } = mode
+    var { beingEdited, states } = childProps
+    var { edit } = states.mode
     var thisBeingEdited = beingEdited === name
     var someBeingEdited = edit && !!beingEdited
     return (

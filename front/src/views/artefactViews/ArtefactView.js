@@ -43,8 +43,13 @@ import axios from 'axios'
 
 function ArtefactView(props) {
     // get the mode
-    var { create, edit, view } = props
-    var mode = { create: create, edit: edit, view: view }
+    // var { create, edit, view } = props
+    // var mode = { create: create, edit: edit, view: view }
+    const [mode, setMode] = useState({
+        create: props.create,
+        edit: props.edit,
+        view: props.view
+    })
 
     // get families, states, and artefact data
     var { statesLoading, familiesLoading, artefactLoading } = props
@@ -55,7 +60,7 @@ function ArtefactView(props) {
     const username = context.user.username
     let creationErrors
 
-    if (!create) {
+    if (!mode.create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
         var isAdmin = !artefactLoading
             ? artefact.admin.username === username
@@ -63,9 +68,8 @@ function ArtefactView(props) {
     }
 
     // only allow admins to see the edit page
-    if (!isAdmin && edit) {
-        edit = false
-        view = true
+    if (!isAdmin && mode.edit) {
+        setMode({view: true})
     }
 
     const classes = artefactFamilyFormUseStyles()
@@ -125,7 +129,7 @@ function ArtefactView(props) {
     // if in edit or view mode load in the data for the artefact into the state
     // only if the artefact has loaded and this hasn't already run
     if (
-        (edit || view) &&
+        (mode.edit || mode.view) &&
         !artefactLoading &&
         Object.keys(state).length === 0 &&
         families
@@ -143,7 +147,7 @@ function ArtefactView(props) {
     }
 
     // if in create mode, initialise the booleans for the family checkboxes to false
-    if (create && families && !state.belongsToFamiliesBools) {
+    if (mode.create && families && !state.belongsToFamiliesBools) {
         let belong = {}
         families.map(val => (belong[val.id] = false))
 
@@ -152,7 +156,7 @@ function ArtefactView(props) {
 
     // handler for setting the state object
     const handleSetField = (fieldName, value) => {
-        if (edit && beingEdited !== fieldName) {
+        if (mode.edit && beingEdited !== fieldName) {
             setBeingEdited(fieldName)
             setPrevValue(state[fieldName])
         }
@@ -215,14 +219,7 @@ function ArtefactView(props) {
         if (history) {
             history.push(`/artefacts/${id}`)
         }
-    }
-
-    // send user to edit the specified artefact
-    const pushEditArtefactURL = id => {
-        const { history } = props
-        if (history) {
-            history.push(`/artefacts/edit/${id}`)
-        }
+        setMode({view: true})
     }
 
     // send user to home
@@ -341,7 +338,7 @@ function ArtefactView(props) {
 
     // for updating an existing artefact
     const saveChange = async event => {
-        if (edit) {
+        if (mode.edit) {
             var input = {}
             if (!addressIsSearchResult) {
                 handleUnselectedSearchField()
@@ -372,10 +369,10 @@ function ArtefactView(props) {
     // select the submit handler
     const submitHandler = e => {
         e.preventDefault()
-        create ? submitForm(e) : saveChange(e)
+        mode.create ? submitForm(e) : saveChange(e)
     }
 
-    if ((edit || view) && dataLoading) {
+    if ((mode.edit || mode.view) && dataLoading) {
         return <Loading />
     }
 
@@ -387,20 +384,21 @@ function ArtefactView(props) {
     }
 
     const componentProps = {
+        classes: classes,
         beingEdited: beingEdited,
-        mode: mode,
         artefactStates: artefactStates,
         username: context.user.username,
         families: families,
         states: {
             state: state,
-            locationState: locationState
+            locationState: locationState,
+            mode: mode
         },
         setters: {
-            handleSetField: handleSetField
+            handleSetField: handleSetField,
+            setMode
         },
     }
-    const numFams = state.families ? state.families.length : 0
 
     const addressProps = {
         ...componentProps,
@@ -422,7 +420,7 @@ function ArtefactView(props) {
     ]
 
     const RightPaneComponents = [
-        { comp: view ? null : Privacy, name: 'isPublic' },
+        { comp: mode.view ? null : Privacy, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         { comp: Images, name: 'files' }
     ]
@@ -434,7 +432,7 @@ function ArtefactView(props) {
         { comp: Date, name: 'date' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         { comp: Description, name: 'description' },
-        { comp: view ? null : Privacy, name: 'isPublic' },
+        { comp: mode.view ? null : Privacy, name: 'isPublic' },
         { comp: Images, name: 'files', widthProps: {xs: 7} }
     ]
 
@@ -452,18 +450,16 @@ function ArtefactView(props) {
                     spacing={1}
                 >
                     <Head
-                        mode={mode}
-                        classes={classes}
                         isAdmin={isAdmin}
-                        goToEdit={() => pushEditArtefactURL(artefact.id)}
                         openDelete={() => setDeleteOpen(true)}
                         noErrors={noErrors}
+                        {...componentProps}
                     />
                 </Grid>
 
                 {components.map(({ comp, name, widthProps }) => {
                     if (comp === null) return null
-                    if (!widthProps) widthProps = {xs:12, md:6}
+                    if (!widthProps) widthProps = { xs: 12, md: 6 }
                     return (
                         <Grid container item {...widthProps} key={name}>
                             <FieldWrapper
@@ -473,7 +469,6 @@ function ArtefactView(props) {
                                 childProps={componentProps}
                                 editButtonProps={editButtonProps}
                                 classes={classes}
-                                numFams={numFams}
                             />
                         </Grid>
                     )
