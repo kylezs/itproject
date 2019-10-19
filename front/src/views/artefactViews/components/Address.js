@@ -13,14 +13,14 @@ import SearchIcon from '@material-ui/icons/Search'
 import { Map } from '../../../components'
 
 export default ({
-    mode,
     states,
     setters,
     classes,
     name,
-    handleGeocodeQuery
+    handleGeocodeQuery,
+    disabled
 }) => {
-    var { view } = mode
+    var { view } = states.mode
     var {
         handleSetField,
         setAddressIsSearchResult,
@@ -44,6 +44,7 @@ export default ({
                 label='Address'
                 variant='outlined'
                 fullWidth
+                disabled={disabled}
                 value={state.address || ''}
                 inputProps={{
                     readOnly: view
@@ -131,7 +132,8 @@ export default ({
                     }}
                     artefacts={[
                         {
-                            center: locationState.mapState.center
+                            center: locationState.mapState.center,
+                            id: -1
                         }
                     ]}
                 />

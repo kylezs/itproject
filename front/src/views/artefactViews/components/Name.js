@@ -1,8 +1,8 @@
 import React from 'react'
 import { TextField } from '@material-ui/core'
 
-export default ({ mode, states, setters, disabled, name }) => {
-    var { view } = mode
+export default ({ states, setters, disabled, name }) => {
+    var { view } = states.mode
     var { state } = states
     var { handleSetField } = setters
     return (
@@ -16,9 +16,7 @@ export default ({ mode, states, setters, disabled, name }) => {
             required
             fullWidth
             value={state.name || ''}
-            inputProps={{
-                readOnly: view
-            }}
+            inputProps={{ readOnly: view }}
             onChange={e => handleSetField(name, e.target.value)}
             disabled={disabled}
         />

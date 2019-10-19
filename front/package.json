@@ -23,6 +23,7 @@
     "graphql": "^14.4.2",
     "mapbox-gl": "^1.4.0",
     "material-ui-dropzone": "^2.4.1",
+    "material-ui-image": "^3.2.2",
     "password-validator": "^5.0.2",
     "react": "^16.9.0",
     "react-apollo": "^3.0.1",

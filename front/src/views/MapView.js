@@ -78,7 +78,7 @@ const MyDialogContent = () => (
             <DialogContentText>Scroll to zoom</DialogContentText>
             <DialogContentText>Click and drag to move</DialogContentText>
             <DialogContentText>
-                Click on an artefact to open a popup
+                Click on an artefact to show more information
             </DialogContentText>
         </DialogContent>
     </Fragment>
@@ -130,13 +130,13 @@ function MapView(props) {
     }
 
     const [mapArtefacts, setMapArtefacts] = useState([])
-    const [mapState, setMapState] = useState({
-        zoom: [2]
-    })
+    const initMapState = { zoom: [2] }
+    const [mapState, setMapState] = useState(initMapState)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [errorSnackbar, setErrorSnackbar] = useState({ open: false, msg: '' })
     const [helpOpen, setHelpOpen] = useState(false)
     const getArtefactMapData = data => {
+        console.log('Query resulted')
         if (!data) return
         artefacts = data.family.hasArtefacts.edges.map(edge => edge.node)
 
@@ -179,7 +179,8 @@ function MapView(props) {
                 setErrorSnackbar({ open: true, msg: 'Error loading family' })
                 console.log(error)
             }
-        }
+        },
+        fetchPolicy: 'network-only'
     })
 
     var artefacts = []
@@ -191,12 +192,17 @@ function MapView(props) {
             setMapArtefacts([])
         }
 
-        if (event.target.name === 'selectedArtefact'){
-            setMapState({
-                ...mapState,
-                center: event.target.value.center
-            })
-            event.target.value.initPopupOpen = true
+        if (event.target.name === 'selectedArtefact') {
+            if (event.target.value !== null) {
+                var newCenter = event.target.value.center
+                if (newCenter === mapState.center) {
+                    newCenter = newCenter.map(coord => 0.99999999 * coord)
+                }
+                setMapState({
+                    center: newCenter
+                })
+                event.target.value.initPopupOpen = true
+            }
         }
         setState({
             ...state,
@@ -219,6 +225,7 @@ function MapView(props) {
                         borderRadius: 10
                     }}
                     artefacts={mapArtefacts}
+                    // onClick={e => setState({ ...state, selectedArtefact: {} })}
                 />
             </Grid>
             <Grid
@@ -269,7 +276,7 @@ function MapView(props) {
                         >
                             <MenuItem value={defaultMapStyle}>Default</MenuItem>
                             {MapStyles.map(style => (
-                                <MenuItem value={style.value}>
+                                <MenuItem value={style.value} key={style.value}>
                                     {style.name}
                                 </MenuItem>
                             ))}
@@ -277,14 +284,14 @@ function MapView(props) {
                     </Paper>
                 </Grid>
 
-                {/* {mapArtefacts && (
+                {mapArtefacts.length > 0 && (
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
                             <TextField
                                 fullWidth
-                                label='Go to artefact'
+                                label='Jump to'
                                 variant='outlined'
-                                value={state.selectedArtefact}
+                                value={state.selectedArtefact || {}}
                                 select
                                 onChange={handleChange}
                                 SelectProps={{
@@ -292,16 +299,18 @@ function MapView(props) {
                                     autoWidth: true
                                 }}
                             >
-                                <MenuItem value={{}}>None</MenuItem>
                                 {mapArtefacts.map(artefact => (
-                                    <MenuItem value={artefact}>
+                                    <MenuItem
+                                        value={artefact}
+                                        key={artefact.id}
+                                    >
                                         {artefact.name}
                                     </MenuItem>
                                 ))}
                             </TextField>
                         </Paper>
                     </Grid>
-                )} */}
+                )}
 
                 <IconButton
                     edge='start'

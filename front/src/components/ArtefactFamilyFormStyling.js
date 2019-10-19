@@ -9,7 +9,7 @@ export default makeStyles(theme => ({
     },
     formControl: {
         height: '100%',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         textAlign: 'left'
     },
     title: {
@@ -17,6 +17,10 @@ export default makeStyles(theme => ({
         marginRight: theme.spacing(3),
         padding: theme.spacing(1),
         textAlign: 'center'
+    },
+    fieldTitle: {
+        textAlign: 'left',
+        marginLeft: theme.spacing(1)
     },
     paper: {
         padding: theme.spacing(1),
@@ -26,12 +30,22 @@ export default makeStyles(theme => ({
     paperWrapper: {
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
-        height: '100%',
-        alignItems: 'center',
+        width: '100%',
         borderRadius: 10
     },
     button: {
         height: '100%'
+    },
+    editLinkButton: {
+        width: '60px',
+        height: '30px',
+        margin: theme.spacing(1)
+    },
+    deleteButton: {
+        width: '60px',
+        height: '30px',
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.error.main
     },
     map: {
         height: '200px',
@@ -48,14 +62,24 @@ export default makeStyles(theme => ({
         padding: 10
     },
     dropzone: {
-        backgroundColor: theme.palette.background.paper,
-        minHeight: '80px',
-        borderRadius: 10
+        backgroundColor: theme.palette.background.paper + '!important',
+        // minHeight: '160px',
+        minHeight: '85% !important',
+        borderRadius: 10,
+        alignItems: 'flex-start !important'
+    },
+    dropzoneText: {
+        fontSize: 'medium !important'
+        // margin: '0 !important'
     },
     outerContainer: {
         spacing: theme.spacing(1),
         alignItems: 'stretch',
         alignContent: 'stretch',
         justifyContent: 'center'
+    },
+    switch: {
+        justifyContent: 'center',
+        textAlign: 'center'
     }
 }))

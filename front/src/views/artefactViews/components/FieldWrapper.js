@@ -7,25 +7,26 @@ export default ({
     childProps,
     name,
     classes,
-    editButtonProps
+    editButtonProps,
+    ...rest
 }) => {
-    var { beingEdited, mode } = childProps
-    var { edit } = mode
+    var { beingEdited, states } = childProps
+    var { edit } = states.mode
     var thisBeingEdited = beingEdited === name
     var someBeingEdited = edit && !!beingEdited
     return (
-        <Grid item xs={12}>
-            <Paper className={classes.paperWrapper} elevation={3}>
-                <FormControl className={classes.formControl} fullWidth>
-                    <Child
-                        {...childProps}
-                        disabled={someBeingEdited && !thisBeingEdited}
-                        name={name}
-                    />
+        <Paper className={classes.paperWrapper} elevation={3}>
+            <FormControl className={classes.formControl} fullWidth>
+                <Child
+                    {...childProps}
+                    disabled={someBeingEdited && !thisBeingEdited}
+                    name={name}
+                    classes={classes}
+                    {...rest}
+                />
 
-                    {thisBeingEdited && <EditButtons {...editButtonProps} />}
-                </FormControl>
-            </Paper>
-        </Grid>
+                {thisBeingEdited && <EditButtons {...editButtonProps} />}
+            </FormControl>
+        </Paper>
     )
 }

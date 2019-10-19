@@ -1,10 +1,11 @@
 import React from 'react'
 import { TextField } from '@material-ui/core'
 
-export default ({ mode, states, setters, disabled, name }) => {
-    var { view } = mode
+export default ({ states, setters, disabled, name, numFams }) => {
+    var { view } = states.mode
     var { state } = states
     var { handleSetField } = setters
+
     return (
         <TextField
             id='description'
@@ -13,7 +14,6 @@ export default ({ mode, states, setters, disabled, name }) => {
             required
             fullWidth
             multiline
-            rows={6}
             value={state.description || ''}
             inputProps={{
                 readOnly: view

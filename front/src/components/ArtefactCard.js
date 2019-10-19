@@ -10,6 +10,8 @@ import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import { Link as RouterLink } from 'react-router-dom'
 
+import { config } from '../constants'
+
 const useStyles = makeStyles(theme => ({
     textField: {
         // marginLeft: theme.spacing(1),
@@ -39,15 +41,16 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-
 /*
 This component is to present a summary of the artefact to a user, it's used in the homepage
 and manage page as a quick way to assist navigating through artefacts
 */
-function ArtefactCard({ mediaURI, name, description, id }) {
+function ArtefactCard({ artefact }) {
     const classes = useStyles()
 
-    console.log("here's the mediaURI: " + mediaURI)
+    const { upload, name, description, id } = artefact
+    const mediaURI = config.mediaRoot + upload
+
     return (
         <Card className={classes.card} elevation={3}>
             <CardActionArea>
@@ -82,20 +85,21 @@ function ArtefactCard({ mediaURI, name, description, id }) {
             <CardActions>
                 <Button
                     size='small'
+                    fullWidth
                     color='primary'
                     component={RouterLink}
                     to={`/artefacts/${id}`}
                 >
                     View
                 </Button>
-                <Button
+                {/* <Button
                     size='small'
                     color='secondary'
                     component={RouterLink}
                     to={`/artefacts/edit/${id}`}
                 >
                     Edit
-                </Button>
+                </Button> */}
             </CardActions>
         </Card>
     )
