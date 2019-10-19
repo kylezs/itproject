@@ -15,7 +15,8 @@ function HomePageButton(props) {
         <Button style={{ 
             color: "#f0f0f0",
             padding: "12px",
-            margin: "5px"
+            margin: "4px",
+            marginTop: "8px"
             }}
             component={RouterLink}
             to={linkTo}>
@@ -26,6 +27,7 @@ function HomePageButton(props) {
 
 function LandingPage(props) {
 
+    // Allow for looping of the typing animation
     const [typing, setTyping] = useState(true);
     useEffect(() => {
         setTyping(true)
@@ -195,7 +197,7 @@ function LandingPage(props) {
             <div
                 style={{
                     position: "absolute",
-                    right: 0
+                    right: "20px",
                 }}>
             <HomePageButton linkTo="/signup">Sign up</HomePageButton>
             <HomePageButton linkTo="/login">Login</HomePageButton>
