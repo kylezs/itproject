@@ -12,6 +12,8 @@ import { Link as RouterLink } from 'react-router-dom'
 
 import { config } from '../constants'
 
+var Trianglify = require('trianglify')
+
 const useStyles = makeStyles(theme => ({
     textField: {
         // marginLeft: theme.spacing(1),
@@ -47,9 +49,14 @@ and manage page as a quick way to assist navigating through artefacts
 */
 function ArtefactCard({ artefact }) {
     const classes = useStyles()
-
+    
     const { upload, name, description, id } = artefact
-    const mediaURI = config.mediaRoot + upload
+    
+    var pattern = Trianglify({ width: 200, height: 200 })
+    var mediaURI = config.mediaRoot + upload
+    if (upload === "False"){
+        mediaURI = pattern.png()
+    }
 
     return (
         <Card className={classes.card} elevation={3}>
