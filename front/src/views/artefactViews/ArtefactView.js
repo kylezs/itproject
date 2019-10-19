@@ -2,13 +2,12 @@ import React, { useContext, useState } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 
-import { CssBaseline, Grid } from '@material-ui/core'
+import { CssBaseline, Grid, CircularProgress } from '@material-ui/core'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
 
 import {
-    Loading,
     geocodeQuery,
     artefactFamilyFormUseStyles
 } from '../../components'
@@ -374,7 +373,7 @@ function ArtefactView(props) {
     }
 
     if ((mode.edit || mode.view) && dataLoading) {
-        return <Loading />
+        return <CircularProgress />
     }
 
     const editButtonProps = {

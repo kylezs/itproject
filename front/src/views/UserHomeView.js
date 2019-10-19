@@ -17,7 +17,7 @@ import {
 import Select from '@material-ui/core/Select'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import ArtefactCard from '../components/ArtefactCard'
+import { ArtefactCard, Loading } from '../components'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -154,7 +154,7 @@ function UserHomeView(props) {
     }
 
     if (loading) {
-        return <p>Loading...</p>
+        return <Loading />
     }
 
     const selectedFamily = home_data.me.profile.selectedFamily
@@ -196,7 +196,7 @@ function UserHomeView(props) {
                                     key={key}
                                     artefact={artefact.node}
                                 />
-                            </GridListTile> 
+                            </GridListTile>
                         ))}
                     </GridList>
                 </Grid>

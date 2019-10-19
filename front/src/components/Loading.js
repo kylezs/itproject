@@ -1,17 +1,16 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import { CircularProgress, Grid } from '@material-ui/core'
+import { Layout } from './'
 
-function Loading() {
-    const useStyles = makeStyles(theme => ({
-        progress: {
-            margin: theme.spacing(2)
-        }
-    }))
-
-    const classes = useStyles()
-
-    return <CircularProgress className={classes.progress} />
-}
-
-export default Loading
+export default () => (
+    <Layout>
+        <Grid
+            container
+            alignItems='center'
+            justify='center'
+            style={{ height: '90vh' }}
+        >
+            <CircularProgress />
+        </Grid>
+    </Layout>
+)
