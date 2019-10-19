@@ -7,10 +7,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
 
-import {
-    geocodeQuery,
-    artefactFamilyFormUseStyles
-} from '../../components'
+import { geocodeQuery, artefactFamilyFormUseStyles } from '../../components'
 
 import {
     Head,
@@ -419,7 +416,7 @@ function ArtefactView(props) {
         { comp: Description, name: 'description' },
         { comp: mode.view ? null : Privacy, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
-        { comp: Images, name: 'files' }
+        { comp: (mode.view && state.upload === "False") ? null : Images, name: 'files' }
     ]
 
     return (
@@ -465,19 +462,21 @@ function ArtefactView(props) {
                     )
                 })}
 
-                <Grid item xs={12}>
-                    <FieldWrapper
-                        child={Address}
-                        name='address'
-                        childProps={addressProps}
-                        editButtonProps={editButtonProps}
-                        classes={classes}
-                    />
-                </Grid>
+                {(!mode.view || state.address) && (
+                    <Grid item xs={12}>
+                        <FieldWrapper
+                            child={Address}
+                            name='address'
+                            childProps={addressProps}
+                            editButtonProps={editButtonProps}
+                            classes={classes}
+                        />
+                    </Grid>
+                )}
 
                 {mode.create && (
                     <Grid item xs={8} md={5}>
-                        <CreateButton noErrors={noErrors} fullWidth/>
+                        <CreateButton noErrors={noErrors} fullWidth />
                     </Grid>
                 )}
 
@@ -512,7 +511,7 @@ function Wrapped(props) {
                     justify='center'
                     style={{ minHeight: '80vh' }}
                 >
-                    <Grid item xs={11} md={9} >
+                    <Grid item xs={11} md={9}>
                         <CssBaseline />
                         <ArtefactView {...props} />
                     </Grid>
