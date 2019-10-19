@@ -9,7 +9,7 @@ export default makeStyles(theme => ({
     },
     formControl: {
         height: '100%',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         textAlign: 'left'
     },
     title: {
@@ -17,11 +17,10 @@ export default makeStyles(theme => ({
         marginRight: theme.spacing(3),
         padding: theme.spacing(1),
         textAlign: 'center'
-        // flexGrow: 1
     },
     fieldTitle: {
         textAlign: 'left',
-        marginLeft: theme.spacing(1),
+        marginLeft: theme.spacing(1)
     },
     paper: {
         padding: theme.spacing(1),
@@ -32,7 +31,6 @@ export default makeStyles(theme => ({
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,
         width: '100%',
-        alignItems: 'center',
         borderRadius: 10
     },
     button: {
@@ -65,12 +63,13 @@ export default makeStyles(theme => ({
     },
     dropzone: {
         backgroundColor: theme.palette.background.paper + '!important',
-        minHeight: '70px !important',
+        // minHeight: '160px',
+        minHeight: '85% !important',
         borderRadius: 10,
         alignItems: 'flex-start !important'
     },
     dropzoneText: {
-        fontSize: 'large !important'
+        fontSize: 'medium !important'
         // margin: '0 !important'
     },
     outerContainer: {

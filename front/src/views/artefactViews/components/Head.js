@@ -56,9 +56,6 @@ export default ({
             {create && (
                 <CreateButton
                     noErrors={noErrors}
-                    color='secondary'
-                    variant='contained'
-                    type='submit'
                     className={classes.editLinkButton}
                     style={{ marginLeft: 'auto' }}
                 />

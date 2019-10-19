@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { DropzoneArea } from 'material-ui-dropzone'
-import { Typography } from '@material-ui/core'
+import { Typography, Container } from '@material-ui/core'
 import Image from 'material-ui-image'
 import { useTheme } from '@material-ui/styles'
 

@@ -26,7 +26,8 @@ import {
     FieldWrapper,
     Address,
     SuccessSnackbar,
-    DeleteDialog
+    DeleteDialog,
+    CreateButton
 } from './components'
 import authContext from '../../authContext'
 
@@ -69,7 +70,7 @@ function ArtefactView(props) {
 
     // only allow admins to see the edit page
     if (!isAdmin && mode.edit) {
-        setMode({view: true})
+        setMode({ view: true })
     }
 
     const classes = artefactFamilyFormUseStyles()
@@ -151,7 +152,7 @@ function ArtefactView(props) {
         let belong = {}
         families.map(val => (belong[val.id] = false))
 
-        setState({ belongsToFamiliesBools: belong, date: null })
+        setState({ belongsToFamiliesBools: belong, date: null, state: 'OKY' })
     }
 
     // handler for setting the state object
@@ -219,7 +220,7 @@ function ArtefactView(props) {
         if (history) {
             history.push(`/artefacts/${id}`)
         }
-        setMode({view: true})
+        setMode({ view: true })
     }
 
     // send user to home
@@ -397,7 +398,7 @@ function ArtefactView(props) {
         setters: {
             handleSetField: handleSetField,
             setMode
-        },
+        }
     }
 
     const addressProps = {
@@ -411,32 +412,16 @@ function ArtefactView(props) {
         }
     }
 
-    const LeftPaneComponents = [
-        { comp: Name, name: 'name' },
-        { comp: State, name: 'state' },
-        { comp: Description, name: 'description' },
-        { comp: Admin, name: 'admin' },
-        { comp: Date, name: 'date' }
-    ]
-
-    const RightPaneComponents = [
-        { comp: mode.view ? null : Privacy, name: 'isPublic' },
-        { comp: Families, name: 'belongsToFamiliesBools' },
-        { comp: Images, name: 'files' }
-    ]
-
     const components = [
         { comp: Name, name: 'name' },
         { comp: State, name: 'state' },
         { comp: Admin, name: 'admin' },
         { comp: Date, name: 'date' },
-        { comp: Families, name: 'belongsToFamiliesBools' },
         { comp: Description, name: 'description' },
         { comp: mode.view ? null : Privacy, name: 'isPublic' },
-        { comp: Images, name: 'files', widthProps: {xs: 7} }
+        { comp: Families, name: 'belongsToFamiliesBools' },
+        { comp: Images, name: 'files' }
     ]
-
-    const Panes = [LeftPaneComponents, RightPaneComponents]
 
     return (
         <form onSubmit={submitHandler} className={classes.form}>
@@ -459,9 +444,16 @@ function ArtefactView(props) {
 
                 {components.map(({ comp, name, widthProps }) => {
                     if (comp === null) return null
-                    if (!widthProps) widthProps = { xs: 12, md: 6 }
+                    if (!widthProps) widthProps = { xs: 12, sm: 6, lg: 4 }
                     return (
-                        <Grid container item {...widthProps} key={name}>
+                        <Grid
+                            container
+                            item
+                            {...widthProps}
+                            key={name}
+                            // alignItems='flex-start'
+                            alignContent='stretch'
+                        >
                             <FieldWrapper
                                 key={comp}
                                 child={comp}
@@ -483,6 +475,12 @@ function ArtefactView(props) {
                         classes={classes}
                     />
                 </Grid>
+
+                {mode.create && (
+                    <Grid item xs={8} md={5}>
+                        <CreateButton noErrors={noErrors} fullWidth/>
+                    </Grid>
+                )}
 
                 <SuccessSnackbar
                     open={snackbarOpen}
@@ -515,7 +513,7 @@ function Wrapped(props) {
                     justify='center'
                     style={{ minHeight: '80vh' }}
                 >
-                    <Grid item xs={11} md={8}>
+                    <Grid item xs={11} md={9} >
                         <CssBaseline />
                         <ArtefactView {...props} />
                     </Grid>

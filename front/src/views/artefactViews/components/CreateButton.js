@@ -6,6 +6,8 @@ export default ({ noErrors, ...rest }) => (
     <Fragment>
         <Button
             {...rest}
+            color='secondary'
+            variant='contained'
             type='submit'
         >
             Save

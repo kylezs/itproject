@@ -14,7 +14,6 @@ export default ({ states, setters, disabled, name, numFams }) => {
             required
             fullWidth
             multiline
-            rows={numFams * 2 > 5 ? numFams * 2 : 8}
             value={state.description || ''}
             inputProps={{
                 readOnly: view
