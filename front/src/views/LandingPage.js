@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Particles from 'react-particles-js'
 import { Typography, Button } from '@material-ui/core'
 import Typist from 'react-typist';
@@ -15,7 +15,8 @@ function HomePageButton(props) {
         <Button style={{ 
             color: "#f0f0f0",
             padding: "12px",
-            margin: "5px"
+            margin: "4px",
+            marginTop: "8px"
             }}
             component={RouterLink}
             to={linkTo}>
@@ -25,6 +26,17 @@ function HomePageButton(props) {
 }
 
 function LandingPage(props) {
+
+    // Allow for looping of the typing animation
+    const [typing, setTyping] = useState(true);
+    useEffect(() => {
+        setTyping(true)
+    }, [typing]);
+
+    const typingDone = () => {
+        setTyping(false)
+    }
+
     return (
         <div>
             <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet"></link>
@@ -49,9 +61,19 @@ function LandingPage(props) {
                     fontFamily: "Dosis",
                     color: "#f0f0f0",
                 }}>
-            <Typist>
-                Connecting you to your family <br />and your family's history.
-            </Typist>
+                {typing
+                    ? (
+                        <Typist cursor={{ show: false }} onTypingDone={typingDone}>
+                            <Typist.Delay ms={400} />
+                            <span>Connecting you to your family<br /></span>
+                            <span>and your familys history.</span>
+                            <Typist.Backspace count={10} delay={200} />
+                            <span>'s history.</span>
+                            <Typist.Backspace count={56} delay={5000} />
+                        </Typist>
+                    )
+                    : ''
+                }
             </Typography>
             <Particles
                 style = {{
@@ -175,10 +197,10 @@ function LandingPage(props) {
             <div
                 style={{
                     position: "absolute",
-                    right: 0
+                    right: "20px",
                 }}>
-            <HomePageButton linkTo="/login">Login</HomePageButton>
             <HomePageButton linkTo="/signup">Sign up</HomePageButton>
+            <HomePageButton linkTo="/login">Login</HomePageButton>
             </div>
         </div>
     )

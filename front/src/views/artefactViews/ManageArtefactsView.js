@@ -5,7 +5,6 @@ import { CssBaseline, Grid } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import ArtefactCard from '../../components/ArtefactCard'
-import { config } from '../../constants'
 
 const useStyles = makeStyles(theme => ({
     textField: {
@@ -53,7 +52,8 @@ function ManageArtefactsView(props) {
             first: numArtefactsFetched
         },
         onCompleted: data =>
-            SetArtefactEdges(data.me.artefactAdministratorOf.edges)
+            SetArtefactEdges(data.me.artefactAdministratorOf.edges),
+        fetchPolicy: 'network-only'
     })
 
     console.log('The data is: ', data)
@@ -70,10 +70,7 @@ function ManageArtefactsView(props) {
                         {artefactEdges.map(edge => (
                             <Grid item key={edge.node.id}>
                                 <ArtefactCard
-                                    mediaURI={config.mediaRoot + edge.node.upload}
-                                    name={edge.node.name}
-                                    description={edge.node.description}
-                                    id={edge.node.id}
+                                    artefact={edge.node}
                                 />
                             </Grid>
                         ))}

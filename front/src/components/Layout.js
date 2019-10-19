@@ -6,9 +6,7 @@ import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
 import {
     teal,
-    blue,
     deepPurple,
-    lightBlue,
     indigo
 } from '@material-ui/core/colors'
 

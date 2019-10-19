@@ -2,17 +2,15 @@ import React, { Fragment } from 'react'
 
 import { Button, FormHelperText } from '@material-ui/core'
 
-export default ({ noErrors }) => (
+export default ({ noErrors, ...rest }) => (
     <Fragment>
         <Button
-            name='create'
-            label='Create'
-            type='submit'
-            fullWidth
+            {...rest}
+            color='secondary'
             variant='contained'
-            color='primary'
+            type='submit'
         >
-            Create
+            Save
         </Button>
         {!noErrors && (
             <FormHelperText error={!noErrors}>

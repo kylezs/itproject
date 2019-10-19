@@ -14,7 +14,7 @@ import {
 } from '../../components'
 
 import {
-    Title,
+    Head,
     Name,
     State,
     Description,
@@ -26,6 +26,7 @@ import {
     FieldWrapper,
     Address,
     SuccessSnackbar,
+    DeleteDialog,
     CreateButton
 } from './components'
 import authContext from '../../authContext'
@@ -34,7 +35,8 @@ import { Layout } from '../../components'
 
 import {
     CREATE_ARTEFACT_MUTATION_STR,
-    UPDATE_ARTEFACT_MUTATION
+    UPDATE_ARTEFACT_MUTATION,
+    DELETE_ARTEFACT_MUTATION
 } from '../../gqlQueriesMutations'
 
 import { AUTH_TOKEN, config } from '../../constants'
@@ -42,8 +44,13 @@ import axios from 'axios'
 
 function ArtefactView(props) {
     // get the mode
-    var { create, edit, view } = props
-    var mode = { create: create, edit: edit, view: view }
+    // var { create, edit, view } = props
+    // var mode = { create: create, edit: edit, view: view }
+    const [mode, setMode] = useState({
+        create: props.create,
+        edit: props.edit,
+        view: props.view
+    })
 
     // get families, states, and artefact data
     var { statesLoading, familiesLoading, artefactLoading } = props
@@ -52,9 +59,9 @@ function ArtefactView(props) {
     // if viewing an existing artefact get the details (potentially unloaded)
     const context = useContext(authContext)
     const username = context.user.username
-    let creationErrors, creationLoading
+    let creationErrors
 
-    if (!create) {
+    if (!mode.create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
         var isAdmin = !artefactLoading
             ? artefact.admin.username === username
@@ -62,9 +69,8 @@ function ArtefactView(props) {
     }
 
     // only allow admins to see the edit page
-    if (!isAdmin && edit) {
-        edit = false
-        view = true
+    if (!isAdmin && mode.edit) {
+        setMode({ view: true })
     }
 
     const classes = artefactFamilyFormUseStyles()
@@ -76,6 +82,7 @@ function ArtefactView(props) {
     const [prevValue, setPrevValue] = useState({})
     // a message indicating successful edit
     const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
 
     // state variables for the map
     const [locationState, setLocationState] = useState({
@@ -123,14 +130,15 @@ function ArtefactView(props) {
     // if in edit or view mode load in the data for the artefact into the state
     // only if the artefact has loaded and this hasn't already run
     if (
-        (edit || view) &&
+        (mode.edit || mode.view) &&
         !artefactLoading &&
         Object.keys(state).length === 0 &&
         families
     ) {
-        var belong = {}
+        let belong = {}
         families.map(val => (belong[val.id] = false))
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        console.log(artefact)
 
         setState({
             ...artefact,
@@ -140,16 +148,16 @@ function ArtefactView(props) {
     }
 
     // if in create mode, initialise the booleans for the family checkboxes to false
-    if (create && families && !state.belongsToFamiliesBools) {
-        var belong = {}
+    if (mode.create && families && !state.belongsToFamiliesBools) {
+        let belong = {}
         families.map(val => (belong[val.id] = false))
 
-        setState({ belongsToFamiliesBools: belong, date: null })
+        setState({ belongsToFamiliesBools: belong, date: null, state: 'OKY' })
     }
 
     // handler for setting the state object
     const handleSetField = (fieldName, value) => {
-        if (edit && beingEdited !== fieldName) {
+        if (mode.edit && beingEdited !== fieldName) {
             setBeingEdited(fieldName)
             setPrevValue(state[fieldName])
         }
@@ -212,6 +220,15 @@ function ArtefactView(props) {
         if (history) {
             history.push(`/artefacts/${id}`)
         }
+        setMode({ view: true })
+    }
+
+    // send user to home
+    const pushHomeURL = () => {
+        const { history } = props
+        if (history) {
+            history.push(`/`)
+        }
     }
 
     // handlers for GQL mutations
@@ -225,11 +242,17 @@ function ArtefactView(props) {
         setBeingEdited('')
         setSnackbarOpen(true)
     }
+    const deleteCompleted = async data => {
+        pushHomeURL()
+    }
     const handleCreationError = async errors => {
         console.error('Creation errors occurred:', errors)
     }
     const handleUpdateError = async errors => {
         console.error('Update errors occured: ', errors)
+    }
+    const handleDeleteError = async errors => {
+        console.error('Deletion errors occured: ', errors)
     }
 
     const createArtefact = async (
@@ -273,6 +296,14 @@ function ArtefactView(props) {
         }
     )
 
+    const [deleteArtefact, { error: deleteErrors }] = useMutation(
+        DELETE_ARTEFACT_MUTATION,
+        {
+            onCompleted: deleteCompleted,
+            onError: handleDeleteError
+        }
+    )
+
     const parseDate = date => {
         return date ? date.toISOString().slice(0, -1) : null
     }
@@ -298,7 +329,7 @@ function ArtefactView(props) {
             state: state.state,
             isPublic: state.isPublic ? state.isPublic : false,
             belongsToFamilies: famIDs,
-            address: state.address ? state.address : '',
+            address: state.address ? state.address : ''
         }
         if (state.date) {
             input.date = parseDate(state.date)
@@ -308,7 +339,7 @@ function ArtefactView(props) {
 
     // for updating an existing artefact
     const saveChange = async event => {
-        if (edit) {
+        if (mode.edit) {
             var input = {}
             if (!addressIsSearchResult) {
                 handleUnselectedSearchField()
@@ -339,10 +370,10 @@ function ArtefactView(props) {
     // select the submit handler
     const submitHandler = e => {
         e.preventDefault()
-        create ? submitForm(e) : saveChange(e)
+        mode.create ? submitForm(e) : saveChange(e)
     }
 
-    if ((edit || view) && dataLoading) {
+    if ((mode.edit || mode.view) && dataLoading) {
         return <Loading />
     }
 
@@ -354,18 +385,19 @@ function ArtefactView(props) {
     }
 
     const componentProps = {
-        beingEdited: beingEdited,
-        mode: mode,
         classes: classes,
+        beingEdited: beingEdited,
         artefactStates: artefactStates,
         username: context.user.username,
         families: families,
         states: {
             state: state,
-            locationState: locationState
+            locationState: locationState,
+            mode: mode
         },
         setters: {
-            handleSetField: handleSetField
+            handleSetField: handleSetField,
+            setMode
         }
     }
 
@@ -380,45 +412,59 @@ function ArtefactView(props) {
         }
     }
 
-    const LeftPaneComponents = [
+    const components = [
         { comp: Name, name: 'name' },
         { comp: State, name: 'state' },
-        { comp: Description, name: 'description' },
         { comp: Admin, name: 'admin' },
-        { comp: Date, name: 'date' }
-    ]
-
-    const RightPaneComponents = [
-        { comp: Privacy, name: 'isPublic' },
+        { comp: Date, name: 'date' },
+        { comp: Description, name: 'description' },
+        { comp: mode.view ? null : Privacy, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         { comp: Images, name: 'files' }
     ]
 
-    const Panes = [LeftPaneComponents, RightPaneComponents]
-
     return (
         <form onSubmit={submitHandler} className={classes.form}>
             <Grid container className={classes.outerContainer} spacing={1}>
-                <Grid item xs={12} container justify='center'>
-                    <Title mode={mode} classes={classes} />
+                <Grid
+                    item
+                    xs={12}
+                    container
+                    justify='center'
+                    alignItems='center'
+                    spacing={1}
+                >
+                    <Head
+                        isAdmin={isAdmin}
+                        openDelete={() => setDeleteOpen(true)}
+                        noErrors={noErrors}
+                        {...componentProps}
+                    />
                 </Grid>
 
-                {Panes.map(pane => (
-                    <Grid item xs={12} sm={6} container spacing={1} key={pane}>
-                        {pane.map(({ comp, name }) => {
-                            return (
-                                <FieldWrapper
-                                    key={comp}
-                                    child={comp}
-                                    name={name}
-                                    childProps={componentProps}
-                                    editButtonProps={editButtonProps}
-                                    classes={classes}
-                                />
-                            )
-                        })}
-                    </Grid>
-                ))}
+                {components.map(({ comp, name, widthProps }) => {
+                    if (comp === null) return null
+                    if (!widthProps) widthProps = { xs: 12, sm: 6, lg: 4 }
+                    return (
+                        <Grid
+                            container
+                            item
+                            {...widthProps}
+                            key={name}
+                            // alignItems='flex-start'
+                            alignContent='stretch'
+                        >
+                            <FieldWrapper
+                                key={comp}
+                                child={comp}
+                                name={name}
+                                childProps={componentProps}
+                                editButtonProps={editButtonProps}
+                                classes={classes}
+                            />
+                        </Grid>
+                    )
+                })}
 
                 <Grid item xs={12}>
                     <FieldWrapper
@@ -430,9 +476,9 @@ function ArtefactView(props) {
                     />
                 </Grid>
 
-                {create && (
-                    <Grid item xs={5}>
-                        <CreateButton noErrors={noErrors} />
+                {mode.create && (
+                    <Grid item xs={8} md={5}>
+                        <CreateButton noErrors={noErrors} fullWidth/>
                     </Grid>
                 )}
 
@@ -442,6 +488,13 @@ function ArtefactView(props) {
                     viewArtefact={pushViewArtefactURL}
                     classes={classes}
                     id={artefact ? artefact.id : '-1'}
+                />
+
+                <DeleteDialog
+                    open={deleteOpen}
+                    setOpen={setDeleteOpen}
+                    deleteArtefact={deleteArtefact}
+                    artefact={artefact}
                 />
             </Grid>
         </form>
@@ -460,7 +513,7 @@ function Wrapped(props) {
                     justify='center'
                     style={{ minHeight: '80vh' }}
                 >
-                    <Grid item xs={10}>
+                    <Grid item xs={11} md={9} >
                         <CssBaseline />
                         <ArtefactView {...props} />
                     </Grid>

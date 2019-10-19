@@ -1,37 +1,44 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import {
-    List,
-    ListSubheader,
-    ListItem,
-    Checkbox,
-    ListItemIcon,
-    ListItemText
+    Switch,
+    FormHelperText,
+    Typography,
+    FormControlLabel
 } from '@material-ui/core'
 
-export default ({ mode, states, setters, disabled, name }) => {
-    var { view } = mode
+export default ({ states, setters, disabled, name, classes }) => {
+    var { create, edit } = states.mode
     var { state } = states
     var { handleSetField } = setters
-    return (
-        <List
-            subheader={<ListSubheader component='div'>Privacy</ListSubheader>}
-            dense
-        >
-            <ListItem disabled={disabled}>
-                {!view && (
-                    <ListItemIcon>
-                        <Checkbox
-                            edge='start'
+
+    if (create || edit) {
+        return (
+            <Fragment>
+                <Typography variant='h6' className={classes.fieldTitle}>
+                    Privacy
+                </Typography>
+                <FormControlLabel
+                    control={
+                        <Switch
                             checked={state.isPublic || false}
-                            tabIndex={-1}
-                            onClick={e =>
+                            onChange={e =>
                                 handleSetField(name, e.target.checked)
                             }
+                            // edge='end'
+                            disabled={disabled}
                         />
-                    </ListItemIcon>
-                )}
-                <ListItemText primary={'Public'} />
-            </ListItem>
-        </List>
-    )
+                    }
+                    style={{ marginLeft: 3 }}
+                    label='Public'
+                />
+                <FormHelperText className={classes.fieldTitle}>
+                    {state.isPublic
+                        ? 'Viewable by anyone'
+                        : 'Viewable by family members only'}
+                </FormHelperText>
+            </Fragment>
+        )
+    } else {
+        return null
+    }
 }

@@ -86,7 +86,6 @@ function CreateFamilyView(props) {
                 container
                 spacing={1}
                 className={classes.outerContainer}
-                spacing={1}
             >
                 <Grid item xs={12} container justify='center'>
                     <Typography variant='h4' className={classes.title}>
@@ -193,7 +192,7 @@ export default props => (
             justify='center'
             style={{ minHeight: '80vh' }}
         >
-            <Grid item xs={6}>
+            <Grid item xs={11} md={6}>
                 <CreateFamilyView {...props} />
             </Grid>
         </Grid>
