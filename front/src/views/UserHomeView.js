@@ -1,23 +1,19 @@
-import React, { useContext, useState } from 'react'
-import Layout from '../components/Layout'
-import authContext from '../authContext'
-import { makeStyles } from '@material-ui/core/styles'
-import GridList from '@material-ui/core/GridList'
-import GridListTile from '@material-ui/core/GridListTile'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
-import {
-    Typography,
-    CssBaseline,
-    Button,
-    TextField,
-    Grid,
-    FormControl
-} from '@material-ui/core'
-import Select from '@material-ui/core/Select'
-import gql from 'graphql-tag'
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import { ArtefactCard, Loading } from '../components'
+import React, { useContext, useState } from 'react';
+import Layout from '../components/Layout';
+import authContext from '../authContext';
+import { makeStyles } from '@material-ui/core/styles';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import { Typography, CssBaseline, Button, TextField, Grid,
+FormControl } from '@material-ui/core';
+import Select from '@material-ui/core/Select';
+import gql from "graphql-tag";
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import ArtefactCard from '../components/ArtefactCard';
+import { Redirect } from 'react-router-dom';
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -157,9 +153,20 @@ function UserHomeView(props) {
         return <Loading />
     }
 
-    const selectedFamily = home_data.me.profile.selectedFamily
-    const families = home_data.me.isMemberOf
-    const profileId = home_data.me.profile.id
+    let selectedFamily;
+    let families;
+    let profileId;
+    if (home_data) {
+        selectedFamily = home_data.me.profile.selectedFamily;
+        families = home_data.me.isMemberOf;
+        profileId = home_data.me.profile.id;
+    } else {
+        // Go to logout to remove token which is normally the cause of this error
+        console.error("User data was not defined, but fetched, logging out");
+        return <Redirect to='/logout' />
+        
+    }
+
     let artefacts = []
 
     // If the user has selected a family there will be a list of artefacts
