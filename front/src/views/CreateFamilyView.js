@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import {
-    IconButton,
     Button,
     CssBaseline,
     TextField,
@@ -13,7 +12,6 @@ import {
     Paper,
     FormControl
 } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
 
 import { useMutation } from '@apollo/react-hooks'
 
@@ -21,26 +19,6 @@ import Layout from '../components/Layout'
 import authContext from '../authContext'
 import { artefactFamilyFormUseStyles } from '../components'
 import { CREATE_FAMILY_MUTATION } from '../gqlQueriesMutations'
-
-// const MyDialogTitle = props => {
-//     const classes = artefactFamilyFormUseStyles()
-//     const { children, onClose } = props
-
-//     return (
-//         <DialogTitle disableTypography className={classes.root}>
-//             <Typography variant='h6'>{children}</Typography>
-//             {onClose ? (
-//                 <IconButton
-//                     aria-label='close'
-//                     className={classes.closeButton}
-//                     onClick={onClose}
-//                 >
-//                     <CloseIcon />
-//                 </IconButton>
-//             ) : null}
-//         </DialogTitle>
-//     )
-// }
 
 function CreateFamilyView(props) {
     const classes = artefactFamilyFormUseStyles()
@@ -54,14 +32,13 @@ function CreateFamilyView(props) {
     const [open, setOpen] = useState(false)
 
     const _completed = async data => {
-        console.log(data)
         const { joinCode } = data.familyCreate.family
         setJoinCode(joinCode)
         setOpen(true)
     }
 
     // back to const once done
-    let [createFamily, { data }] = useMutation(CREATE_FAMILY_MUTATION, {
+    const [createFamily, { data }] = useMutation(CREATE_FAMILY_MUTATION, {
         onCompleted: _completed
     })
 
@@ -81,7 +58,6 @@ function CreateFamilyView(props) {
         setOpen(false)
         props.history.push(`/`)
     }
-    data = "hello"
 
     return (
         <form className={classes.form} onSubmit={submitForm}>
