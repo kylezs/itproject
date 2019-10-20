@@ -128,7 +128,7 @@ function Login(props) {
                             component={RouterLink}
                             to='/signup'
                             className={classes.root}
-                            color='inherit'
+                            color='secondary'
                         >
                             Need an account? Sign up
                         </Link>

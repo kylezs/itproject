@@ -17,10 +17,9 @@ export default ({ states, username }) => {
                     : username
             }
             inputProps={{
-                readOnly: view
+                readOnly: true
             }}
             onChange={e => console.log('admin field was changed')}
-            disabled
         />
     )
 }

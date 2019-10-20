@@ -195,7 +195,7 @@ function Signup(props) {
                             className={classes.root}
                             component={RouterLink}
                             to='/login'
-                            color='inherit'
+                            color='secondary'
                         >
                             Already have an account? Log in
                         </Link>

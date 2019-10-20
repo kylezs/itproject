@@ -1,17 +1,13 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, Fragment } from 'react'
 import { withRouter } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 
-import { CssBaseline, Grid } from '@material-ui/core'
+import { CssBaseline, Grid, CircularProgress } from '@material-ui/core'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
 
-import {
-    Loading,
-    geocodeQuery,
-    artefactFamilyFormUseStyles
-} from '../../components'
+import { geocodeQuery, artefactFamilyFormUseStyles } from '../../components'
 
 import {
     Head,
@@ -374,7 +370,7 @@ function ArtefactView(props) {
     }
 
     if ((mode.edit || mode.view) && dataLoading) {
-        return <Loading />
+        return <CircularProgress />
     }
 
     const editButtonProps = {
@@ -420,8 +416,21 @@ function ArtefactView(props) {
         { comp: Description, name: 'description' },
         { comp: mode.view ? null : Privacy, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
-        { comp: Images, name: 'files' }
+        {
+            comp: mode.view && state.upload === 'False' ? null : Images,
+            name: 'files'
+        }
     ]
+
+    const componentsViewMode = [
+        { comp: Name, name: 'name' },
+        { comp: State, name: 'state' },
+        { comp: Admin, name: 'admin' },
+        { comp: Date, name: 'date' },
+        { comp: Description, name: 'description' },
+        { comp: Families, name: 'belongsToFamiliesBools' }
+    ]
+    const regularView = !mode.view || state.upload === 'False'
 
     return (
         <form onSubmit={submitHandler} className={classes.form}>
@@ -442,43 +451,107 @@ function ArtefactView(props) {
                     />
                 </Grid>
 
-                {components.map(({ comp, name, widthProps }) => {
-                    if (comp === null) return null
-                    if (!widthProps) widthProps = { xs: 12, sm: 6, lg: 4 }
-                    return (
+                {regularView &&
+                    components.map(({ comp, name, widthProps }) => {
+                        if (comp === null) return null
+                        if (!widthProps) widthProps = { xs: 6, sm: 6 }
+                        return (
+                            <Grid
+                                container
+                                item
+                                {...widthProps}
+                                key={name}
+                                // alignItems='flex-start'
+                                alignContent='stretch'
+                            >
+                                <FieldWrapper
+                                    key={comp}
+                                    child={comp}
+                                    name={name}
+                                    childProps={componentProps}
+                                    editButtonProps={editButtonProps}
+                                    classes={classes}
+                                />
+                            </Grid>
+                        )
+                    })}
+
+                {!regularView && (
+                    <Fragment>
                         <Grid
                             container
                             item
-                            {...widthProps}
-                            key={name}
+                            xs={12}
+                            sm={6}
                             // alignItems='flex-start'
                             alignContent='stretch'
                         >
                             <FieldWrapper
-                                key={comp}
-                                child={comp}
-                                name={name}
+                                child={Images}
+                                name={'files'}
                                 childProps={componentProps}
                                 editButtonProps={editButtonProps}
                                 classes={classes}
                             />
                         </Grid>
-                    )
-                })}
 
-                <Grid item xs={12}>
-                    <FieldWrapper
-                        child={Address}
-                        name='address'
-                        childProps={addressProps}
-                        editButtonProps={editButtonProps}
-                        classes={classes}
-                    />
-                </Grid>
+                        <Grid
+                            container
+                            item
+                            xs={12}
+                            sm={6}
+                            // alignItems='flex-start'
+                            alignContent='stretch'
+                            spacing={1}
+                        >
+                            {componentsViewMode.map(
+                                ({ comp, name, widthProps }) => {
+                                    if (comp === null) return null
+                                    if (!widthProps)
+                                        widthProps = { xs: 12 }
+                                    return (
+                                        <Grid
+                                            container
+                                            item
+                                            {...widthProps}
+                                            key={name}
+                                            // alignItems='flex-start'
+                                            alignContent='stretch'
+                                            padding={1}
+                                        >
+                                            <FieldWrapper
+                                                key={comp}
+                                                child={comp}
+                                                name={name}
+                                                childProps={componentProps}
+                                                editButtonProps={
+                                                    editButtonProps
+                                                }
+                                                classes={classes}
+                                            />
+                                        </Grid>
+                                    )
+                                }
+                            )}
+                        </Grid>
+                    </Fragment>
+                )}
+
+                {(!mode.view || state.address) && (
+                    <Grid item xs={12}>
+                        <FieldWrapper
+                            child={Address}
+                            name='address'
+                            childProps={addressProps}
+                            editButtonProps={editButtonProps}
+                            classes={classes}
+                        />
+                    </Grid>
+                )}
 
                 {mode.create && (
-                    <Grid item xs={8} md={5}>
-                        <CreateButton noErrors={noErrors} fullWidth/>
+                    <Grid item xs={12} md={12}>
+                        <CreateButton noErrors={noErrors} fullWidth />
                     </Grid>
                 )}
 
@@ -508,12 +581,11 @@ function Wrapped(props) {
                 <Grid
                     container
                     spacing={0}
-                    direction='column'
-                    alignItems='center'
+                    alignItems='flex-start'
                     justify='center'
                     style={{ minHeight: '80vh' }}
                 >
-                    <Grid item xs={11} md={9} >
+                    <Grid item xs={11} md={9}>
                         <CssBaseline />
                         <ArtefactView {...props} />
                     </Grid>

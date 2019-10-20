@@ -32,6 +32,10 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
+const Trianglify = require('trianglify')
+const pattern = Trianglify({ width: 200, height: 200 })
+const mediaURI = pattern.png()
+
 export default ({ drawerOpen, setDrawerOpen }) => {
     const classes = useStyles()
     const [anchorEl, setAnchorEl] = React.useState(null)

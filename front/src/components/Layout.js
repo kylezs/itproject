@@ -17,6 +17,7 @@ const lightPalette = {
     secondary: {
         main: teal[400]
     },
+    // secondary: teal,
     type: 'light'
 }
 
