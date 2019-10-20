@@ -54,7 +54,7 @@ function ArtefactCard({ artefact }) {
     
     var mediaURI = config.mediaRoot + upload
     if (upload === "False"){
-        var pattern = Trianglify({ width: 200, height: 200 })
+        var pattern = Trianglify({ width: 500, height: 500 })
         mediaURI = pattern.png()
     }
 
