@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Particles from 'react-particles-js'
-import { Typography, Button } from '@material-ui/core'
+import { Button } from '@material-ui/core'
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles'
+import Typography from '@material-ui/core/Typography';
 import Typist from 'react-typist';
 import { Link as RouterLink } from 'react-router-dom'
 
@@ -8,7 +11,6 @@ import { Link as RouterLink } from 'react-router-dom'
 The page that users come to when they first encounter our app. It's a marketing page basically
 
 */
-
 function HomePageButton(props) {
     const {linkTo} = props;
     return (
@@ -27,6 +29,10 @@ function HomePageButton(props) {
 
 function LandingPage(props) {
 
+    let landingTheme = createMuiTheme();
+    landingTheme = responsiveFontSizes(landingTheme);
+
+
     // Allow for looping of the typing animation
     const [typing, setTyping] = useState(true);
     useEffect(() => {
@@ -39,12 +45,25 @@ function LandingPage(props) {
 
     return (
         <div>
+            <ThemeProvider theme={landingTheme}>
             <link href="https://fonts.googleapis.com/css?family=Dosis&display=swap" rel="stylesheet"></link>
-            <Typography variant="h1" 
+            <div
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    right: "20px",
+                    zIndex: 4,
+                }}>
+                <HomePageButton linkTo="/signup">Sign up</HomePageButton>
+                <HomePageButton linkTo="/login">Login</HomePageButton>
+            </div>
+            <Typography theme={landingTheme} variant="h1" 
             style={{
-                padding: "5rem",
+                marginLeft: "8%",
+                marginRight: "8%",
+                marginTop: "10%",
                 zIndex: 3,
-                position: "absolute",
+                position: "relative",
                 fontWeight: "lighter",
                 fontFamily: "Dosis",
                 color: "#f0f0f0",
@@ -52,10 +71,13 @@ function LandingPage(props) {
                 Family Artefacts Register
             </Typography>
             <Typography variant="h2"
+                theme={landingTheme}
                 style={{
-                    padding: "5rem",
+                    marginLeft: "8%",
+                    marginRight: "8%",
+                    marginTop: "1%",
                     zIndex: 3,
-                    position: "absolute",
+                    position: "relative",
                     top: "8rem",
                     fontWeight: "lighter",
                     fontFamily: "Dosis",
@@ -65,8 +87,8 @@ function LandingPage(props) {
                     ? (
                         <Typist cursor={{ show: false }} onTypingDone={typingDone}>
                             <Typist.Delay ms={400} />
-                            <span>Connecting you to your family<br /></span>
-                            <span>and your familys history.</span>
+                            <span>Connecting you to your family</span>
+                            <span> and your familys history.</span>
                             <Typist.Backspace count={10} delay={200} />
                             <span>'s history.</span>
                             <Typist.Backspace count={56} delay={5000} />
@@ -193,15 +215,9 @@ function LandingPage(props) {
                     },
                     "retina_detect": true
                 }}
-            />
-            <div
-                style={{
-                    position: "absolute",
-                    right: "20px",
-                }}>
-            <HomePageButton linkTo="/signup">Sign up</HomePageButton>
-            <HomePageButton linkTo="/login">Login</HomePageButton>
-            </div>
+            >
+                </Particles>
+            </ThemeProvider>
         </div>
     )
 }
