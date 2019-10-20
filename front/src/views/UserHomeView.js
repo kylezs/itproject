@@ -17,7 +17,7 @@ import {
 import Select from '@material-ui/core/Select'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { ArtefactCard, Loading } from '../components'
+import ArtefactCard from '../components/ArtefactCard'
 import { Redirect } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
@@ -169,6 +169,20 @@ function UserHomeView(props) {
         // Go to logout to remove token which is normally the cause of this error
         console.error('User data was not defined, but fetched, logging out')
         return <Redirect to='/logout' />
+    }
+
+    let selectedFamily;
+    let families;
+    let profileId;
+    if (home_data) {
+        selectedFamily = home_data.me.profile.selectedFamily;
+        families = home_data.me.isMemberOf;
+        profileId = home_data.me.profile.id;
+    } else {
+        // Go to logout to remove token which is normally the cause of this error
+        console.error("User data was not defined, but fetched, logging out");
+        return <Redirect to='/logout' />
+        
     }
 
     let artefacts = []
