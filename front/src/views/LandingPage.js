@@ -8,7 +8,7 @@ import Typist from 'react-typist';
 import { Link as RouterLink } from 'react-router-dom'
 
 /*
-The page that users come to when they first encounter our app. It's a marketing page basically
+The page that users come to when they first encounter our app. It's a marketing page
 
 */
 function HomePageButton(props) {
@@ -29,6 +29,7 @@ function HomePageButton(props) {
 
 function LandingPage(props) {
 
+    // Help the landing page be mobile friendly
     let landingTheme = createMuiTheme();
     landingTheme = responsiveFontSizes(landingTheme);
 

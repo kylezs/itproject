@@ -18,6 +18,7 @@ import Select from '@material-ui/core/Select'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import ArtefactCard from '../components/ArtefactCard'
+import { Redirect } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -157,7 +158,6 @@ function UserHomeView(props) {
         return <p>Loading...</p>
     }
 
-<<<<<<< HEAD
     let selectedFamily;
     let families;
     let profileId;
@@ -172,11 +172,6 @@ function UserHomeView(props) {
         
     }
 
-=======
-    const selectedFamily = home_data.me.profile.selectedFamily
-    const families = home_data.me.isMemberOf
-    const profileId = home_data.me.profile.id
->>>>>>> dev
     let artefacts = []
 
     // If the user has selected a family there will be a list of artefacts
