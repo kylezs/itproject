@@ -10,6 +10,7 @@ import {
     Typography,
     Paper
 } from '@material-ui/core'
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { useMutation } from '@apollo/react-hooks'
 
@@ -128,7 +129,7 @@ function Login(props) {
                             component={RouterLink}
                             to='/signup'
                             className={classes.root}
-                            color='inherit'
+                            color='secondary'
                         >
                             Need an account? Sign up
                         </Link>

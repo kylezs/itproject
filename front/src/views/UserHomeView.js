@@ -4,21 +4,25 @@ import authContext from '../authContext'
 import { makeStyles } from '@material-ui/core/styles'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
-import InputLabel from '@material-ui/core/InputLabel'
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import MenuItem from '@material-ui/core/MenuItem'
 import {
     Typography,
-    CssBaseline,
     Button,
     TextField,
     Grid,
-    FormControl
+    FormControl,
+    Container
 } from '@material-ui/core'
-import Select from '@material-ui/core/Select'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
+<<<<<<< HEAD
 import ArtefactCard from '../components/ArtefactCard'
 import { Redirect }  from 'react-router-dom'
+=======
+import {ArtefactCard, Loading} from '../components'
+import { Redirect } from 'react-router-dom'
+>>>>>>> dev
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -149,27 +153,33 @@ function UserHomeView(props) {
     const handleChange = event => {
         event.preventDefault()
         const newFamily = event.target.value
+        console.log("Here's the new family")
         selectFamily({
             variables: { profileId: profileId, toFamily: newFamily }
         })
     }
 
-    if (loading) {
-        return <p>Loading...</p>
+    if (loading || !home_data.me) {
+        return <Loading />
     }
 
+<<<<<<< HEAD
     let selectedFamily;
     let families;
     let profileId;
+=======
+    let selectedFamily
+    let families
+    let profileId
+>>>>>>> dev
     if (home_data) {
-        selectedFamily = home_data.me.profile.selectedFamily;
-        families = home_data.me.isMemberOf;
-        profileId = home_data.me.profile.id;
+        selectedFamily = home_data.me.profile.selectedFamily
+        families = home_data.me.isMemberOf
+        profileId = home_data.me.profile.id
     } else {
         // Go to logout to remove token which is normally the cause of this error
-        console.error("User data was not defined, but fetched, logging out");
+        console.error('User data was not defined, but fetched, logging out')
         return <Redirect to='/logout' />
-        
     }
 
     let artefacts = []
@@ -180,9 +190,10 @@ function UserHomeView(props) {
         artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges
     }
 
+
     return (
         <Layout>
-            <CssBaseline />
+            <Container style={{ paddingTop: "1rem"}}>
             <Grid container spacing={3}>
                 <Grid item xs={9}>
                     {selectedFamily && (
@@ -208,36 +219,35 @@ function UserHomeView(props) {
                                     key={key}
                                     artefact={artefact.node}
                                 />
-                            </GridListTile> 
+                            </GridListTile>
                         ))}
                     </GridList>
                 </Grid>
                 <Grid item xs={3}>
-                    <InputLabel ref={inputLabel} htmlFor='outlined-age-simple'>
-                        Select Family
-                    </InputLabel>
-                    <Select
-                        variant='outlined'
-                        fullWidth
-                        disabled={families.length <= 1}
-                        value={selectedFamily ? selectedFamily.id : null}
-                        onChange={handleChange}
-                        inputProps={{
-                            name: 'age',
-                            id: 'outlined-age-simple'
-                        }}
-                    >
-                        {families &&
-                            families.map((item, key) => (
-                                <MenuItem key={item.id} value={item.id}>
-                                    {item.familyName}
-                                </MenuItem>
-                            ))}
-                    </Select>
+                        <TextField
+                            fullWidth
+                            label='Select Family'
+                            variant='outlined'
+                            disabled={families.length <= 1}
+                            value={selectedFamily ? selectedFamily.id : null}
+                            select
+                            onChange={handleChange}
+                            SelectProps={{
+                                name: 'family',
+                                autoWidth: true
+                            }}
+                        >
+                            {families &&
+                                families.map((item, key) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        {item.familyName}
+                                    </MenuItem>
+                                ))}
+                        </TextField>
                     <FormControl fullWidth>
                         <TextField
                             id='joinCodeField'
-                            label='Join a family'
+                            label='Enter join code'
                             value={formJoinCode}
                             className={classes.textField}
                             margin='normal'
@@ -250,6 +260,7 @@ function UserHomeView(props) {
                     </FormControl>
                 </Grid>
             </Grid>
+            </Container>
         </Layout>
     )
 }

@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react'
 import { DropzoneArea } from 'material-ui-dropzone'
-import { Typography, Container } from '@material-ui/core'
+import { Typography, CircularProgress } from '@material-ui/core'
 import Image from 'material-ui-image'
 import { useTheme } from '@material-ui/styles'
 
 import { config } from '../../../constants'
-import { Loading } from '../../../components'
 
 export default ({ classes, states, setters, name }) => {
     const theme = useTheme()
@@ -40,7 +39,7 @@ export default ({ classes, states, setters, name }) => {
             {(view || edit) && state.upload !== 'False' && (
                 <Image
                     src={config.mediaRoot + state.upload}
-                    loading={<Loading />}
+                    loading={<CircularProgress />}
                     color={theme.palette.background.paper}
                     imageStyle={{ borderRadius: 10 }}
                 />

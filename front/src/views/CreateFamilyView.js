@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import {
-    IconButton,
     Button,
     CssBaseline,
     TextField,
@@ -8,11 +7,11 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    DialogActions,
     Grid,
     Paper,
     FormControl
 } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
 
 import { useMutation } from '@apollo/react-hooks'
 
@@ -20,26 +19,6 @@ import Layout from '../components/Layout'
 import authContext from '../authContext'
 import { artefactFamilyFormUseStyles } from '../components'
 import { CREATE_FAMILY_MUTATION } from '../gqlQueriesMutations'
-
-const MyDialogTitle = props => {
-    const classes = artefactFamilyFormUseStyles()
-    const { children, onClose } = props
-
-    return (
-        <DialogTitle disableTypography className={classes.root}>
-            <Typography variant='h6'>{children}</Typography>
-            {onClose ? (
-                <IconButton
-                    aria-label='close'
-                    className={classes.closeButton}
-                    onClick={onClose}
-                >
-                    <CloseIcon />
-                </IconButton>
-            ) : null}
-        </DialogTitle>
-    )
-}
 
 function CreateFamilyView(props) {
     const classes = artefactFamilyFormUseStyles()
@@ -53,20 +32,19 @@ function CreateFamilyView(props) {
     const [open, setOpen] = useState(false)
 
     const _completed = async data => {
-        console.log(data)
         const { joinCode } = data.familyCreate.family
         setJoinCode(joinCode)
         setOpen(true)
     }
 
+    // back to const once done
     const [createFamily, { data }] = useMutation(CREATE_FAMILY_MUTATION, {
         onCompleted: _completed
     })
 
+    // Call the mutation on form submission
     const submitForm = async event => {
         event.preventDefault()
-        console.log('Family name: ' + familyName)
-        console.log('About: ' + about)
         createFamily({
             variables: {
                 familyName: familyName,
@@ -78,6 +56,7 @@ function CreateFamilyView(props) {
     const handleClose = event => {
         event.preventDefault()
         setOpen(false)
+        props.history.push(`/`)
     }
 
     return (
@@ -142,7 +121,7 @@ function CreateFamilyView(props) {
                                 fullWidth
                                 id='family-admin'
                                 label='Family Admin'
-                                onChange={e => console.log('hello')}
+                                onChange={e => console.error("The admin value was changed, how is this even possible?")}
                             />
                         </FormControl>
                     </Paper>
@@ -163,18 +142,26 @@ function CreateFamilyView(props) {
             </Grid>
             {data && (
                 <Dialog open={open} onClose={handleClose}>
-                    <MyDialogTitle onClose={handleClose}>
+                    <DialogTitle onClose={handleClose}>
                         Begin adding members to '{familyName}'!
-                    </MyDialogTitle>
+                    </DialogTitle>
                     <DialogContent>
                         <Typography align='center'>
+                            You can now add artefacts to this family. To view them simply
+                            select '{familyName}' from the Select Family dropdown on your
+                            home dashboard.<br />
                             Begin getting members to join your family! Simply
                             share the code below to your family members, get
                             them to sign up and then they can join!
-                            <br />
+                            <br /><br />
                             {joinCode}
                         </Typography>
                     </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary" autoFocus>
+                            Continue
+                    </Button>
+                    </DialogActions>
                 </Dialog>
             )}
         </form>

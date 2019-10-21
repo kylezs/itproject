@@ -1,5 +1,6 @@
 export { default as Layout } from './Layout'
 export { default as Loading } from './Loading'
+export { default as ArtefactCard } from './ArtefactCard'
 export { default as Map } from './Map'
 export { default as geocodeQuery } from './MapAPI'
 export {default as GetFamiliesWrapper} from './GetFamiliesWrapper'
