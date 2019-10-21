@@ -8,11 +8,11 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import {
     Typography,
-    CssBaseline,
     Button,
     TextField,
     Grid,
-    FormControl
+    FormControl,
+    Container
 } from '@material-ui/core'
 import Select from '@material-ui/core/Select'
 import gql from 'graphql-tag'
@@ -179,9 +179,10 @@ function UserHomeView(props) {
         artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges
     }
 
+
     return (
         <Layout>
-            <CssBaseline />
+            <Container style={{ paddingTop: "1rem"}}>
             <Grid container spacing={3}>
                 <Grid item xs={9}>
                     {selectedFamily && (
@@ -249,6 +250,7 @@ function UserHomeView(props) {
                     </FormControl>
                 </Grid>
             </Grid>
+            </Container>
         </Layout>
     )
 }
