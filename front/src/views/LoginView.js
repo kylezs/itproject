@@ -10,6 +10,7 @@ import {
     Typography,
     Paper
 } from '@material-ui/core'
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { useMutation } from '@apollo/react-hooks'
 

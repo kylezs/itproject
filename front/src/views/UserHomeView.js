@@ -4,7 +4,7 @@ import authContext from '../authContext'
 import { makeStyles } from '@material-ui/core/styles'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
-import InputLabel from '@material-ui/core/InputLabel'
+import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import MenuItem from '@material-ui/core/MenuItem'
 import {
     Typography,
@@ -14,7 +14,6 @@ import {
     FormControl,
     Container
 } from '@material-ui/core'
-import Select from '@material-ui/core/Select'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import {ArtefactCard, Loading} from '../components'
@@ -149,6 +148,7 @@ function UserHomeView(props) {
     const handleChange = event => {
         event.preventDefault()
         const newFamily = event.target.value
+        console.log("Here's the new family")
         selectFamily({
             variables: { profileId: profileId, toFamily: newFamily }
         })
@@ -213,31 +213,30 @@ function UserHomeView(props) {
                     </GridList>
                 </Grid>
                 <Grid item xs={3}>
-                    <InputLabel ref={inputLabel} htmlFor='outlined-age-simple'>
-                        Select Family
-                    </InputLabel>
-                    <Select
-                        variant='outlined'
-                        fullWidth
-                        disabled={families.length <= 1}
-                        value={selectedFamily ? selectedFamily.id : null}
-                        onChange={handleChange}
-                        inputProps={{
-                            name: 'age',
-                            id: 'outlined-age-simple'
-                        }}
-                    >
-                        {families &&
-                            families.map((item, key) => (
-                                <MenuItem key={item.id} value={item.id}>
-                                    {item.familyName}
-                                </MenuItem>
-                            ))}
-                    </Select>
+                        <TextField
+                            fullWidth
+                            label='Select Family'
+                            variant='outlined'
+                            disabled={families.length <= 1}
+                            value={selectedFamily ? selectedFamily.id : null}
+                            select
+                            onChange={handleChange}
+                            SelectProps={{
+                                name: 'family',
+                                autoWidth: true
+                            }}
+                        >
+                            {families &&
+                                families.map((item, key) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        {item.familyName}
+                                    </MenuItem>
+                                ))}
+                        </TextField>
                     <FormControl fullWidth>
                         <TextField
                             id='joinCodeField'
-                            label='Join a family'
+                            label='Enter join code'
                             value={formJoinCode}
                             className={classes.textField}
                             margin='normal'
