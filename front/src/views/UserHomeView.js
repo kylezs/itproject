@@ -16,13 +16,8 @@ import {
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
-<<<<<<< HEAD
-import ArtefactCard from '../components/ArtefactCard'
-import { Redirect }  from 'react-router-dom'
-=======
 import {ArtefactCard, Loading} from '../components'
 import { Redirect } from 'react-router-dom'
->>>>>>> dev
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -163,15 +158,10 @@ function UserHomeView(props) {
         return <Loading />
     }
 
-<<<<<<< HEAD
     let selectedFamily;
     let families;
     let profileId;
-=======
-    let selectedFamily
-    let families
-    let profileId
->>>>>>> dev
+    
     if (home_data) {
         selectedFamily = home_data.me.profile.selectedFamily
         families = home_data.me.isMemberOf
