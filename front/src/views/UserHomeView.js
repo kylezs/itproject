@@ -1,23 +1,25 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, Fragment } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
+
 import Layout from '../components/Layout'
 import authContext from '../authContext'
 import { makeStyles } from '@material-ui/core/styles'
-import GridList from '@material-ui/core/GridList'
-import GridListTile from '@material-ui/core/GridListTile'
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import MenuItem from '@material-ui/core/MenuItem'
 import {
     Typography,
     Button,
     TextField,
     Grid,
-    FormControl,
-    Container
+    Paper,
+    Link,
+    MenuItem,
+    Snackbar,
+    CssBaseline
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import {ArtefactCard, Loading} from '../components'
+import { ArtefactCard, Loading } from '../components'
 import { Redirect } from 'react-router-dom'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -29,6 +31,21 @@ const useStyles = makeStyles(theme => ({
     },
     icon: {
         color: 'rgba(255, 255, 255, 0.54)'
+    },
+    outerContainer: {
+        padding: theme.spacing(2)
+    },
+    card: {
+        alignContent: 'stretch'
+    },
+    paper: {
+        padding: theme.spacing(1),
+        // margin: theme.spacing(1),
+        borderRadius: 10
+    },
+    button: {
+        // marginTop: theme.spacing(1)
+        // height: '100%'
     }
 }))
 
@@ -57,6 +74,7 @@ const HOMEPAGE_INFO = gql`
                     id
                     familyName
                     joinCode
+                    about
                     hasArtefacts {
                         edges {
                             node {
@@ -64,6 +82,9 @@ const HOMEPAGE_INFO = gql`
                                 name
                                 description
                                 upload
+                                admin {
+                                    username
+                                }
                             }
                         }
                     }
@@ -101,6 +122,7 @@ function UserHomeView(props) {
     const context = useContext(authContext)
     const username = context.user.username
     const [formJoinCode, setFormJoinCode] = useState('')
+    const [copied, setCopied] = useState(false)
 
     const [joinFamilyMutation, { data: join_mutation_data }] = useMutation(
         JOIN_FAMILY_MUTATION,
@@ -154,7 +176,7 @@ function UserHomeView(props) {
         })
     }
 
-    if (loading || !home_data) {
+    if (loading) {
         return <Loading />
     }
 
@@ -182,74 +204,167 @@ function UserHomeView(props) {
 
     return (
         <Layout>
-            <Container style={{ paddingTop: "1rem"}}>
-            <Grid container spacing={3}>
-                <Grid item xs={9}>
-                    {selectedFamily && (
-                        <div>
-                            <Typography variant='h1'>
-                                {selectedFamily.familyName}
+            <CssBaseline />
+            <Grid container justify='center'>
+                <Grid
+                    item
+                    xs={12}
+                    lg={10}
+                    container
+                    spacing={2}
+                    justify='space-between'
+                    className={classes.outerContainer}
+                >
+                    <Grid
+                        item
+                        xs={12}
+                        sm={7}
+                        container
+                        justify='center'
+                        alignItems='stretch'
+                        spacing={1}
+                        className={classes.paper}
+                    >
+                        {selectedFamily && (
+                            <Fragment>
+                                <Grid item xs={12}>
+                                    <Typography variant='h1'>
+                                        {selectedFamily.familyName}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant='subtitle1'>
+                                        {selectedFamily.about}
+                                    </Typography>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <CopyToClipboard
+                                        text={selectedFamily.joinCode}
+                                        onCopy={() => setCopied(true)}
+                                    >
+                                        <Button variant='outlined'>
+                                            Copy family join code
+                                        </Button>
+                                    </CopyToClipboard>
+                                </Grid>
+                            </Fragment>
+                        )}
+
+                        {!selectedFamily && (
+                            <Typography variant='h2'>
+                                Join and/or Select a Family
                             </Typography>
-                            <Typography variant='h5'>
-                                Join code: {selectedFamily.joinCode}
-                            </Typography>
-                        </div>
-                    )}
-                    {!selectedFamily && (
-                        <Typography variant='h2'>
-                            Join and/or Select a Family
-                        </Typography>
-                    )}
-                    <h4>Your username is (temp, for testing): {username}</h4>
-                    <GridList cellHeight={'auto'} cols={2}>
+                        )}
+                    </Grid>
+                    <Grid
+                        item
+                        xs={8}
+                        sm={5}
+                        md={3}
+                        container
+                        spacing={1}
+                        justify='center'
+                        alignContent='flex-start'
+                    >
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                label='Select Family'
+                                variant='outlined'
+                                value={
+                                    selectedFamily ? selectedFamily.id : null
+                                }
+                                select
+                                onChange={handleChange}
+                                SelectProps={{
+                                    name: 'age',
+                                    autoWidth: true
+                                }}
+                                disabled={families.length <= 1}
+                            >
+                                {families &&
+                                    families.map((item, key) => (
+                                        <MenuItem key={item.id} value={item.id}>
+                                            {item.familyName}
+                                        </MenuItem>
+                                    ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                id='joinCodeField'
+                                variant='outlined'
+                                label='Enter join code'
+                                value={formJoinCode}
+                                className={classes.textField}
+                                onChange={e => setFormJoinCode(e.target.value)}
+                                InputProps={{
+                                    endAdornment: (
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            onClick={handleJoinFamily}
+                                            className={classes.button}
+                                            size='small'
+                                        >
+                                            Join
+                                        </Button>
+                                    ),
+                                    style: {}
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        container
+                        justify='center'
+                        alignItems='stretch'
+                        spacing={1}
+                        item
+                        xs={12}
+                    >
                         {artefacts.map((artefact, key) => (
-                            <GridListTile key={key}>
+                            <Grid item xs={12} sm={6} md={4} key={key}>
                                 <ArtefactCard
-                                    key={key}
                                     artefact={artefact.node}
+                                    className={classes.card}
                                 />
-                            </GridListTile>
+                            </Grid>
                         ))}
-                    </GridList>
-                </Grid>
-                <Grid item xs={3}>
-                        <TextField
-                            fullWidth
-                            label='Select Family'
-                            variant='outlined'
-                            disabled={families.length <= 1}
-                            value={selectedFamily ? selectedFamily.id : null}
-                            select
-                            onChange={handleChange}
-                            SelectProps={{
-                                name: 'family',
-                                autoWidth: true
-                            }}
-                        >
-                            {families &&
-                                families.map((item, key) => (
-                                    <MenuItem key={item.id} value={item.id}>
-                                        {item.familyName}
-                                    </MenuItem>
-                                ))}
-                        </TextField>
-                    <FormControl fullWidth>
-                        <TextField
-                            id='joinCodeField'
-                            label='Enter join code'
-                            value={formJoinCode}
-                            className={classes.textField}
-                            margin='normal'
-                            onChange={e => setFormJoinCode(e.target.value)}
-                            fullWidth
-                        />
-                        <Button variant='outlined' onClick={handleJoinFamily}>
-                            Join Family
-                        </Button>
-                    </FormControl>
+                        {artefacts.length === 0 && (
+                            <Paper
+                                className={classes.paper}
+                                style={{ marginTop: 15 }}
+                            >
+                                This family has no artefacts, click
+                                <Link
+                                    component={RouterLink}
+                                    to='/artefacts/create'
+                                    // className={classes.root}
+                                    color='secondary'
+                                >
+                                    {' here '}
+                                </Link>
+                                to create some. Make sure to asign them to this
+                                family
+                            </Paper>
+                        )}
+                    </Grid>
                 </Grid>
             </Grid>
-            </Container>
+
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                }}
+                open={copied}
+                autoHideDuration={2000}
+                onClose={() => setCopied(false)}
+                message={<span id='message-id'>Code copied to clipboard</span>}
+            />
         </Layout>
     )
 }
