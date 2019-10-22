@@ -74,6 +74,13 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    # 'JWT_EXPIRATION_DELTA': timedelta(seconds=5),
+    # 'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
