@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, Fragment } from 'react'
 import {
     IconButton,
     Button,
@@ -8,6 +8,7 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    DialogContentText,
     DialogActions,
     Grid,
     Paper,
@@ -17,30 +18,29 @@ import CloseIcon from '@material-ui/icons/Close'
 
 import { useMutation } from '@apollo/react-hooks'
 
-import Layout from '../components/Layout'
+import { HelpDialog } from '../components'
 import authContext from '../authContext'
 import { artefactFamilyFormUseStyles } from '../components'
 import { CREATE_FAMILY_MUTATION } from '../gqlQueriesMutations'
 
-// const MyDialogTitle = props => {
-//     const classes = artefactFamilyFormUseStyles()
-//     const { children, onClose } = props
-
-//     return (
-//         <DialogTitle disableTypography className={classes.root}>
-//             <Typography variant='h6'>{children}</Typography>
-//             {onClose ? (
-//                 <IconButton
-//                     aria-label='close'
-//                     className={classes.closeButton}
-//                     onClick={onClose}
-//                 >
-//                     <CloseIcon />
-//                 </IconButton>
-//             ) : null}
-//         </DialogTitle>
-//     )
-// }
+const HelpContent = () => (
+    <Fragment>
+        <DialogTitle id='help-title'>Help</DialogTitle>
+        <DialogContent>
+            <DialogContentText>
+                Select from your families in the corner to view their artefacts
+            </DialogContentText>
+            <DialogContentText>
+                Enter a family's join code in the box underneath to join
+                someone's family
+            </DialogContentText>
+            <DialogContentText>
+                The join code can be copied by clicking the button underneath
+                the family name
+            </DialogContentText>
+        </DialogContent>
+    </Fragment>
+)
 
 function CreateFamilyView(props) {
     const classes = artefactFamilyFormUseStyles()
@@ -162,6 +162,13 @@ function CreateFamilyView(props) {
                     </Button>
                 </Grid>
             </Grid>
+
+            <HelpDialog
+                open={props.helpOpen}
+                setOpen={props.setHelpOpen}
+                content={HelpContent}
+            />
+
             {data && (
                 <Dialog open={open} onClose={handleClose}>
                     <DialogTitle onClose={handleClose}>
@@ -193,7 +200,7 @@ function CreateFamilyView(props) {
 }
 
 export default props => (
-    <Layout>
+    <Fragment>
         <CssBaseline />
         <Grid
             container
@@ -207,5 +214,5 @@ export default props => (
                 <CreateFamilyView {...props} />
             </Grid>
         </Grid>
-    </Layout>
+    </Fragment>
 )

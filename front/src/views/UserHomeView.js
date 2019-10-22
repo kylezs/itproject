@@ -13,11 +13,17 @@ import {
     Paper,
     Link,
     MenuItem,
-    Snackbar
+    Snackbar,
+    CssBaseline,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { ArtefactCard, Loading } from '../components'
+import { ArtefactCard, Loading, HelpDialog } from '../components'
 import { Redirect } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
@@ -116,11 +122,28 @@ const SELECT_FAMILY_MUTATION = gql`
     }
 `
 
-function UserHomeView(props) {
-    const classes = useStyles()
+const HelpContent = () => (
+    <Fragment>
+        <DialogTitle id='help-title'>Help</DialogTitle>
+        <DialogContent>
+            <DialogContentText>
+                Select from your families in the corner to view their artefacts
+            </DialogContentText>
+            <DialogContentText>
+                Enter a family's join code in the box underneath to join
+                someone's family
+            </DialogContentText>
+            <DialogContentText>
+                The join code can be copied by clicking the button underneath
+                the family name
+            </DialogContentText>
+        </DialogContent>
+    </Fragment>
+)
 
+export default function UserHomeView(props) {
+    const classes = useStyles()
     const context = useContext(authContext)
-    const username = context.user.username
     const [formJoinCode, setFormJoinCode] = useState('')
     const [copied, setCopied] = useState(false)
 
@@ -201,7 +224,7 @@ function UserHomeView(props) {
     }
 
     return (
-        <Layout>
+        <Fragment>
             <CssBaseline />
             <Grid container justify='center'>
                 <Grid
@@ -363,8 +386,12 @@ function UserHomeView(props) {
                 onClose={() => setCopied(false)}
                 message={<span id='message-id'>Code copied to clipboard</span>}
             />
-        </Layout>
+
+            <HelpDialog
+                open={props.helpOpen}
+                setOpen={props.setHelpOpen}
+                content={HelpContent}
+            />
+        </Fragment>
     )
 }
-
-export default UserHomeView

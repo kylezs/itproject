@@ -4,11 +4,7 @@ import Header from './Header'
 
 import { createMuiTheme } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
-import {
-    teal,
-    deepPurple,
-    indigo
-} from '@material-ui/core/colors'
+import { teal, deepPurple, indigo } from '@material-ui/core/colors'
 
 import { THEME_TYPE } from '../constants.js'
 
@@ -24,7 +20,7 @@ const lightPalette = {
 const darkPalette = {
     primary: {
         // light: deepPurple[100],
-        main: deepPurple['A100'],
+        main: deepPurple['A100']
         // dark: deepPurple[500]
     },
     secondary: teal,
@@ -56,11 +52,22 @@ export default props => {
         setTheme(newTheme === 'light' ? lightTheme : darkTheme)
     }
 
+    const [helpOpen, setHelpOpen] = useState(false)
+    const children = React.Children.map(props.children, child => {
+        return React.cloneElement(child, {
+            helpOpen: helpOpen,
+            setHelpOpen: setHelpOpen
+        })
+    })
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Header onToggleDarkTheme={toggleDarkTheme} />
-            {props.children}
+            <Header
+                onToggleDarkTheme={toggleDarkTheme}
+                setHelpOpen={setHelpOpen}
+            />
+            {children}
         </ThemeProvider>
     )
 }

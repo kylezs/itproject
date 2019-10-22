@@ -19,7 +19,7 @@ import { Layout, formUseStyles } from '../components'
 
 import { LOGIN_MUTATION } from '../gqlQueriesMutations'
 
-function Login(props) {
+function Login({ history }) {
     const context = useContext(authContext)
     const classes = formUseStyles()
 
@@ -32,7 +32,7 @@ function Login(props) {
         const { token } = data.tokenAuth
         context.handleAuthentication(token)
         localStorage.setItem(AUTH_TOKEN, token)
-        props.history.push(`/`)
+        history.push(`/`)
     }
 
     const _handleError = async errors => {
@@ -91,7 +91,9 @@ function Login(props) {
                     id='password'
                     onChange={e => setPassword(e.target.value)}
                     error={invalidCred}
-                    helperText={invalidCred ? 'Please enter valid credentials' : ''}
+                    helperText={
+                        invalidCred ? 'Please enter valid credentials' : ''
+                    }
                 />
 
                 <Grid
@@ -139,19 +141,23 @@ function Login(props) {
     )
 }
 
+const CenterWrapping = props => (
+    <Grid
+        container
+        spacing={0}
+        direction='column'
+        alignItems='center'
+        justify='center'
+        style={{ minHeight: '80vh' }}
+    >
+        <Grid item xs={10} sm={8} md={6} lg={4}>
+            <Login {...props} />
+        </Grid>
+    </Grid>
+)
+
 export default props => (
     <Layout>
-        <Grid
-            container
-            spacing={0}
-            direction='column'
-            alignItems='center'
-            justify='center'
-            style={{ minHeight: '80vh' }}
-        >
-            <Grid item xs={10} sm={8} md={6} lg={4}>
-                <Login {...props} />
-            </Grid>
-        </Grid>
+        <CenterWrapping {...props} />
     </Layout>
 )

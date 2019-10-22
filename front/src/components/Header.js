@@ -87,6 +87,7 @@ export default function MenuAppBar(props) {
                             username={username}
                             drawerOpen={open}
                             setDrawerOpen={setOpen}
+                            setHelpOpen={props.setHelpOpen}
                         />
                     ) : (
                         <NotLoggedInBar />

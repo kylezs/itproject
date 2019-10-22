@@ -23,11 +23,12 @@ import {
     Address,
     SuccessSnackbar,
     DeleteDialog,
-    CreateButton
+    CreateButton,
+    HelpContent
 } from './components'
 import authContext from '../../authContext'
 
-import { Layout } from '../../components'
+import { HelpDialog } from '../../components'
 
 import {
     CREATE_ARTEFACT_MUTATION_STR,
@@ -40,8 +41,6 @@ import axios from 'axios'
 
 function ArtefactView(props) {
     // get the mode
-    // var { create, edit, view } = props
-    // var mode = { create: create, edit: edit, view: view }
     const [mode, setMode] = useState({
         create: props.create,
         edit: props.edit,
@@ -507,8 +506,7 @@ function ArtefactView(props) {
                             {componentsViewMode.map(
                                 ({ comp, name, widthProps }) => {
                                     if (comp === null) return null
-                                    if (!widthProps)
-                                        widthProps = { xs: 12 }
+                                    if (!widthProps) widthProps = { xs: 12 }
                                     return (
                                         <Grid
                                             container
@@ -569,6 +567,13 @@ function ArtefactView(props) {
                     deleteArtefact={deleteArtefact}
                     artefact={artefact}
                 />
+
+                <HelpDialog
+                    open={props.helpOpen}
+                    setOpen={props.setHelpOpen}
+                    content={HelpContent}
+                    mode={mode}
+                />
             </Grid>
         </form>
     )
@@ -576,22 +581,20 @@ function ArtefactView(props) {
 
 function Wrapped(props) {
     return (
-        <Layout>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <Grid
-                    container
-                    spacing={0}
-                    alignItems='flex-start'
-                    justify='center'
-                    style={{ minHeight: '80vh' }}
-                >
-                    <Grid item xs={11} md={9}>
-                        <CssBaseline />
-                        <ArtefactView {...props} />
-                    </Grid>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid
+                container
+                spacing={0}
+                alignItems='flex-start'
+                justify='center'
+                style={{ minHeight: '80vh' }}
+            >
+                <Grid item xs={11} md={9}>
+                    <CssBaseline />
+                    <ArtefactView {...props} />
                 </Grid>
-            </MuiPickersUtilsProvider>
-        </Layout>
+            </Grid>
+        </MuiPickersUtilsProvider>
     )
 }
 
