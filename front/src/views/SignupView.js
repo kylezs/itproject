@@ -14,7 +14,7 @@ import {
 
 import { useMutation } from '@apollo/react-hooks'
 
-import { Layout, formUseStyles } from '../components'
+import { Layout } from '../components'
 import { USERNAME_TAKEN_ERR_MSG } from '../constants.js'
 import {
     PASSWORD_SCHEMA,
@@ -231,19 +231,23 @@ function Signup(props) {
     )
 }
 
+const CenterWrapping = props => (
+    <Grid
+        container
+        spacing={0}
+        direction='column'
+        alignItems='center'
+        justify='center'
+        style={{ minHeight: '80vh' }}
+    >
+        <Grid item xs={10} sm={8} md={6} lg={4}>
+            <Signup {...props} />
+        </Grid>
+    </Grid>
+)
+
 export default props => (
     <Layout>
-        <Grid
-            container
-            spacing={0}
-            direction='column'
-            alignItems='center'
-            justify='center'
-            style={{ minHeight: '80vh' }}
-        >
-            <Grid item xs={10} sm={8} md={6} lg={4}>
-                <Signup {...props} />
-            </Grid>
-        </Grid>
+        <CenterWrapping {...props} />
     </Layout>
 )

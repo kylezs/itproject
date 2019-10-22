@@ -23,7 +23,7 @@ import { green } from '@material-ui/core/colors'
 import { Map } from '../components'
 import { artefactGeocodeQuery } from '../components/MapAPI'
 
-import { GetFamiliesWrapper, Layout } from '../components'
+import { GetFamiliesWrapper, HelpDialog } from '../components'
 
 import { GET_FAMILY_ARTEFACTS } from '../gqlQueriesMutations'
 import { useQuery } from '@apollo/react-hooks'
@@ -134,7 +134,6 @@ function MapView(props) {
     const [mapState, setMapState] = useState(initMapState)
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [errorSnackbar, setErrorSnackbar] = useState({ open: false, msg: '' })
-    const [helpOpen, setHelpOpen] = useState(false)
     const getArtefactMapData = data => {
         console.log('Query resulted')
         if (!data) return
@@ -311,31 +310,13 @@ function MapView(props) {
                         </Paper>
                     </Grid>
                 )}
-
-                <IconButton
-                    edge='start'
-                    color='inherit'
-                    aria-label='menu'
-                    onClick={() => setHelpOpen(true)}
-                >
-                    <HelpIcon />
-                </IconButton>
             </Grid>
 
-            <Dialog
-                fullWidth
-                maxWidth='sm'
-                open={helpOpen}
-                onClose={() => setHelpOpen(false)}
-                aria-labelledby='help-title'
-            >
-                <MyDialogContent />
-                <DialogActions>
-                    <Button onClick={() => setHelpOpen(false)} color='primary'>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <HelpDialog
+                open={props.helpOpen}
+                setOpen={props.setHelpOpen}
+                content={MyDialogContent}
+            />
 
             <Snackbar
                 anchorOrigin={{
@@ -385,8 +366,4 @@ function MapView(props) {
     )
 }
 
-export default props => (
-    <Layout>
-        <GetFamiliesWrapper {...props} child={MapView} />
-    </Layout>
-)
+export default props => <GetFamiliesWrapper {...props} child={MapView} />
