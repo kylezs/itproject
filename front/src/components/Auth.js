@@ -39,25 +39,19 @@ export default function Auth(props) {
 
         );
         if (error) {
-            console.log("[Error] handleAuthentication()")
+            console.error(error);
             return;
         }
 
         if (loading) {
-            console.log("Thing is loading");
+            console.log("Loading...");
         }
 
     };
 
     const setSession = (data) => {
 
-        if (error) {
-            console.log("Invalid data, please sign in again");
-            return;
-        }
-
         const username = data.data.verifyToken.payload.username
-        console.log("Here's the user id: ", data.data.verifyToken.payload.id);
         const user = {
             username: username,
         };
@@ -70,16 +64,13 @@ export default function Auth(props) {
     };
 
     const logout = () => {
-        console.log("Logout called");
         setAuthenticated(false);
         setUser({});
-        // setAuthToken("");
         localStorage[AUTH_TOKEN] = "";
     };
 
     const authProviderValue = {
         authenticated,
-        // authToken,
         user,
         initiateLogin: initiateLogin,
         handleAuthentication: handleAuthentication,
