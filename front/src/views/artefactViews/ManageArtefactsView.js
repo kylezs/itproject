@@ -13,9 +13,9 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const LIST_OF_ARTEFACTS = gql`
-    query artefactsQuery($first: Int!) {
+    query artefactsQuery {
         me {
-            artefactAdministratorOf(first: $first) {
+            artefactAdministratorOf {
                 edges {
                     node {
                         id
@@ -34,13 +34,9 @@ const LIST_OF_ARTEFACTS = gql`
 
 function ManageArtefactsView(props) {
     const classes = useStyles()
-    const numArtefactsFetched = 10
     const [artefactEdges, SetArtefactEdges] = useState([])
 
     let { data, loading } = useQuery(LIST_OF_ARTEFACTS, {
-        variables: {
-            first: numArtefactsFetched
-        },
         onCompleted: data =>
             SetArtefactEdges(data.me.artefactAdministratorOf.edges),
         onError: errors => console.log(errors),

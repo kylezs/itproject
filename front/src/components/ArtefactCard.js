@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
@@ -54,9 +54,10 @@ function ArtefactCard({ artefact }) {
     const theme = useTheme()
 
     const { upload, name, description, id, admin } = artefact
+    const [patternURI, setPatternURI] = useState('')
 
     var mediaURI = config.mediaRoot + upload
-    if (upload === 'False') {
+    if (upload === 'False' && !patternURI) {
         // use primary colour of theme as a seed for the random colour generation
         var pattern = Trianglify({
             width: 500,
@@ -64,14 +65,14 @@ function ArtefactCard({ artefact }) {
             x_colors: [theme.palette.primary.dark, theme.palette.primary.light],
             y_colors: 'random'
         })
-        mediaURI = pattern.png()
+        setPatternURI(pattern.png())
     }
 
     return (
         <Card className={classes.card} elevation={3}>
             <CardMedia
                 className={classes.media}
-                image={mediaURI}
+                image={patternURI ? patternURI : mediaURI}
                 title={name}
             />
             <CardContent>

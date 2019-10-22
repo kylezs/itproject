@@ -317,8 +317,7 @@ function UserHomeView(props) {
                     </Grid>
                     <Grid
                         container
-                        justify='space-evenly'
-                        // alignContent='stretch'
+                        justify='center'
                         alignItems='stretch'
                         spacing={1}
                         item
