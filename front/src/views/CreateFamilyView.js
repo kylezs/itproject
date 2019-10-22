@@ -81,21 +81,15 @@ function CreateFamilyView(props) {
         setOpen(false)
         props.history.push(`/`)
     }
-    data = "hello"
+    data = 'hello'
 
     return (
         <form className={classes.form} onSubmit={submitForm}>
-            <Grid
-                container
-                spacing={1}
-                className={classes.outerContainer}
-            >
+            <Grid container spacing={1} className={classes.outerContainer}>
                 <Grid item xs={12} container justify='center'>
-                    <Typography variant='h4' className={classes.title}>
-                        Create Family
-                    </Typography>
+                    <Typography variant='h4'>Create Family</Typography>
 
-                    <Typography variant='subtitle1' className={classes.title}>
+                    <Typography variant='subtitle1'>
                         Families are how you manage your artefacts. We recognise
                         there is often complex overlap between families. That's
                         why you can create and be a part of several families, so
@@ -145,20 +139,24 @@ function CreateFamilyView(props) {
                                 fullWidth
                                 id='family-admin'
                                 label='Family Admin'
-                                onChange={e => console.error("The admin value was changed, how is this even possible?")}
+                                onChange={e =>
+                                    console.error(
+                                        'The admin value was changed, how is this even possible?'
+                                    )
+                                }
                             />
                         </FormControl>
                     </Paper>
                 </Grid>
 
-                <Grid item xs={5}>
+                <Grid item xs={12}>
                     <Button
                         name='create'
                         label='Create'
                         type='submit'
                         fullWidth
                         variant='contained'
-                        color='primary'
+                        color='secondary'
                     >
                         Create
                     </Button>
@@ -171,20 +169,22 @@ function CreateFamilyView(props) {
                     </DialogTitle>
                     <DialogContent>
                         <Typography align='center'>
-                            You can now add artefacts to this family. To view them simply
-                            select '{familyName}' from the Select Family dropdown on your
-                            home dashboard.<br />
+                            You can now add artefacts to this family. To view
+                            them simply select '{familyName}' from the Select
+                            Family dropdown on your home dashboard.
+                            <br />
                             Begin getting members to join your family! Simply
                             share the code below to your family members, get
                             them to sign up and then they can join!
-                            <br /><br />
+                            <br />
+                            <br />
                             {joinCode}
                         </Typography>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="primary" autoFocus>
+                        <Button onClick={handleClose} color='primary' autoFocus>
                             Continue
-                    </Button>
+                        </Button>
                     </DialogActions>
                 </Dialog>
             )}

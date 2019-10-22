@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/styles'
 import Card from '@material-ui/core/Card'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import CardActions from '@material-ui/core/CardActions'
@@ -50,13 +51,19 @@ and manage page as a quick way to assist navigating through artefacts
 */
 function ArtefactCard({ artefact }) {
     const classes = useStyles()
+    const theme = useTheme()
 
     const { upload, name, description, id, admin } = artefact
 
     var mediaURI = config.mediaRoot + upload
     if (upload === 'False') {
         // use primary colour of theme as a seed for the random colour generation
-        var pattern = Trianglify({ width: 500, height: 500 })
+        var pattern = Trianglify({
+            width: 500,
+            height: 500,
+            x_colors: [theme.palette.primary.dark, theme.palette.primary.light],
+            y_colors: 'random'
+        })
         mediaURI = pattern.png()
     }
 

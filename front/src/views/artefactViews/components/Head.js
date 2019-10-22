@@ -27,7 +27,7 @@ export default ({
                     }}
                 />
             )}
-            <Typography variant='h4' className={classes.title}>
+            <Typography variant='h4' align='center'>
                 {create && 'Create'} {edit && 'Edit'} {view && 'View'} Artefact
             </Typography>
             {showEditButton && (
@@ -62,7 +62,7 @@ export default ({
             )}
             {create && (
                 <Grid item xs={12}>
-                    <Typography variant='subtitle1' className={classes.title}>
+                    <Typography variant='subtitle1' align='center'>
                         Artefacts are belongings of the family, enter as much or
                         as little detail as you like
                     </Typography>

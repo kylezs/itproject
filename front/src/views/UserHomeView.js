@@ -12,7 +12,8 @@ import {
     Grid,
     Paper,
     Link,
-    MenuItem
+    MenuItem,
+    Snackbar
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
@@ -40,11 +41,11 @@ const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(1),
         // margin: theme.spacing(1),
-        borderRadius: 10,
+        borderRadius: 10
     },
     button: {
         // marginTop: theme.spacing(1)
-        height: '100%'
+        // height: '100%'
     }
 }))
 
@@ -209,12 +210,13 @@ function UserHomeView(props) {
                     lg={10}
                     container
                     spacing={2}
+                    justify='space-between'
                     className={classes.outerContainer}
                 >
                     <Grid
                         item
                         xs={12}
-                        md={8}
+                        sm={7}
                         container
                         justify='center'
                         alignItems='stretch'
@@ -240,7 +242,7 @@ function UserHomeView(props) {
                                         onCopy={() => setCopied(true)}
                                     >
                                         <Button variant='outlined'>
-                                            Copy join code
+                                            Copy family join code
                                         </Button>
                                     </CopyToClipboard>
                                 </Grid>
@@ -255,78 +257,62 @@ function UserHomeView(props) {
                     </Grid>
                     <Grid
                         item
-                        xs={12}
-                        md={4}
+                        xs={8}
+                        sm={5}
+                        md={3}
                         container
                         spacing={1}
                         justify='center'
                         alignContent='flex-start'
                     >
-                        <Grid item xs={12} sm={4} md={12}>
-                            <Paper className={classes.paper}>
-                                <TextField
-                                    fullWidth
-                                    label='Select Family'
-                                    variant='outlined'
-                                    value={
-                                        selectedFamily
-                                            ? selectedFamily.id
-                                            : null
-                                    }
-                                    select
-                                    onChange={handleChange}
-                                    SelectProps={{
-                                        name: 'age',
-                                        autoWidth: true
-                                    }}
-                                    disabled={families.length <= 1}
-                                >
-                                    {families &&
-                                        families.map((item, key) => (
-                                            <MenuItem
-                                                key={item.id}
-                                                value={item.id}
-                                            >
-                                                {item.familyName}
-                                            </MenuItem>
-                                        ))}
-                                </TextField>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} sm={8} md={12}>
-                            {/* <Paper className={classes.paper}> */}
-                            <Grid
-                                container
-                                alignItems='stretch'
-                                spacing={1}
-                                className={classes.paper}
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                label='Select Family'
+                                variant='outlined'
+                                value={
+                                    selectedFamily ? selectedFamily.id : null
+                                }
+                                select
+                                onChange={handleChange}
+                                SelectProps={{
+                                    name: 'age',
+                                    autoWidth: true
+                                }}
+                                disabled={families.length <= 1}
                             >
-                                <Grid item xs={9}>
-                                    <TextField
-                                        id='joinCodeField'
-                                        variant='outlined'
-                                        label='Enter a code to join a family'
-                                        value={formJoinCode}
-                                        className={classes.textField}
-                                        onChange={e =>
-                                            setFormJoinCode(e.target.value)
-                                        }
-                                        fullWidth
-                                    />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <Button
-                                        variant='contained'
-                                        color='primary'
-                                        onClick={handleJoinFamily}
-                                        fullWidth
-                                        className={classes.button}
-                                    >
-                                        Join
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                            {/* </Paper> */}
+                                {families &&
+                                    families.map((item, key) => (
+                                        <MenuItem key={item.id} value={item.id}>
+                                            {item.familyName}
+                                        </MenuItem>
+                                    ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                id='joinCodeField'
+                                variant='outlined'
+                                label='Enter join code'
+                                value={formJoinCode}
+                                className={classes.textField}
+                                onChange={e => setFormJoinCode(e.target.value)}
+                                InputProps={{
+                                    endAdornment: (
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            onClick={handleJoinFamily}
+                                            className={classes.button}
+                                            size='small'
+                                        >
+                                            Join
+                                        </Button>
+                                    ),
+                                    style: {}
+                                }}
+                            />
                         </Grid>
                     </Grid>
                     <Grid
@@ -367,6 +353,17 @@ function UserHomeView(props) {
                     </Grid>
                 </Grid>
             </Grid>
+
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                }}
+                open={copied}
+                autoHideDuration={2000}
+                onClose={() => setCopied(false)}
+                message={<span id='message-id'>Code copied to clipboard</span>}
+            />
         </Layout>
     )
 }
