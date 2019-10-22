@@ -154,7 +154,7 @@ function UserHomeView(props) {
         })
     }
 
-    if (loading || !home_data.me) {
+    if (loading || !home_data) {
         return <Loading />
     }
 

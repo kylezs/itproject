@@ -13,16 +13,15 @@ mutation VerifyToken($token: String!) {
 }
 `
 
+// Component that allows for Authentication throughout the application
 export default function Auth(props) {
     const [authenticated, setAuthenticated] = useState(false)
     const [user, setUser] = useState({})
-    const [authToken, setAuthToken] = useState("");
     const [VerifyToken, {error, loading }] = useMutation(VERIFY_TOKEN_MUTATION)
 
     const handleAuthentication = async (authToken, _callback) => {
-        if (!authToken) {
-            authToken = localStorage.getItem(AUTH_TOKEN)
-        }
+        
+        // const token = localStorage.getItem(AUTH_TOKEN)
 
         await VerifyToken({ variables: { token: authToken } }).then((data) => {
             setSession(data)
@@ -32,6 +31,7 @@ export default function Auth(props) {
         }).catch((errors) => {
             // If could not validate it, remove it to stop unnecessary requests
             localStorage[AUTH_TOKEN] = ""
+            setAuthenticated(false)
             if (_callback) {
                 _callback();
             }
@@ -62,7 +62,6 @@ export default function Auth(props) {
             username: username,
         };
         setAuthenticated(true);
-        setAuthToken(data.verifyToken);
         setUser(user);
     }
 
@@ -74,13 +73,13 @@ export default function Auth(props) {
         console.log("Logout called");
         setAuthenticated(false);
         setUser({});
-        setAuthToken("");
+        // setAuthToken("");
         localStorage[AUTH_TOKEN] = "";
     };
 
     const authProviderValue = {
         authenticated,
-        authToken,
+        // authToken,
         user,
         initiateLogin: initiateLogin,
         handleAuthentication: handleAuthentication,
