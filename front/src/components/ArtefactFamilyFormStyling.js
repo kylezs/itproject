@@ -12,12 +12,6 @@ export default makeStyles(theme => ({
         justifyContent: 'flex-start',
         textAlign: 'left'
     },
-    title: {
-        marginLeft: theme.spacing(3),
-        marginRight: theme.spacing(3),
-        padding: theme.spacing(1),
-        textAlign: 'center'
-    },
     fieldTitle: {
         textAlign: 'left',
         marginLeft: theme.spacing(1)

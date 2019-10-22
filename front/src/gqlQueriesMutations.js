@@ -142,6 +142,9 @@ export const GET_FAMILY_ARTEFACTS = gql`
                         description
                         address
                         upload
+                        admin {
+                            username
+                        }
                     }
                 }
             }

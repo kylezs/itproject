@@ -27,7 +27,7 @@ import { Link as RouterLink } from 'react-router-dom'
 const useStyles = makeStyles(theme => ({
     drawer: {
         width: 'auto',
-        margin: theme.spacing(1),
+        // margin: theme.spacing(1),
         marginTop: theme.spacing(5)
     }
 }))
