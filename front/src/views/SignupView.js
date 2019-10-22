@@ -8,12 +8,13 @@ import {
     Link,
     Grid,
     Typography,
-    Paper
+    Paper,
+    makeStyles
 } from '@material-ui/core'
 
 import { useMutation } from '@apollo/react-hooks'
 
-import { Layout, formUseStyles } from '../components'
+import { Layout } from '../components'
 import { USERNAME_TAKEN_ERR_MSG } from '../constants.js'
 import {
     PASSWORD_SCHEMA,
@@ -21,6 +22,30 @@ import {
 } from '../components/passwordValidator.js'
 
 import { SIGNUP_MUTATION } from '../gqlQueriesMutations'
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        margin: theme.spacing(1),
+        borderRadius: 10
+    },
+    paper: {
+        padding: theme.spacing(2),
+        backgroundColor: theme.palette.background.paper,
+        alignItems: 'center',
+        alignContent: 'stretch',
+        justify: 'center',
+        borderRadius: 10
+    },
+    form: {
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2)
+    }
+}))
 
 function Signup(props) {
     const [username, setUsername] = useState('')
@@ -35,7 +60,7 @@ function Signup(props) {
 
     var emailValidator = require('email-validator')
 
-    const classes = formUseStyles()
+    const classes = useStyles()
     const _confirm = async data => {
         // handle signup errors and potentially login
         props.history.push(`/login`)
@@ -206,19 +231,23 @@ function Signup(props) {
     )
 }
 
+const CenterWrapping = props => (
+    <Grid
+        container
+        spacing={0}
+        direction='column'
+        alignItems='center'
+        justify='center'
+        style={{ minHeight: '80vh' }}
+    >
+        <Grid item xs={10} sm={8} md={6} lg={4}>
+            <Signup {...props} />
+        </Grid>
+    </Grid>
+)
+
 export default props => (
     <Layout>
-        <Grid
-            container
-            spacing={0}
-            direction='column'
-            alignItems='center'
-            justify='center'
-            style={{ minHeight: '80vh' }}
-        >
-            <Grid item xs={10} sm={8} md={6} lg={4}>
-                <Signup {...props} />
-            </Grid>
-        </Grid>
+        <CenterWrapping {...props} />
     </Layout>
 )

@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
-import Layout from '../../components/Layout'
+import React, { useState, Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { CssBaseline, Grid, Typography } from '@material-ui/core'
+import {
+    DialogContent,
+    DialogContentText,
+    DialogTitle
+} from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
-import { ArtefactCard, Loading } from '../../components'
+import { ArtefactCard, Loading, HelpDialog } from '../../components'
 
 const useStyles = makeStyles(theme => ({
     container: {
-        padding: theme.spacing(3),
+        padding: theme.spacing(3)
     }
 }))
 
@@ -32,7 +36,26 @@ const LIST_OF_ARTEFACTS = gql`
     }
 `
 
-function ManageArtefactsView(props) {
+const HelpContent = () => (
+    <Fragment>
+        <DialogTitle id='help-title'>Help</DialogTitle>
+        <DialogContent>
+            <DialogContentText>
+                Select from your families in the corner to view their artefacts
+            </DialogContentText>
+            <DialogContentText>
+                Enter a family's join code in the box underneath to join
+                someone's family
+            </DialogContentText>
+            <DialogContentText>
+                The join code can be copied by clicking the button underneath
+                the family name
+            </DialogContentText>
+        </DialogContent>
+    </Fragment>
+)
+
+export default function ManageArtefactsView(props) {
     const classes = useStyles()
     const [artefactEdges, SetArtefactEdges] = useState([])
 
@@ -43,13 +66,11 @@ function ManageArtefactsView(props) {
         fetchPolicy: 'network-only'
     })
 
-    console.log('The data is: ', data)
-
-    if (loading) {
-        return <Loading />
-    }
+    // if (loading) {
+    //     return <Loading />
+    // }
     return (
-        <Layout>
+        <Fragment>
             <CssBaseline />
             <Grid
                 container
@@ -65,14 +86,29 @@ function ManageArtefactsView(props) {
                         Here you can view all the artefacts you are an admin of
                     </Typography>
                 </Grid>
-                {artefactEdges.map(edge => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={edge.node.id}>
-                        <ArtefactCard artefact={edge.node} />
-                    </Grid>
-                ))}
+                {loading ? (
+                    <Loading />
+                ) : (
+                    artefactEdges.map(edge => (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={3}
+                            key={edge.node.id}
+                        >
+                            <ArtefactCard artefact={edge.node} />
+                        </Grid>
+                    ))
+                )}
             </Grid>
-        </Layout>
+
+            <HelpDialog
+                open={props.helpOpen}
+                setOpen={props.setHelpOpen}
+                content={HelpContent}
+            />
+        </Fragment>
     )
 }
-
-export default ManageArtefactsView

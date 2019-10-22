@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
     IconButton,
     Menu,
@@ -18,7 +18,8 @@ import {
     Create,
     Map,
     Apps,
-    AccountCircle
+    AccountCircle,
+    Help
 } from '@material-ui/icons'
 
 import authContext from '../authContext'
@@ -36,7 +37,7 @@ const Trianglify = require('trianglify')
 const pattern = Trianglify({ width: 200, height: 200 })
 const mediaURI = pattern.png()
 
-export default ({ drawerOpen, setDrawerOpen }) => {
+export default ({ drawerOpen, setDrawerOpen, setHelpOpen }) => {
     const classes = useStyles()
     const [anchorEl, setAnchorEl] = React.useState(null)
     const context = useContext(authContext)
@@ -106,6 +107,15 @@ export default ({ drawerOpen, setDrawerOpen }) => {
                     </List>
                 </div>
             </Drawer>
+
+            <IconButton
+                edge='start'
+                color='inherit'
+                aria-label='menu'
+                onClick={() => setHelpOpen(true)}
+            >
+                <Help />
+            </IconButton>
 
             <IconButton
                 aria-label='account of current user'

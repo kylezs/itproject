@@ -8,21 +8,45 @@ import {
     Link,
     Grid,
     Typography,
-    Paper
+    Paper,
+    makeStyles
 } from '@material-ui/core'
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { useMutation } from '@apollo/react-hooks'
 
 import authContext from '../authContext'
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from '../constants.js'
-import { Layout, formUseStyles } from '../components'
+import { Layout } from '../components'
 
 import { LOGIN_MUTATION } from '../gqlQueriesMutations'
 
-function Login(props) {
+const useStyles = makeStyles(theme => ({
+    root: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        margin: theme.spacing(1),
+        borderRadius: 10
+    },
+    paper: {
+        padding: theme.spacing(2),
+        backgroundColor: theme.palette.background.paper,
+        alignItems: 'center',
+        alignContent: 'stretch',
+        justify: 'center',
+        borderRadius: 10
+    },
+    form: {
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2)
+    }
+}))
+
+function Login({ history }) {
     const context = useContext(authContext)
-    const classes = formUseStyles()
+    const classes = useStyles()
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -33,7 +57,7 @@ function Login(props) {
         const { token } = data.tokenAuth
         context.handleAuthentication(token)
         localStorage.setItem(AUTH_TOKEN, token)
-        props.history.push(`/`)
+        history.push(`/`)
     }
 
     const _handleError = async errors => {
@@ -92,7 +116,9 @@ function Login(props) {
                     id='password'
                     onChange={e => setPassword(e.target.value)}
                     error={invalidCred}
-                    helperText={invalidCred ? 'Please enter valid credentials' : ''}
+                    helperText={
+                        invalidCred ? 'Please enter valid credentials' : ''
+                    }
                 />
 
                 <Grid
@@ -140,19 +166,23 @@ function Login(props) {
     )
 }
 
+const CenterWrapping = props => (
+    <Grid
+        container
+        spacing={0}
+        direction='column'
+        alignItems='center'
+        justify='center'
+        style={{ minHeight: '80vh' }}
+    >
+        <Grid item xs={10} sm={8} md={6} lg={4}>
+            <Login {...props} />
+        </Grid>
+    </Grid>
+)
+
 export default props => (
     <Layout>
-        <Grid
-            container
-            spacing={0}
-            direction='column'
-            alignItems='center'
-            justify='center'
-            style={{ minHeight: '80vh' }}
-        >
-            <Grid item xs={10} sm={8} md={6} lg={4}>
-                <Login {...props} />
-            </Grid>
-        </Grid>
+        <CenterWrapping {...props} />
     </Layout>
 )
