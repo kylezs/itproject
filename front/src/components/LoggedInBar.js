@@ -12,6 +12,8 @@ import {
     ListItemIcon
 } from '@material-ui/core'
 
+import { teal, deepPurple, indigo } from '@material-ui/core/colors'
+
 import {
     Home,
     Group,
@@ -24,11 +26,11 @@ import {
 
 import authContext from '../authContext'
 import { Link as RouterLink } from 'react-router-dom'
+import zIndex from '@material-ui/core/styles/zIndex'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
         width: 'auto',
-        // margin: theme.spacing(1),
         marginTop: theme.spacing(5)
     }
 }))
@@ -36,6 +38,24 @@ const useStyles = makeStyles(theme => ({
 const Trianglify = require('trianglify')
 const pattern = Trianglify({ width: 200, height: 200 })
 const mediaURI = pattern.png()
+
+const ComingSoon = () => {
+    return (
+            <span style={{
+                position: "absolute",
+                marginTop: "14px",
+                marginLeft: "2px",
+                padding: "1px",
+                fontSize: "10px",
+                color: "white",
+                backgroundColor: "#00BCD4",
+                borderRadius: "4px",
+                zIndex: 2
+            }}>
+                Coming Soon
+            </span>
+    )
+}
 
 export default ({ drawerOpen, setDrawerOpen, setHelpOpen }) => {
     const classes = useStyles()
@@ -100,7 +120,6 @@ export default ({ drawerOpen, setDrawerOpen, setHelpOpen }) => {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={name}
-                                    // primaryTypographyProps={{variant: 'h6'}}
                                 />
                             </ListItem>
                         ))}
@@ -141,8 +160,14 @@ export default ({ drawerOpen, setDrawerOpen, setHelpOpen }) => {
                 open={open}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Settings</MenuItem>
+                <MenuItem onClick={handleClose} disabled>
+                    Profile
+                    <ComingSoon />
+                </MenuItem>
+                <MenuItem onClick={handleClose} disabled>
+                    Settings
+                    <ComingSoon />
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </div>
