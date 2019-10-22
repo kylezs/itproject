@@ -120,7 +120,6 @@ function UserHomeView(props) {
     const classes = useStyles()
 
     const context = useContext(authContext)
-    const username = context.user.username
     const [formJoinCode, setFormJoinCode] = useState('')
     const [copied, setCopied] = useState(false)
 
@@ -140,20 +139,9 @@ function UserHomeView(props) {
         joinFamilyMutation({ variables: { joinCode: formJoinCode } })
     }
 
-    const _homepageInfoCompleted = data => {
-        const selectedFamily = data.me.profile.selectedFamily
-        if (!selectedFamily) {
-            console.error('User has not selected a family')
-            return
-        }
-    }
-
-    let { data: home_data, loading, called: home_page_info_called } = useQuery(
+    let { data: home_data, loading } = useQuery(
         HOMEPAGE_INFO,
         {
-            onCompleted: data => {
-                _homepageInfoCompleted(data)
-            },
             fetchPolicy: 'network-only'
         }
     )
@@ -164,8 +152,6 @@ function UserHomeView(props) {
             refetchQueries: data => [{ query: HOMEPAGE_INFO }]
         }
     )
-
-    const inputLabel = React.useRef(null)
 
     const handleChange = event => {
         event.preventDefault()
