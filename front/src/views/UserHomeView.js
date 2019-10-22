@@ -1,7 +1,6 @@
 import React, { useContext, useState, Fragment } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
-import Layout from '../components/Layout'
 import authContext from '../authContext'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -14,9 +13,6 @@ import {
     Link,
     MenuItem,
     Snackbar,
-    CssBaseline,
-    Dialog,
-    DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle
