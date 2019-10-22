@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     card: {
         backgroundColor: theme.palette.background.paper,
         // maxWidth: 345,
-        borderRadius: 10,
+        borderRadius: 10
         // height: '100%'
     },
     media: {
@@ -69,48 +69,46 @@ function ArtefactCard({ artefact }) {
 
     return (
         <Card className={classes.card} elevation={3}>
-            <CardActionArea>
-                <CardMedia
-                    className={classes.media}
-                    image={mediaURI}
-                    title={name}
-                />
-                <CardContent>
-                    <Grid container>
-                        <Grid item xs={9}>
-                            <Typography
-                                gutterBottom
-                                variant='h5'
-                                component='h2'
-                                noWrap
-                            >
-                                {name}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Typography
-                                gutterBottom
-                                variant='overline'
-                                component='h2'
-                                noWrap
-                                align='right'
-                            >
-                                {admin.username}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography
-                                variant='body2'
-                                color='textSecondary'
-                                component='p'
-                                noWrap
-                            >
-                                {description}
-                            </Typography>
-                        </Grid>
+            <CardMedia
+                className={classes.media}
+                image={mediaURI}
+                title={name}
+            />
+            <CardContent>
+                <Grid container>
+                    <Grid item xs={9}>
+                        <Typography
+                            gutterBottom
+                            variant='h5'
+                            component='h2'
+                            noWrap
+                        >
+                            {name}
+                        </Typography>
                     </Grid>
-                </CardContent>
-            </CardActionArea>
+                    <Grid item xs={3}>
+                        <Typography
+                            gutterBottom
+                            variant='overline'
+                            component='h2'
+                            noWrap
+                            align='right'
+                        >
+                            {admin.username}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography
+                            variant='body2'
+                            color='textSecondary'
+                            component='p'
+                            noWrap
+                        >
+                            {description}
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </CardContent>
             <CardActions>
                 <Button
                     size='small'
