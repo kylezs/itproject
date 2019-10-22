@@ -8,7 +8,8 @@ import {
     Link,
     Grid,
     Typography,
-    Paper
+    Paper,
+    makeStyles
 } from '@material-ui/core'
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
@@ -20,9 +21,34 @@ import { Layout, formUseStyles } from '../components'
 
 import { LOGIN_MUTATION } from '../gqlQueriesMutations'
 
+const useStyles = makeStyles(theme => ({
+    root: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        margin: theme.spacing(1),
+        borderRadius: 10
+    },
+    paper: {
+        padding: theme.spacing(2),
+        backgroundColor: theme.palette.background.paper,
+        alignItems: 'center',
+        alignContent: 'stretch',
+        justify: 'center',
+        borderRadius: 10
+    },
+    form: {
+        display: 'flex',
+        flexWrap: 'wrap'
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2)
+    }
+}))
+
 function Login(props) {
     const context = useContext(authContext)
-    const classes = formUseStyles()
+    // const classes = formUseStyles()
+    const classes = useStyles()
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
