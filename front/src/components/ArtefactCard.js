@@ -34,12 +34,13 @@ const useStyles = makeStyles(theme => ({
     },
     card: {
         backgroundColor: theme.palette.background.paper,
-        maxWidth: 345,
-        borderRadius: 10
+        // maxWidth: 345,
+        borderRadius: 10,
+        // height: '100%'
     },
     media: {
         backgroundColor: theme.palette.background.paper,
-        height: 140
+        height: 170
     }
 }))
 
@@ -49,11 +50,12 @@ and manage page as a quick way to assist navigating through artefacts
 */
 function ArtefactCard({ artefact }) {
     const classes = useStyles()
-    
-    const { upload, name, description, id } = artefact
-    
+
+    const { upload, name, description, id, admin } = artefact
+
     var mediaURI = config.mediaRoot + upload
-    if (upload === "False"){
+    if (upload === 'False') {
+        // use primary colour of theme as a seed for the random colour generation
         var pattern = Trianglify({ width: 500, height: 500 })
         mediaURI = pattern.png()
     }
@@ -67,25 +69,38 @@ function ArtefactCard({ artefact }) {
                     title={name}
                 />
                 <CardContent>
-                    <Grid item xs zeroMinWidth>
-                        <Typography
-                            gutterBottom
-                            variant='h5'
-                            component='h2'
-                            noWrap
-                        >
-                            {name}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs zeroMinWidth>
-                        <Typography
-                            variant='body2'
-                            color='textSecondary'
-                            component='p'
-                            noWrap
-                        >
-                            {description}
-                        </Typography>
+                    <Grid container>
+                        <Grid item xs={9}>
+                            <Typography
+                                gutterBottom
+                                variant='h5'
+                                component='h2'
+                                noWrap
+                            >
+                                {name}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Typography
+                                gutterBottom
+                                variant='overline'
+                                component='h2'
+                                noWrap
+                                align='right'
+                            >
+                                {admin.username}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography
+                                variant='body2'
+                                color='textSecondary'
+                                component='p'
+                                noWrap
+                            >
+                                {description}
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </CardContent>
             </CardActionArea>

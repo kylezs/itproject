@@ -16,8 +16,7 @@ const useStyles = makeStyles(theme => ({
         marginTop: theme.spacing(1)
     },
     container: {
-        padding: theme.spacing(1),
-        margin: theme.spacing(1)
+        padding: theme.spacing(1)
     },
     button: {
         margin: theme.spacing(1)
@@ -34,6 +33,9 @@ const LIST_OF_ARTEFACTS = gql`
                         name
                         description
                         upload
+                        admin {
+                            username
+                        }
                     }
                 }
             }
@@ -52,6 +54,7 @@ function ManageArtefactsView(props) {
         },
         onCompleted: data =>
             SetArtefactEdges(data.me.artefactAdministratorOf.edges),
+        onError: errors => console.log(errors),
         fetchPolicy: 'network-only'
     })
 
@@ -63,16 +66,17 @@ function ManageArtefactsView(props) {
     return (
         <Layout>
             <CssBaseline />
-            <Grid container spacing={2} className={classes.container}>
-                <Grid item xs={12}>
-                    <Grid container justify='center' spacing={2}>
-                        {artefactEdges.map(edge => (
-                            <Grid item key={edge.node.id}>
-                                <ArtefactCard artefact={edge.node} />
-                            </Grid>
-                        ))}
+            <Grid
+                container
+                spacing={2}
+                justify='center'
+                className={classes.container}
+            >
+                {artefactEdges.map(edge => (
+                    <Grid item key={edge.node.id}>
+                        <ArtefactCard artefact={edge.node} />
                     </Grid>
-                </Grid>
+                ))}
             </Grid>
         </Layout>
     )
