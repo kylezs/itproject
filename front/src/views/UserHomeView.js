@@ -5,7 +5,6 @@ import authContext from '../authContext'
 import { makeStyles } from '@material-ui/core/styles'
 import {
     Typography,
-    CssBaseline,
     Button,
     TextField,
     Grid,
@@ -15,7 +14,8 @@ import {
     Snackbar,
     DialogContent,
     DialogContentText,
-    DialogTitle
+    DialogTitle,
+    CssBaseline
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useMutation, useQuery } from '@apollo/react-hooks'
@@ -159,20 +159,9 @@ export default function UserHomeView(props) {
         joinFamilyMutation({ variables: { joinCode: formJoinCode } })
     }
 
-    const _homepageInfoCompleted = data => {
-        const selectedFamily = data.me.profile.selectedFamily
-        if (!selectedFamily) {
-            console.error('User has not selected a family')
-            return
-        }
-    }
-
-    let { data: home_data, loading, called: home_page_info_called } = useQuery(
+    let { data: home_data, loading } = useQuery(
         HOMEPAGE_INFO,
         {
-            onCompleted: data => {
-                _homepageInfoCompleted(data)
-            },
             fetchPolicy: 'network-only'
         }
     )
@@ -184,11 +173,10 @@ export default function UserHomeView(props) {
         }
     )
 
-    const inputLabel = React.useRef(null)
-
     const handleChange = event => {
         event.preventDefault()
         const newFamily = event.target.value
+        console.log("Here's the new family")
         selectFamily({
             variables: { profileId: profileId, toFamily: newFamily }
         })
@@ -218,6 +206,7 @@ export default function UserHomeView(props) {
     if (selectedFamily) {
         artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges
     }
+
 
     return (
         <Fragment>

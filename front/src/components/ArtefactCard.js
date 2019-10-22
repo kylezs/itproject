@@ -62,7 +62,7 @@ function ArtefactCard({ artefact }) {
         var pattern = Trianglify({
             width: 500,
             height: 500,
-            x_colors: [theme.palette.primary.dark, theme.palette.primary.light],
+            x_colors: [theme.palette.primary.dark, theme.palette.secondary.light],
             y_colors: 'random'
         })
         setPatternURI(pattern.png())

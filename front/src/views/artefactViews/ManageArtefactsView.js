@@ -66,11 +66,9 @@ export default function ManageArtefactsView(props) {
         fetchPolicy: 'network-only'
     })
 
-    console.log('The data is: ', data)
-
-    if (loading) {
-        return <Loading />
-    }
+    // if (loading) {
+    //     return <Loading />
+    // }
     return (
         <Fragment>
             <CssBaseline />
@@ -88,11 +86,22 @@ export default function ManageArtefactsView(props) {
                         Here you can view all the artefacts you are an admin of
                     </Typography>
                 </Grid>
-                {artefactEdges.map(edge => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={edge.node.id}>
-                        <ArtefactCard artefact={edge.node} />
-                    </Grid>
-                ))}
+                {loading ? (
+                    <Loading />
+                ) : (
+                    artefactEdges.map(edge => (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={3}
+                            key={edge.node.id}
+                        >
+                            <ArtefactCard artefact={edge.node} />
+                        </Grid>
+                    ))
+                )}
             </Grid>
 
             <HelpDialog

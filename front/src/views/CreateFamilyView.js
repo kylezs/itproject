@@ -1,6 +1,5 @@
 import React, { useContext, useState, Fragment } from 'react'
 import {
-    IconButton,
     Button,
     CssBaseline,
     TextField,
@@ -14,7 +13,6 @@ import {
     Paper,
     FormControl
 } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
 
 import { useMutation } from '@apollo/react-hooks'
 
@@ -54,14 +52,13 @@ function CreateFamilyView(props) {
     const [open, setOpen] = useState(false)
 
     const _completed = async data => {
-        console.log(data)
         const { joinCode } = data.familyCreate.family
         setJoinCode(joinCode)
         setOpen(true)
     }
 
     // back to const once done
-    let [createFamily, { data }] = useMutation(CREATE_FAMILY_MUTATION, {
+    const [createFamily, { data }] = useMutation(CREATE_FAMILY_MUTATION, {
         onCompleted: _completed
     })
 
@@ -81,7 +78,6 @@ function CreateFamilyView(props) {
         setOpen(false)
         props.history.push(`/`)
     }
-    data = 'hello'
 
     return (
         <form className={classes.form} onSubmit={submitForm}>
