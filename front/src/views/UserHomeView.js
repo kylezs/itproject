@@ -256,7 +256,7 @@ export default function UserHomeView(props) {
 
                         {!selectedFamily && (
                             <Typography variant='h2'>
-                                Join or Create a Family
+                            Join or Create a Family
                             </Typography>
                         )}
                     </Grid>
@@ -336,7 +336,7 @@ export default function UserHomeView(props) {
                                 />
                             </Grid>
                         ))}
-                        {artefacts.length === 0 && (
+                        {(artefacts.length === 0) && selectedFamily && (
                             <Paper
                                 className={classes.paper}
                                 style={{ 
@@ -347,7 +347,6 @@ export default function UserHomeView(props) {
                                 <Link
                                     component={RouterLink}
                                     to='/artefacts/create'
-                                    // className={classes.root}
                                     color='secondary'
                                 >
                                     {' here '}
@@ -356,21 +355,42 @@ export default function UserHomeView(props) {
                                 family
                             </Paper>
                         )}
+                        {(artefacts.length === 0) && !selectedFamily && (
+                            <Paper
+                                className={classes.paper}
+                                style={{
+                                    marginTop: 15,
+                                    padding: "6px",
+                                }}
+                            >
+                                You are not yet a member of a family. Click
+                                <Link
+                                    component={RouterLink}
+                                    to='/family/create'
+                                    color='secondary'
+                                >
+                                    {' here '}
+                                </Link>
+                                to create one. Or join using a join code on the right.
+                            </Paper>
+                        )}
                     </Grid>
                 </Grid>
             </Grid>
+            { selectedFamily && (
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left'
+                    }}
+                    open={copied}
+                    autoHideDuration={2000}
+                    onClose={() => setCopied(false)}
+                    message={<span id='message-id'>Join code copied to clipboard<br />
+                        {selectedFamily.joinCode}</span>}
+                />
+            )}
 
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left'
-                }}
-                open={copied}
-                autoHideDuration={2000}
-                onClose={() => setCopied(false)}
-                message={<span id='message-id'>Join code copied to clipboard<br />
-                {selectedFamily.joinCode}</span>}
-            />
 
             <HelpDialog
                 open={props.helpOpen}
