@@ -1,6 +1,6 @@
 {
-  "short_name": "Family AR",
-  "name": "Family Artefacts Register",
+  "short_name": "AMS",
+  "name": "Artefact Management System",
   "icons": [
     {
       "src": "favicon.ico",
