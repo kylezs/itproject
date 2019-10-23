@@ -8,7 +8,7 @@ export default ({ states, setters, artefactStates, disabled, name }) => {
     return (
         <TextField
             id='state'
-            label='Artefact State'
+            label='Artefact Condition'
             variant='outlined'
             required
             fullWidth
