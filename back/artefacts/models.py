@@ -23,7 +23,7 @@ class Artefact(models.Model):
     date = models.DateTimeField(null=True)
 
     state_options = [
-        ('OKY', 'No Problem'),
+        ('OKY', 'Good'),
         ('LST', 'Lost'),
         ('DMG', 'Damaged'),
         ('DST', 'Destroyed'),
