@@ -179,7 +179,6 @@ function MapView(props) {
                 console.log(error)
             }
         },
-        fetchPolicy: 'network-only'
     })
 
     var artefacts = []

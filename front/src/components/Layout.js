@@ -8,20 +8,18 @@ import { teal, deepPurple, indigo } from '@material-ui/core/colors'
 
 import { THEME_TYPE } from '../constants.js'
 
+// Allow switching between light and dark modes
 const lightPalette = {
     primary: indigo,
     secondary: {
         main: teal[400]
     },
-    // secondary: teal,
     type: 'light'
 }
 
 const darkPalette = {
     primary: {
-        // light: deepPurple[100],
         main: deepPurple['A100']
-        // dark: deepPurple[500]
     },
     secondary: teal,
     error: {
@@ -37,7 +35,9 @@ const darkPalette = {
 const lightTheme = createMuiTheme({ palette: lightPalette, type: 'light' })
 const darkTheme = createMuiTheme({ palette: darkPalette, type: 'dark' })
 
+
 export default props => {
+    // Get the user's theme from local storage. This will clear if localStorage.clear()
     if (!localStorage.getItem(THEME_TYPE)) {
         localStorage.setItem(THEME_TYPE, 'light')
     }
@@ -46,6 +46,7 @@ export default props => {
         localStorage.getItem(THEME_TYPE) === 'light' ? lightTheme : darkTheme
     )
 
+    // Called on click of dark theme button
     const toggleDarkTheme = () => {
         var newTheme = theme.palette.type === 'light' ? 'dark' : 'light'
         localStorage.setItem(THEME_TYPE, newTheme)

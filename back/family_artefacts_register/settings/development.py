@@ -34,10 +34,3 @@ DATABASES = {
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BACK_DIR, 'media')
-
-# JWT Settings
-# GRAPHQL_JWT = {
-#     'JWT_VERIFY_EXPIRATION': True,
-#     'JWT_EXPIRATION_DELTA': timedelta(seconds=5),
-#     # 'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
-# }
