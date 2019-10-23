@@ -61,10 +61,10 @@ const MyDialogContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Select from your families in the corner to view their artefacts
+                Select from your families to view artefacts from that family as pins on the map.
             </DialogContentText>
             <DialogContentText>
-                Only artefacts with a location will be shown
+                Only artefacts with a location will be shown.
             </DialogContentText>
         </DialogContent>
 
@@ -73,7 +73,7 @@ const MyDialogContent = () => (
             <DialogContentText>Scroll to zoom</DialogContentText>
             <DialogContentText>Click and drag to move</DialogContentText>
             <DialogContentText>
-                Click on an artefact to show more information
+                Click on an artefact to show more information.
             </DialogContentText>
         </DialogContent>
     </Fragment>

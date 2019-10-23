@@ -44,10 +44,10 @@ const HelpContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Here you can view all of the artefacts which you are an admin of
+                Here you can view all of the artefacts which you are an admin of.
             </DialogContentText>
             <DialogContentText>
-                Click view to see more about the artefact or to edit it
+                Click view to see more about the artefact or to edit it.
             </DialogContentText>
         </DialogContent>
     </Fragment>
