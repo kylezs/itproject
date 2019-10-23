@@ -157,6 +157,7 @@ export default function UserHomeView(props) {
             setJoinError('You are already a member of this family')
         } else {
             joinFamilyMutation({ variables: { joinCode: formJoinCode } })
+            setFormJoinCode("")
         }
     }
 
