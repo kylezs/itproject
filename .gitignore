@@ -8,7 +8,7 @@
 # static files, should be built on deploy
 staticfiles/
 
-migrations/
+# migrations/
 
 # media files are only stored locally for dev/testing purposes
 media/
