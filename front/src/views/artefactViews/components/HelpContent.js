@@ -17,6 +17,10 @@ export default ({ mode }) => {
                         "save"
                     </DialogContentText>
                     <DialogContentText>
+                        You can assign the artefact to any number of your
+                        families
+                    </DialogContentText>
+                    <DialogContentText>
                         The artefact will only be viewable by members of the
                         selected families, unless the artefact is set to
                         "public"

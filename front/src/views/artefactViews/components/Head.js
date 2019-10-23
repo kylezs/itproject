@@ -59,7 +59,10 @@ export default withGetScreen(
                 )}
                 {create && (
                     <Grid item xs={12}>
-                        <Typography variant='subtitle1' align='center'>
+                        <Typography
+                            variant='subtitle1'
+                            align={isMobile() ? 'left' : 'center'}
+                        >
                             Artefacts are belongings of the family, enter as
                             much or as little detail as you like
                         </Typography>
