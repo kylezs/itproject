@@ -5,8 +5,6 @@ import { useMutation } from '@apollo/react-hooks'
 import {
     CssBaseline,
     Grid,
-    CircularProgress,
-    Container,
     Typography,
     Link
 } from '@material-ui/core'
@@ -61,6 +59,7 @@ const FetchArtefactError = () => {
                     width: '200%'
                 }}
                 src='https://media.tenor.com/images/b10411f7f3a9c5df3ce39a9678eac1dd/tenor.gif'
+                alt='artefact-pic'
             />
 
             <Typography
@@ -91,7 +90,7 @@ function ArtefactView(props) {
     })
 
     // get families, states, and artefact data
-    var { statesLoading, familiesLoading, artefactLoading } = props
+    var { artefactLoading } = props
     var { artefactStates, families, fetchError } = props
 
     // if viewing an existing artefact get the details (potentially unloaded)
@@ -329,7 +328,7 @@ function ArtefactView(props) {
         }
     )
 
-    const [deleteArtefact, { error: deleteErrors }] = useMutation(
+    const [deleteArtefact] = useMutation(
         DELETE_ARTEFACT_MUTATION,
         {
             onCompleted: deleteCompleted,
@@ -398,7 +397,6 @@ function ArtefactView(props) {
     }
 
     const noErrors = !creationErrors
-    const dataLoading = familiesLoading || statesLoading
 
     // select the submit handler
     const submitHandler = e => {
@@ -491,8 +489,7 @@ function ArtefactView(props) {
                     item
                     xs={12}
                     container
-                    justify='center'
-                    alignItems='center'
+                    justify='space-between'
                     spacing={1}
                 >
                     <Head

@@ -5,17 +5,12 @@ import {
     TextField,
     Grid,
     Paper,
-    IconButton,
     Snackbar,
     SnackbarContent,
-    Button,
-    Dialog,
-    DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle
 } from '@material-ui/core'
-import HelpIcon from '@material-ui/icons/Help'
 import ErrorIcon from '@material-ui/icons/Error'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import { green } from '@material-ui/core/colors'

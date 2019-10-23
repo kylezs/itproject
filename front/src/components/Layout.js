@@ -115,7 +115,6 @@ export default props => {
         })
     })
 
-    console.log(theme.typography)
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />

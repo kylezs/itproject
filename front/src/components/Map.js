@@ -64,7 +64,7 @@ export default function Map(props) {
             onClick={onMapClick}
         >
             {artefacts.map(artefact => {
-                var { center, popup, initPopupOpen, id, ...rest } = artefact
+                var { center, popup, initPopupOpen, id } = artefact
                 if (initPopupOpen) {
                     artefact.initPopupOpen = false
                     setOpenArtefactID(id)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, FormControl, Paper } from '@material-ui/core'
+import { FormControl, Paper } from '@material-ui/core'
 import EditButtons from './EditButtons'
 
 export default ({
