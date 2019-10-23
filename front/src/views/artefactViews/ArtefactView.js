@@ -490,6 +490,7 @@ function ArtefactView(props) {
                     xs={12}
                     container
                     justify='space-between'
+                    alignItems='center'
                     spacing={1}
                 >
                     <Head
