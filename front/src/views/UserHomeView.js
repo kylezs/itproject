@@ -136,13 +136,17 @@ export default function UserHomeView(props) {
     const [formJoinCode, setFormJoinCode] = useState('')
     const [copied, setCopied] = useState(false)
     const [joinError, setJoinError] = useState('')
+    const [joined, setJoined] = useState(false)
 
     // After a new family has been joined, refetch the home info to update it, so the user
     // Can now see that family in the bar
     const [joinFamilyMutation] = useMutation(JOIN_FAMILY_MUTATION, {
         refetchQueries: data => [{ query: HOMEPAGE_INFO }],
         onError: errors => setJoinError('Enter a valid join code'),
-        onCompleted: data => setJoinError('')
+        onCompleted: data => {
+            setJoinError('')
+            setJoined(true)
+        }
     })
 
     const handleJoinFamily = () => {
@@ -157,7 +161,7 @@ export default function UserHomeView(props) {
             setJoinError('You are already a member of this family')
         } else {
             joinFamilyMutation({ variables: { joinCode: formJoinCode } })
-            setFormJoinCode("")
+            setFormJoinCode('')
         }
     }
 
@@ -378,8 +382,7 @@ export default function UserHomeView(props) {
                                 >
                                     {' here '}
                                 </Link>
-                                to create one. Or join using a join code on the
-                                right.
+                                to create one. Or join using a join code.
                             </Paper>
                         )}
                     </Grid>
@@ -403,6 +406,19 @@ export default function UserHomeView(props) {
                     }
                 />
             )}
+
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                }}
+                open={joined}
+                autoHideDuration={2000}
+                onClose={() => setJoined(false)}
+                message={
+                    <span id='message-id'>Joined family successfully</span>
+                }
+            />
 
             <HelpDialog
                 open={props.helpOpen}
