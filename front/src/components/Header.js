@@ -69,7 +69,7 @@ export default function MenuAppBar(props) {
                     </IconButton>
 
                     <Typography variant='h6' className={classes.title} noWrap>
-                        Artefacts Register
+                        AMS
                     </Typography>
 
 
