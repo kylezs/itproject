@@ -1,10 +1,11 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import {
     Switch,
     FormHelperText,
     Typography,
     FormControlLabel,
-    Button
+    Button,
+    Snackbar
 } from '@material-ui/core'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
@@ -12,6 +13,7 @@ export default ({ states, setters, disabled, name, classes }) => {
     var { create, edit, view } = states.mode
     var { state } = states
     var { handleSetField } = setters
+    const [copied, setCopied] = useState(false)
 
     if (create || edit) {
         return (
@@ -46,9 +48,28 @@ export default ({ states, setters, disabled, name, classes }) => {
                 <Typography variant='h6' className={classes.fieldTitle}>
                     This artefact is public, accessible by link
                 </Typography>
-                <CopyToClipboard text={window.location.href}>
+                <CopyToClipboard
+                    text={window.location.href}
+                    onCopy={() => setCopied(true)}
+                >
                     <Button variant='outlined'>Copy Link</Button>
                 </CopyToClipboard>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left'
+                    }}
+                    open={copied}
+                    autoHideDuration={2000}
+                    onClose={() => setCopied(false)}
+                    message={
+                        <span id='message-id'>
+                            Link copied to clipboard
+                            <br />
+                            {window.location.href}
+                        </span>
+                    }
+                />
             </Fragment>
         )
     } else {
