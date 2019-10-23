@@ -55,12 +55,15 @@ const HelpContent = () => (
 
 export default function ManageArtefactsView(props) {
     const classes = useStyles()
-    const [artefactEdges, SetArtefactEdges] = useState([])
+    const [state, setState] = useState({ loading: true })
 
     let { data, loading } = useQuery(LIST_OF_ARTEFACTS, {
         onCompleted: data =>
-            SetArtefactEdges(data.me.artefactAdministratorOf.edges),
-        onError: errors => console.log(errors),
+            setState({
+                artefactEdges: data.me.artefactAdministratorOf.edges,
+                loading: false
+            }),
+        onError: errors => console.log(errors)
     })
 
     return (
@@ -80,10 +83,10 @@ export default function ManageArtefactsView(props) {
                         Here you can view all the artefacts you are an admin of
                     </Typography>
                 </Grid>
-                {loading ? (
+                {state.loading ? (
                     <Loading />
-                ) : (
-                    artefactEdges.map(edge => (
+                ) : state.artefactEdges.length !== 0 ? (
+                    state.artefactEdges.map(edge => (
                         <Grid
                             item
                             xs={12}
@@ -95,17 +98,16 @@ export default function ManageArtefactsView(props) {
                             <ArtefactCard artefact={edge.node} />
                         </Grid>
                     ))
-                )}
-                {artefactEdges.length === 0 && (
+                ) : (
                     <Paper
                         className={classes.paper}
-                        style={{ 
+                        style={{
                             marginTop: 15,
-                            padding: "6px",
-                         }}
+                            padding: '6px'
+                        }}
                     >
                         You are not managing any artefacts, click
-                                <Link
+                        <Link
                             component={RouterLink}
                             to='/artefacts/create'
                             color='secondary'
@@ -113,7 +115,7 @@ export default function ManageArtefactsView(props) {
                             {' here '}
                         </Link>
                         to create one.
-                        </Paper>
+                    </Paper>
                 )}
             </Grid>
 
