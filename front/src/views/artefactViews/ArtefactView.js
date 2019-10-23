@@ -54,6 +54,8 @@ function ArtefactView(props) {
     // if viewing an existing artefact get the details (potentially unloaded)
     const context = useContext(authContext)
     const username = context.user.username
+    console.log("Username in view artefact: " + username)
+    console.log("Authenticated in view artefact: " + username)
     let creationErrors
 
     if (!mode.create) {
@@ -133,6 +135,7 @@ function ArtefactView(props) {
         let belong = {}
         families.map(val => (belong[val.id] = false))
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
+        console.log("Artefact being printed")
         console.log(artefact)
 
         setState({
@@ -255,9 +258,6 @@ function ArtefactView(props) {
         successCallback,
         errorCallback
     ) => {
-        console.log("here's input from call")
-        console.log(variables)
-        // const input = "hello"
         let form_data = new FormData()
         // Image not passed through by variables
         if (state.files && state.files.length) {
@@ -269,7 +269,7 @@ function ArtefactView(props) {
         axios
             .post(url, form_data, {
                 headers: {
-                    Authorization: 'JWT ' + localStorage.getItem(AUTH_TOKEN),
+                    'Authorization': 'JWT ' + localStorage.getItem(AUTH_TOKEN),
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Content-Transfer-Encoding': 'multipart/form-data'
                 }
@@ -368,9 +368,9 @@ function ArtefactView(props) {
         mode.create ? submitForm(e) : saveChange(e)
     }
 
-    if ((mode.edit || mode.view) && dataLoading) {
-        return <CircularProgress />
-    }
+    // if ((mode.edit || mode.view) && dataLoading) {
+    //     return <CircularProgress />
+    // }
 
     const editButtonProps = {
         save: saveChange,
@@ -418,7 +418,7 @@ function ArtefactView(props) {
         { comp: showPrivacy ? Privacy : null, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         {
-            comp: mode.view && state.upload === 'False' ? null : Images,
+            comp: mode.view && state.upload === 'False' || state.upload === "undefined" ? null : Images,
             name: 'files'
         }
     ]
@@ -463,7 +463,6 @@ function ArtefactView(props) {
                                 item
                                 {...widthProps}
                                 key={name}
-                                // alignItems='flex-start'
                                 alignContent='stretch'
                             >
                                 <FieldWrapper

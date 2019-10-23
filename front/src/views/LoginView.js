@@ -11,13 +11,12 @@ import {
     Paper,
     makeStyles
 } from '@material-ui/core'
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
 import { useMutation } from '@apollo/react-hooks'
 
 import authContext from '../authContext'
 import { AUTH_TOKEN, INVALID_CRED_ERR_MSG } from '../constants.js'
-import { Layout, formUseStyles } from '../components'
+import { Layout } from '../components'
 
 import { LOGIN_MUTATION } from '../gqlQueriesMutations'
 
@@ -45,9 +44,8 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-function Login(props) {
+function Login({ history }) {
     const context = useContext(authContext)
-    // const classes = formUseStyles()
     const classes = useStyles()
 
     const [username, setUsername] = useState('')

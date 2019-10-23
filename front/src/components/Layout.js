@@ -62,9 +62,7 @@ const lightPalette = {
 
 const darkPalette = {
     primary: {
-        // light: deepPurple[100],
         main: deepPurple['A100']
-        // dark: deepPurple[500]
     },
     secondary: teal,
     error: {
@@ -89,7 +87,9 @@ const darkTheme = createMuiTheme({
     typography: typography
 })
 
+
 export default props => {
+    // Get the user's theme from local storage. This will clear if localStorage.clear()
     if (!localStorage.getItem(THEME_TYPE)) {
         localStorage.setItem(THEME_TYPE, 'light')
     }
@@ -98,6 +98,7 @@ export default props => {
         localStorage.getItem(THEME_TYPE) === 'light' ? lightTheme : darkTheme
     )
 
+    // Called on click of dark theme button
     const toggleDarkTheme = () => {
         var newTheme = theme.palette.type === 'light' ? 'dark' : 'light'
         localStorage.setItem(THEME_TYPE, newTheme)

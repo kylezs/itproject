@@ -4,11 +4,14 @@ import { CssBaseline, Grid, Typography } from '@material-ui/core'
 import {
     DialogContent,
     DialogContentText,
-    DialogTitle
+    DialogTitle,
+    Paper,
+    Link
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import { ArtefactCard, Loading, HelpDialog } from '../../components'
+import { Link as RouterLink } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -58,12 +61,8 @@ export default function ManageArtefactsView(props) {
         onCompleted: data =>
             SetArtefactEdges(data.me.artefactAdministratorOf.edges),
         onError: errors => console.log(errors),
-        fetchPolicy: 'network-only'
     })
 
-    // if (loading) {
-    //     return <Loading />
-    // }
     return (
         <Fragment>
             <CssBaseline />
@@ -96,6 +95,25 @@ export default function ManageArtefactsView(props) {
                             <ArtefactCard artefact={edge.node} />
                         </Grid>
                     ))
+                )}
+                {artefactEdges.length === 0 && (
+                    <Paper
+                        className={classes.paper}
+                        style={{ 
+                            marginTop: 15,
+                            padding: "6px",
+                         }}
+                    >
+                        You are not managing any artefacts, click
+                                <Link
+                            component={RouterLink}
+                            to='/artefacts/create'
+                            color='secondary'
+                        >
+                            {' here '}
+                        </Link>
+                        to create one.
+                        </Paper>
                 )}
             </Grid>
 

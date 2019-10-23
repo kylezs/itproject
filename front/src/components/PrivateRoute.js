@@ -14,11 +14,9 @@ class WaitWraper extends Component {
             this.setState({ checkAuthenticated: true })
         }
         const localToken = localStorage.getItem(AUTH_TOKEN)
-
         // If there's no token, then they can't have been logged in i.e. checkauthenticated complete
         if (!this.context.authenticated && localToken) {
             this.context.handleAuthentication(localToken, () => {
-                console.log('Setting state')
                 this.setState({ checkAuthenticated: true })
             })
         } else {

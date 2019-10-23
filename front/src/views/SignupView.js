@@ -14,7 +14,7 @@ import {
 
 import { useMutation } from '@apollo/react-hooks'
 
-import { Layout, formUseStyles } from '../components'
+import { Layout } from '../components'
 import { USERNAME_TAKEN_ERR_MSG } from '../constants.js'
 import {
     PASSWORD_SCHEMA,

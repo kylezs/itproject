@@ -45,25 +45,21 @@ function App(props) {
                         exact
                         path='/artefacts/create/'
                         loggedIn={CreateArtefactView}
-                        landingPage
                     />
                     <PrivateRoute
                         exact
                         path='/artefacts/manage/'
                         loggedIn={ManageArtefactsView}
-                        landingPage
                     />
                     <PrivateRoute
                         exact
                         path='/artefacts/:id/'
                         loggedIn={DetailView}
-                        landingPage
                     />
                     <PrivateRoute
                         exact
                         path='/artefacts/edit/:id/'
                         loggedIn={EditArtefactView}
-                        landingPage
                     />
 
                     {/* Family routes */}
@@ -71,7 +67,6 @@ function App(props) {
                         exact
                         path='/family/create/'
                         loggedIn={CreateFamilyView}
-                        landingPage
                     />
 
                     {/* Map */}
@@ -79,7 +74,6 @@ function App(props) {
                         exact
                         path='/map/'
                         loggedIn={MapView}
-                        landingPage
                     />
 
                     <Route component={Error404View} />
