@@ -262,10 +262,10 @@ function ArtefactView(props) {
     }
 
     // send user to home
-    const pushHomeURL = () => {
+    const pushManageArtefactsURL = () => {
         const { history } = props
         if (history) {
-            history.push(`/`)
+            history.push(`/artefacts/manage`)
         }
     }
 
@@ -279,7 +279,7 @@ function ArtefactView(props) {
         setSnackbarOpen(true)
     }
     const deleteCompleted = async data => {
-        pushHomeURL()
+        pushManageArtefactsURL()
     }
     const handleCreationError = async errors => {
         console.error('Creation errors occurred:', errors)
