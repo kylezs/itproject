@@ -16,7 +16,7 @@ export default ({ states, setters, disabled, name }) => {
             inputVariant='outlined'
             format='dd/MM/yyyy'
             openTo='year'
-            label='Date'
+            label='Date (dd/mm/yyyy)'
             value={state.date}
             onChange={date => handleSetField(name, date)}
             KeyboardButtonProps={{

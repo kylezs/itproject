@@ -8,7 +8,52 @@ import { teal, deepPurple, indigo } from '@material-ui/core/colors'
 
 import { THEME_TYPE } from '../constants.js'
 
-// Allow switching between light and dark modes
+const typography = {
+    fontFamily: 'Dosis, Roboto, sans-serif',
+    h1: {
+        fontFamily: 'Roboto, sans-serif',
+        fontWeight: 100,
+    },
+    h2: {
+        fontFamily: 'Roboto, sans-serif',
+        fontWeight: 100,
+    },
+    h3: {
+        fontFamily: 'Roboto, sans-serif'
+    },
+    h4: {
+        fontFamily: 'Roboto, sans-serif'
+    },
+    h5: {
+        fontFamily: 'Roboto, sans-serif'
+    },
+    h6: {
+        fontFamily: 'Roboto, sans-serif'
+    }
+}
+
+// const typography = {
+//     fontFamily: 'Roboto, Dosis, sans-serif',
+//     h1: {
+//         fontFamily: 'Dosis, sans-serif'
+//     },
+//     h2: {
+//         fontFamily: 'Dosis, sans-serif'
+//     },
+//     h3: {
+//         fontFamily: 'Dosis, sans-serif'
+//     },
+//     h4: {
+//         fontFamily: 'Dosis, sans-serif'
+//     },
+//     h5: {
+//         fontFamily: 'Dosis, sans-serif'
+//     },
+//     h6: {
+//         fontFamily: 'Dosis, sans-serif'
+//     }
+// }
+
 const lightPalette = {
     primary: indigo,
     secondary: {
@@ -32,8 +77,17 @@ const darkPalette = {
     type: 'dark'
 }
 
-const lightTheme = createMuiTheme({ palette: lightPalette, type: 'light' })
-const darkTheme = createMuiTheme({ palette: darkPalette, type: 'dark' })
+const lightTheme = createMuiTheme({
+    palette: lightPalette,
+    type: 'light',
+    typography: typography
+})
+
+const darkTheme = createMuiTheme({
+    palette: darkPalette,
+    type: 'dark',
+    typography: typography
+})
 
 
 export default props => {
@@ -61,6 +115,7 @@ export default props => {
         })
     })
 
+    console.log(theme.typography)
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />

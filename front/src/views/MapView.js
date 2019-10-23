@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
         right: '5px',
         // backgroundColor: theme.palette.background.paper,
         margin: theme.spacing(1),
-        minWidth: 120
+        minWidth: 140
     },
     paper: {
         padding: theme.spacing(1),
@@ -136,7 +136,7 @@ function MapView(props) {
     const [errorSnackbar, setErrorSnackbar] = useState({ open: false, msg: '' })
     const getArtefactMapData = data => {
         console.log('Query resulted')
-        if (!data) return
+        if (!data || !data.family) return
         artefacts = data.family.hasArtefacts.edges.map(edge => edge.node)
 
         var promiseArr = []

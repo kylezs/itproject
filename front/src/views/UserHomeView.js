@@ -1,4 +1,4 @@
-import React, { useContext, useState, Fragment, useEffect } from 'react'
+import React, { useContext, useState, Fragment } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
 import authContext from '../authContext'
@@ -18,7 +18,7 @@ import {
     CssBaseline
 } from '@material-ui/core'
 import gql from 'graphql-tag'
-import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { ArtefactCard, Loading, HelpDialog } from '../components'
 import { Redirect } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
@@ -215,7 +215,7 @@ export default function UserHomeView(props) {
                     xs={12}
                     lg={10}
                     container
-                    spacing={2}
+                    spacing={3}
                     justify='space-between'
                     className={classes.outerContainer}
                 >
@@ -323,7 +323,7 @@ export default function UserHomeView(props) {
                     </Grid>
                     <Grid
                         container
-                        justify='center'
+                        justify='flex-start'
                         alignItems='stretch'
                         spacing={1}
                         item

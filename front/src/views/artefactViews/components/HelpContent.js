@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react'
+import React, { Fragment } from 'react'
 import {
     DialogContent,
     DialogContentText,
@@ -10,20 +10,47 @@ export default ({ mode }) => {
     return (
         <Fragment>
             <DialogTitle id='help-title'>Help</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Select from your families in the corner to view their
-                    artefacts
-                </DialogContentText>
-                <DialogContentText>
-                    Enter a family's join code in the box underneath to join
-                    someone's family
-                </DialogContentText>
-                <DialogContentText>
-                    The join code can be copied by clicking the button
-                    underneath the family name
-                </DialogContentText>
-            </DialogContent>
+            {create && (
+                <DialogContent>
+                    <DialogContentText>
+                        Create an artefact by filling out the form and clicking
+                        "save"
+                    </DialogContentText>
+                    <DialogContentText>
+                        The artefact will only be viewable by members of the
+                        selected families, unless the artefact is set to
+                        "public"
+                    </DialogContentText>
+                    <DialogContentText>
+                        Only you will be able to edit the artefact after
+                        creation
+                    </DialogContentText>
+                </DialogContent>
+            )}
+
+            {edit && (
+                <DialogContent>
+                    <DialogContentText>
+                        Edit a field by clicking on it, save and cancel buttons
+                        will appear
+                    </DialogContentText>
+                    <DialogContentText>
+                        After clicking "save" the change is final
+                    </DialogContentText>
+                </DialogContent>
+            )}
+
+            {view && (
+                <DialogContent>
+                    <DialogContentText>
+                        Here you can view the details of an artefact
+                    </DialogContentText>
+                    <DialogContentText>
+                        If you are the admin of the artefact, a button labelled
+                        "edit" in the top right corner will enable editing mode
+                    </DialogContentText>
+                </DialogContent>
+            )}
         </Fragment>
     )
 }

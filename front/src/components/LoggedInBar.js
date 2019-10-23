@@ -43,7 +43,7 @@ const ComingSoon = () => {
     return (
             <span style={{
                 position: "absolute",
-                marginTop: "14px",
+                marginTop: "15px",
                 marginLeft: "2px",
                 padding: "1px",
                 fontSize: "10px",
