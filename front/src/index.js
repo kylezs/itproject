@@ -29,10 +29,22 @@ const authLink = setContext((_, { headers }) => {
     }
 })
 
+const defaultOptions = {
+    watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'ignore',
+    },
+    query: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all',
+    },
+}
+
 // Set up Apollo client using Jwt auth
 const client = new ApolloClient({
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
+    defaultOptions: defaultOptions
 })
 
 // Wrap application with Apollo and Auth providers to give access across the application

@@ -12,7 +12,6 @@ export default function GetArtefactWrapper({
             id: rest.match.params.id
         },
         onError: error => console.error(error),
-        fetchPolicy: "network-only"
     })
 
     var thisChildProps = {

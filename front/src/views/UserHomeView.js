@@ -1,4 +1,4 @@
-import React, { useContext, useState, Fragment } from 'react'
+import React, { useContext, useState, Fragment, useEffect } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
 import authContext from '../authContext'
@@ -18,7 +18,7 @@ import {
     CssBaseline
 } from '@material-ui/core'
 import gql from 'graphql-tag'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { ArtefactCard, Loading, HelpDialog } from '../components'
 import { Redirect } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
@@ -42,13 +42,8 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         padding: theme.spacing(1),
-        // margin: theme.spacing(1),
         borderRadius: 10
     },
-    button: {
-        // marginTop: theme.spacing(1)
-        // height: '100%'
-    }
 }))
 
 const HOMEPAGE_INFO = gql`
@@ -123,15 +118,15 @@ const HelpContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Select from your families in the corner to view their artefacts
+                Select from your families in the corner to view their artefacts.
             </DialogContentText>
             <DialogContentText>
-                Enter a family's join code in the box underneath to join
-                someone's family
+                Enter a family's join code in the box underneath to join a
+                family.
             </DialogContentText>
             <DialogContentText>
                 The join code can be copied by clicking the button underneath
-                the family name
+                the family name.
             </DialogContentText>
         </DialogContent>
     </Fragment>
@@ -143,7 +138,9 @@ export default function UserHomeView(props) {
     const [formJoinCode, setFormJoinCode] = useState('')
     const [copied, setCopied] = useState(false)
 
-    const [joinFamilyMutation, { data: join_mutation_data }] = useMutation(
+    // After a new family has been joined, refetch the home info to update it, so the user
+    // Can now see that family in the bar
+    const [joinFamilyMutation, { data: join_data, loading: join_loading }] = useMutation(
         JOIN_FAMILY_MUTATION,
         {
             refetchQueries: data => [{ query: HOMEPAGE_INFO }]
@@ -159,14 +156,14 @@ export default function UserHomeView(props) {
         joinFamilyMutation({ variables: { joinCode: formJoinCode } })
     }
 
-    let { data: home_data, loading } = useQuery(
-        HOMEPAGE_INFO,
+    let { data: home_data, loading: home_data_loading } = useQuery(
+        HOMEPAGE_INFO, 
         {
-            fetchPolicy: 'network-only'
+            fetchPolicy: 'cache-and-network'
         }
     )
 
-    const [selectFamily, { data: mutation_data }] = useMutation(
+    const [selectFamily, { data: select_data, loading: select_loading }] = useMutation(
         SELECT_FAMILY_MUTATION,
         {
             refetchQueries: data => [{ query: HOMEPAGE_INFO }]
@@ -176,13 +173,13 @@ export default function UserHomeView(props) {
     const handleChange = event => {
         event.preventDefault()
         const newFamily = event.target.value
-        console.log("Here's the new family")
         selectFamily({
             variables: { profileId: profileId, toFamily: newFamily }
         })
     }
 
-    if (loading) {
+    if (home_data_loading) {
+        console.log("home data is loading on refetch")
         return <Loading />
     }
 
@@ -260,7 +257,7 @@ export default function UserHomeView(props) {
 
                         {!selectedFamily && (
                             <Typography variant='h2'>
-                                Join and/or Select a Family
+                                Join or Create a Family
                             </Typography>
                         )}
                     </Grid>
@@ -343,7 +340,9 @@ export default function UserHomeView(props) {
                         {artefacts.length === 0 && (
                             <Paper
                                 className={classes.paper}
-                                style={{ marginTop: 15 }}
+                                style={{ 
+                                    marginTop: 15,
+                                    padding: "6px", }}
                             >
                                 This family has no artefacts, click
                                 <Link
@@ -354,7 +353,7 @@ export default function UserHomeView(props) {
                                 >
                                     {' here '}
                                 </Link>
-                                to create some. Make sure to asign them to this
+                                to create one. Make sure to asign them to this
                                 family
                             </Paper>
                         )}
@@ -370,7 +369,8 @@ export default function UserHomeView(props) {
                 open={copied}
                 autoHideDuration={2000}
                 onClose={() => setCopied(false)}
-                message={<span id='message-id'>Code copied to clipboard</span>}
+                message={<span id='message-id'>Join code copied to clipboard<br />
+                {selectedFamily.joinCode}</span>}
             />
 
             <HelpDialog

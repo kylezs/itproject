@@ -146,7 +146,6 @@ function UserHomeView(props) {
         HOMEPAGE_INFO,
         {
             onCompleted: _homepageInfoCompleted,
-            fetchPolicy: 'network-only'
         }
     )
 
