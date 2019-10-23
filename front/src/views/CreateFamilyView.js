@@ -11,7 +11,8 @@ import {
     DialogActions,
     Grid,
     Paper,
-    FormControl
+    FormControl,
+    Snackbar
 } from '@material-ui/core'
 
 import { useMutation } from '@apollo/react-hooks'
@@ -47,6 +48,7 @@ function CreateFamilyView(props) {
     const [about, setAbout] = useState('')
     const [joinCode, setJoinCode] = useState('')
     const [open, setOpen] = useState(false)
+    const [copied, setCopied] = useState(false)
 
     const _completed = async data => {
         const { joinCode } = data.familyCreate.family
@@ -162,35 +164,55 @@ function CreateFamilyView(props) {
                 content={HelpContent}
             />
 
-            {data && (
-                <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle onClose={handleClose}>
-                        Begin adding members to '{familyName}'!
-                    </DialogTitle>
-                    <DialogContent>
-                        <Typography align='left'>
-                            You can now add artefacts to this family. To view
-                            them simply select '{familyName}' from the Select
-                            Family dropdown on your home dashboard.
-                            <br />
-                            Begin getting members to join your family! Simply
-                            share the code below to your family members, get
-                            them to sign up and then they can join!
-                            <br />
-                            <br />
-                            {joinCode} &nbsp;
-                            <CopyToClipboard text={joinCode}>
-                                <Button variant='outlined'>Copy</Button>
-                            </CopyToClipboard>
-                        </Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color='primary' autoFocus>
-                            Continue
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            )}
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle onClose={handleClose}>
+                    Begin adding members to '{familyName}'!
+                </DialogTitle>
+                <DialogContent>
+                    <Typography align='left'>
+                        You can now add artefacts to this family. To view them
+                        simply select '{familyName}' from the Select Family
+                        dropdown on your home dashboard.
+                        <br />
+                        Begin getting members to join your family! Simply share
+                        the code below to your family members, get them to sign
+                        up and then they can join!
+                        <br />
+                        <br />
+                        {joinCode} &nbsp;
+                        <CopyToClipboard
+                            text={joinCode}
+                            onCopy={() => setCopied(true)}
+                        >
+                            <Button variant='outlined'>Copy</Button>
+                        </CopyToClipboard>
+                        <br />
+                        <br />
+                        (This code will also be available on the home page)
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color='primary' autoFocus>
+                        Continue
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left'
+                }}
+                open={copied}
+                autoHideDuration={2000}
+                onClose={() => setCopied(false)}
+                message={
+                    <span id='message-id'>
+                        Join code copied to clipboard
+                        <br />
+                        {joinCode}
+                    </span>
+                }
+            />
         </form>
     )
 }

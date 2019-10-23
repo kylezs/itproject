@@ -1,12 +1,12 @@
 import React, { useState, Fragment } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { CssBaseline, Grid, Typography } from '@material-ui/core'
+import { CssBaseline, Grid, Typography, Container } from '@material-ui/core'
 import {
     DialogContent,
     DialogContentText,
     DialogTitle,
     Paper,
-    Link
+    Link,
 } from '@material-ui/core'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
@@ -44,10 +44,10 @@ const HelpContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Here you can view all of the artefacts which you are an admin of
+                Here you can view all of the artefacts which you are an admin of.
             </DialogContentText>
             <DialogContentText>
-                Click view to see more about the artefact or to edit it
+                Click view to see more about the artefact or to edit it.
             </DialogContentText>
         </DialogContent>
     </Fragment>
@@ -69,7 +69,7 @@ export default function ManageArtefactsView(props) {
     })
 
     return (
-        <Fragment>
+        <Container>
             <CssBaseline />
             <Grid
                 container
@@ -126,6 +126,6 @@ export default function ManageArtefactsView(props) {
                 setOpen={props.setHelpOpen}
                 content={HelpContent}
             />
-        </Fragment>
+        </Container>
     )
 }
