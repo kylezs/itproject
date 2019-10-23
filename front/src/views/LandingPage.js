@@ -114,7 +114,6 @@ function LandingPage(props) {
                         position: 'fixed',
                         left: 0,
                         top: 0,
-                        background: 'rgb(103, 58, 183)',
                         background:
                             'linear-gradient(90deg, rgba(103, 58, 183, 1) 25%, rgba(63, 81, 181, 1) 100%, rgba(255, 255, 255, 1) 100%)'
                     }}

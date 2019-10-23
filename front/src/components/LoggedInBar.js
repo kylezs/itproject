@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import {
     IconButton,
     Menu,
     MenuItem,
-    Button,
     makeStyles,
     Drawer,
     List,
@@ -11,8 +10,6 @@ import {
     ListItemText,
     ListItemIcon
 } from '@material-ui/core'
-
-import { teal, deepPurple, indigo } from '@material-ui/core/colors'
 
 import {
     Home,
@@ -26,7 +23,6 @@ import {
 
 import authContext from '../authContext'
 import { Link as RouterLink } from 'react-router-dom'
-import zIndex from '@material-ui/core/styles/zIndex'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -34,10 +30,6 @@ const useStyles = makeStyles(theme => ({
         marginTop: theme.spacing(5)
     }
 }))
-
-const Trianglify = require('trianglify')
-const pattern = Trianglify({ width: 200, height: 200 })
-const mediaURI = pattern.png()
 
 const ComingSoon = () => {
     return (

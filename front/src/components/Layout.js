@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { CssBaseline } from '@material-ui/core'
 import Header from './Header'
 
-import { createMuiTheme } from '@material-ui/core/styles'
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 import { ThemeProvider } from '@material-ui/styles'
 import { teal, deepPurple, indigo } from '@material-ui/core/colors'
 
@@ -77,17 +77,21 @@ const darkPalette = {
     type: 'dark'
 }
 
-const lightTheme = createMuiTheme({
+let lightTheme = createMuiTheme({
     palette: lightPalette,
     type: 'light',
     typography: typography
 })
+lightTheme = responsiveFontSizes(lightTheme)
 
-const darkTheme = createMuiTheme({
+
+let darkTheme = createMuiTheme({
     palette: darkPalette,
     type: 'dark',
     typography: typography
 })
+darkTheme = responsiveFontSizes(darkTheme)
+
 
 
 export default props => {
@@ -115,7 +119,6 @@ export default props => {
         })
     })
 
-    console.log(theme.typography)
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />

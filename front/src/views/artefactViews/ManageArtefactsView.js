@@ -57,13 +57,15 @@ export default function ManageArtefactsView(props) {
     const classes = useStyles()
     const [state, setState] = useState({ loading: true })
 
-    let { data, loading } = useQuery(LIST_OF_ARTEFACTS, {
+    useQuery(LIST_OF_ARTEFACTS, {
+        variables: {},
         onCompleted: data =>
             setState({
                 artefactEdges: data.me.artefactAdministratorOf.edges,
                 loading: false
             }),
-        onError: errors => console.log(errors)
+        onError: errors => console.log(errors),
+        fetchPolicy: 'cache-and-network'
     })
 
     return (

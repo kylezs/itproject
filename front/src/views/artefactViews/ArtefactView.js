@@ -2,12 +2,17 @@ import React, { useContext, useState, Fragment } from 'react'
 import { withRouter, Link as RouterLink } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 
-import { CssBaseline, Grid, CircularProgress, Container, Typography, Link } from '@material-ui/core'
+import {
+    CssBaseline,
+    Grid,
+    Typography,
+    Link
+} from '@material-ui/core'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
 
-import { geocodeQuery, artefactFamilyFormUseStyles } from '../../components'
+import { geocodeQuery, artefactFamilyFormUseStyles, Loading } from '../../components'
 
 import {
     Head,
@@ -41,24 +46,37 @@ import axios from 'axios'
 
 const FetchArtefactError = () => {
     return (
-        <Grid container justify="center" spacing={1} style={{
-            marginTop: "2vh"
-        }}>
-        <img style={{
-            width: "200%"
-         }} src="https://media.tenor.com/images/b10411f7f3a9c5df3ce39a9678eac1dd/tenor.gif"/>
+        <Grid
+            container
+            justify='center'
+            spacing={1}
+            style={{
+                marginTop: '2vh'
+            }}
+        >
+            <img
+                style={{
+                    width: '200%'
+                }}
+                src='https://media.tenor.com/images/b10411f7f3a9c5df3ce39a9678eac1dd/tenor.gif'
+                alt='artefact-pic'
+            />
 
-         <Typography variant="h5" style={{
-                textAlign: "center",
-                padding: "2rem"
-         }}>
-             This artefact is not public.<br />
-             You do not have access to view this artefact. Join a family that this artefact is assigned to in order
-             to view it. <br />
-             <Link>
-             <RouterLink to="/">Return home</RouterLink>
+            <Typography
+                variant='h5'
+                style={{
+                    textAlign: 'center',
+                    padding: '2rem'
+                }}
+            >
+                This artefact is not public.
+                <br />
+                You do not have access to view this artefact. Join a family that
+                this artefact is assigned to in order to view it. <br />
+                <Link>
+                    <RouterLink to='/'>Return home</RouterLink>
                 </Link>
-         </Typography>
+            </Typography>
         </Grid>
     )
 }
@@ -72,7 +90,7 @@ function ArtefactView(props) {
     })
 
     // get families, states, and artefact data
-    var { statesLoading, familiesLoading, artefactLoading } = props
+    var { artefactLoading } = props
     var { artefactStates, families, fetchError } = props
 
     // if viewing an existing artefact get the details (potentially unloaded)
@@ -83,9 +101,10 @@ function ArtefactView(props) {
     if (!mode.create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
         // No artefact returned, e.g. if no permissions
-        isAdmin = !artefactLoading && artefact
-            ? artefact.admin.username === username
-            : false
+        isAdmin =
+            !artefactLoading && artefact
+                ? artefact.admin.username === username
+                : false
     }
 
     // only allow admins to see the edit page
@@ -152,7 +171,8 @@ function ArtefactView(props) {
         (mode.edit || mode.view) &&
         !artefactLoading &&
         Object.keys(state).length === 0 &&
-        families && artefact
+        families &&
+        artefact
     ) {
         let belong = {}
         families.map(val => (belong[val.id] = false))
@@ -287,7 +307,7 @@ function ArtefactView(props) {
         axios
             .post(url, form_data, {
                 headers: {
-                    'Authorization': 'JWT ' + localStorage.getItem(AUTH_TOKEN),
+                    Authorization: 'JWT ' + localStorage.getItem(AUTH_TOKEN),
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Content-Transfer-Encoding': 'multipart/form-data'
                 }
@@ -308,7 +328,7 @@ function ArtefactView(props) {
         }
     )
 
-    const [deleteArtefact, { error: deleteErrors }] = useMutation(
+    const [deleteArtefact] = useMutation(
         DELETE_ARTEFACT_MUTATION,
         {
             onCompleted: deleteCompleted,
@@ -377,7 +397,6 @@ function ArtefactView(props) {
     }
 
     const noErrors = !creationErrors
-    const dataLoading = familiesLoading || statesLoading
 
     // select the submit handler
     const submitHandler = e => {
@@ -435,7 +454,11 @@ function ArtefactView(props) {
         { comp: showPrivacy ? Privacy : null, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         {
-            comp: mode.view && state.upload === 'False' || state.upload === "undefined" ? null : Images,
+            comp:
+                (mode.view && state.upload === 'False') ||
+                state.upload === 'undefined'
+                    ? null
+                    : Images,
             name: 'files'
         }
     ]
@@ -452,9 +475,11 @@ function ArtefactView(props) {
     const regularView = !mode.view || state.upload === 'False'
 
     if (fetchError) {
-        return (
-            <FetchArtefactError />
-        )
+        return <FetchArtefactError />
+    }
+
+    if ((mode.view || mode.edit) && artefactLoading) {
+        return <Loading />
     }
 
     return (
@@ -464,7 +489,7 @@ function ArtefactView(props) {
                     item
                     xs={12}
                     container
-                    justify='center'
+                    justify='space-between'
                     alignItems='center'
                     spacing={1}
                 >
@@ -618,7 +643,6 @@ function Wrapped(props) {
                     <CssBaseline />
                     <ArtefactView {...props} />
                 </Grid>
-
             </Grid>
         </MuiPickersUtilsProvider>
     )

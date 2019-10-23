@@ -1,7 +1,6 @@
-import React, { useContext, useState, Fragment } from 'react'
+import React, { useState, Fragment } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
-import authContext from '../authContext'
 import { makeStyles } from '@material-ui/core/styles'
 import {
     Typography,
@@ -43,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(1),
         borderRadius: 10
-    },
+    }
 }))
 
 const HOMEPAGE_INFO = gql`
@@ -134,41 +133,43 @@ const HelpContent = () => (
 
 export default function UserHomeView(props) {
     const classes = useStyles()
-    const context = useContext(authContext)
     const [formJoinCode, setFormJoinCode] = useState('')
     const [copied, setCopied] = useState(false)
+    const [joinError, setJoinError] = useState('')
 
     // After a new family has been joined, refetch the home info to update it, so the user
     // Can now see that family in the bar
-    const [joinFamilyMutation, { data: join_data, loading: join_loading }] = useMutation(
-        JOIN_FAMILY_MUTATION,
-        {
-            refetchQueries: data => [{ query: HOMEPAGE_INFO }]
-        }
-    )
+    const [joinFamilyMutation] = useMutation(JOIN_FAMILY_MUTATION, {
+        refetchQueries: data => [{ query: HOMEPAGE_INFO }],
+        onError: errors => setJoinError('Enter a valid join code'),
+        onCompleted: data => setJoinError('')
+    })
 
     const handleJoinFamily = () => {
         if (formJoinCode.length === 0) {
             console.error('Enter a valid joinCode')
-            return
+        } else if (
+            home_data &&
+            home_data.me.isMemberOf
+                .map(fam => fam.joinCode)
+                .includes(formJoinCode)
+        ) {
+            setJoinError('You are already a member of this family')
+        } else {
+            joinFamilyMutation({ variables: { joinCode: formJoinCode } })
         }
-
-        joinFamilyMutation({ variables: { joinCode: formJoinCode } })
     }
 
     let { data: home_data, loading: home_data_loading } = useQuery(
-        HOMEPAGE_INFO, 
+        HOMEPAGE_INFO,
         {
             fetchPolicy: 'cache-and-network'
         }
     )
 
-    const [selectFamily, { data: select_data, loading: select_loading }] = useMutation(
-        SELECT_FAMILY_MUTATION,
-        {
-            refetchQueries: data => [{ query: HOMEPAGE_INFO }]
-        }
-    )
+    const [selectFamily] = useMutation(SELECT_FAMILY_MUTATION, {
+        refetchQueries: data => [{ query: HOMEPAGE_INFO }]
+    })
 
     const handleChange = event => {
         event.preventDefault()
@@ -179,7 +180,7 @@ export default function UserHomeView(props) {
     }
 
     if (home_data_loading) {
-        console.log("home data is loading on refetch")
+        console.log('home data is loading on refetch')
         return <Loading />
     }
 
@@ -204,7 +205,6 @@ export default function UserHomeView(props) {
     if (selectedFamily) {
         artefacts = home_data.me.profile.selectedFamily.hasArtefacts.edges
     }
-
 
     return (
         <Fragment>
@@ -257,13 +257,13 @@ export default function UserHomeView(props) {
 
                         {!selectedFamily && (
                             <Typography variant='h2'>
-                            Join or Create a Family
+                                Join or Create a Family
                             </Typography>
                         )}
                     </Grid>
                     <Grid
                         item
-                        xs={8}
+                        xs={12}
                         sm={5}
                         md={3}
                         container
@@ -303,7 +303,10 @@ export default function UserHomeView(props) {
                                 label='Enter join code'
                                 value={formJoinCode}
                                 className={classes.textField}
-                                onChange={e => setFormJoinCode(e.target.value)}
+                                onChange={e => {
+                                    setJoinError('')
+                                    setFormJoinCode(e.target.value)
+                                }}
                                 InputProps={{
                                     endAdornment: (
                                         <Button
@@ -318,6 +321,8 @@ export default function UserHomeView(props) {
                                     ),
                                     style: {}
                                 }}
+                                helperText={joinError}
+                                error={!!joinError}
                             />
                         </Grid>
                     </Grid>
@@ -337,12 +342,13 @@ export default function UserHomeView(props) {
                                 />
                             </Grid>
                         ))}
-                        {(artefacts.length === 0) && selectedFamily && (
+                        {artefacts.length === 0 && selectedFamily && (
                             <Paper
                                 className={classes.paper}
-                                style={{ 
+                                style={{
                                     marginTop: 15,
-                                    padding: "6px", }}
+                                    padding: '6px'
+                                }}
                             >
                                 This family has no artefacts, click
                                 <Link
@@ -356,12 +362,12 @@ export default function UserHomeView(props) {
                                 family
                             </Paper>
                         )}
-                        {(artefacts.length === 0) && !selectedFamily && (
+                        {artefacts.length === 0 && !selectedFamily && (
                             <Paper
                                 className={classes.paper}
                                 style={{
                                     marginTop: 15,
-                                    padding: "6px",
+                                    padding: '6px'
                                 }}
                             >
                                 You are not yet a member of a family. Click
@@ -372,13 +378,14 @@ export default function UserHomeView(props) {
                                 >
                                     {' here '}
                                 </Link>
-                                to create one. Or join using a join code on the right.
+                                to create one. Or join using a join code on the
+                                right.
                             </Paper>
                         )}
                     </Grid>
                 </Grid>
             </Grid>
-            { selectedFamily && (
+            {selectedFamily && (
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'bottom',
@@ -387,11 +394,15 @@ export default function UserHomeView(props) {
                     open={copied}
                     autoHideDuration={2000}
                     onClose={() => setCopied(false)}
-                    message={<span id='message-id'>Join code copied to clipboard<br />
-                        {selectedFamily.joinCode}</span>}
+                    message={
+                        <span id='message-id'>
+                            Join code copied to clipboard
+                            <br />
+                            {selectedFamily.joinCode}
+                        </span>
+                    }
                 />
             )}
-
 
             <HelpDialog
                 open={props.helpOpen}
