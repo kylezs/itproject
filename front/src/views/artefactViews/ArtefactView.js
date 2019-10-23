@@ -1,8 +1,8 @@
 import React, { useContext, useState, Fragment } from 'react'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link as RouterLink } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 
-import { CssBaseline, Grid, CircularProgress } from '@material-ui/core'
+import { CssBaseline, Grid, CircularProgress, Container, Typography, Link } from '@material-ui/core'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
@@ -39,6 +39,30 @@ import {
 import { AUTH_TOKEN, config } from '../../constants'
 import axios from 'axios'
 
+const FetchArtefactError = () => {
+    return (
+        <Grid container justify="center" spacing={1} style={{
+            marginTop: "2vh"
+        }}>
+        <img style={{
+            width: "200%"
+         }} src="https://media.tenor.com/images/b10411f7f3a9c5df3ce39a9678eac1dd/tenor.gif"/>
+
+         <Typography variant="h5" style={{
+                textAlign: "center",
+                padding: "2rem"
+         }}>
+             This artefact is not public.<br />
+             You do not have access to view this artefact. Join a family that this artefact is assigned to in order
+             to view it. <br />
+             <Link>
+             <RouterLink to="/">Return home</RouterLink>
+                </Link>
+         </Typography>
+        </Grid>
+    )
+}
+
 function ArtefactView(props) {
     // get the mode
     const [mode, setMode] = useState({
@@ -49,18 +73,17 @@ function ArtefactView(props) {
 
     // get families, states, and artefact data
     var { statesLoading, familiesLoading, artefactLoading } = props
-    var { artefactStates, families } = props
+    var { artefactStates, families, fetchError } = props
 
     // if viewing an existing artefact get the details (potentially unloaded)
     const context = useContext(authContext)
     const username = context.user.username
-    console.log("Username in view artefact: " + username)
-    console.log("Authenticated in view artefact: " + username)
     let creationErrors
-
+    var isAdmin
     if (!mode.create) {
         var artefact = !artefactLoading ? props.artefactData.artefact : {}
-        var isAdmin = !artefactLoading
+        // No artefact returned, e.g. if no permissions
+        isAdmin = !artefactLoading && artefact
             ? artefact.admin.username === username
             : false
     }
@@ -97,7 +120,6 @@ function ArtefactView(props) {
     // result of the query rather than presenting query results
     const handleGeocodeQuery = ({ query, initial }) => {
         if (query) {
-            console.log('Query run with argument: ', query)
             return geocodeQuery(query).then(response => {
                 var newState = {}
                 if (response.noErrors) {
@@ -105,7 +127,7 @@ function ArtefactView(props) {
                 } else if (response.error) {
                     newState.error =
                         'Unknown error occurred, check console for details'
-                    console.log(response.error)
+                    console.error(response.error)
                 }
 
                 if (initial) {
@@ -130,13 +152,11 @@ function ArtefactView(props) {
         (mode.edit || mode.view) &&
         !artefactLoading &&
         Object.keys(state).length === 0 &&
-        families
+        families && artefact
     ) {
         let belong = {}
         families.map(val => (belong[val.id] = false))
         artefact.belongsToFamilies.map(val => (belong[val.id] = true))
-        console.log("Artefact being printed")
-        console.log(artefact)
 
         setState({
             ...artefact,
@@ -231,8 +251,6 @@ function ArtefactView(props) {
 
     // handlers for GQL mutations
     const handleCreationCompleted = data => {
-        console.log("here's the data")
-        console.log(data)
         var id = data.data.artefactCreate.artefact.id
         pushViewArtefactURL(id)
     }
@@ -278,7 +296,6 @@ function ArtefactView(props) {
                 successCallback(res.data)
             })
             .catch(err => {
-                // console.error(err);
                 errorCallback(err)
             })
     }
@@ -433,6 +450,12 @@ function ArtefactView(props) {
         { comp: showPrivacy ? Privacy : null, name: 'isPublic' }
     ]
     const regularView = !mode.view || state.upload === 'False'
+
+    if (fetchError) {
+        return (
+            <FetchArtefactError />
+        )
+    }
 
     return (
         <form onSubmit={submitHandler} className={classes.form}>
@@ -595,6 +618,7 @@ function Wrapped(props) {
                     <CssBaseline />
                     <ArtefactView {...props} />
                 </Grid>
+
             </Grid>
         </MuiPickersUtilsProvider>
     )

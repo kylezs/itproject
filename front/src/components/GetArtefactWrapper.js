@@ -7,17 +7,19 @@ export default function GetArtefactWrapper({
     childProps,
     ...rest
 }) {
-    const { data, loading } = useQuery(ARTEFACT_DETAIL, {
+
+    const {loading, error:fetchError, data } = useQuery(ARTEFACT_DETAIL, {
+        onError: error => console.error("Error fetching artefact: ", error),
         variables: {
             id: rest.match.params.id
         },
-        onError: error => console.error(error),
     })
 
     var thisChildProps = {
         ...childProps,
         artefactData: data,
         artefactLoading: loading,
+        fetchError: fetchError
     }
 
     return <Child {...rest} {...thisChildProps} />
