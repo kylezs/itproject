@@ -11,10 +11,12 @@ import { THEME_TYPE } from '../constants.js'
 const typography = {
     fontFamily: 'Dosis, Roboto, sans-serif',
     h1: {
-        fontFamily: 'Roboto, sans-serif'
+        fontFamily: 'Roboto, sans-serif',
+        fontWeight: 100,
     },
     h2: {
-        fontFamily: 'Roboto, sans-serif'
+        fontFamily: 'Roboto, sans-serif',
+        fontWeight: 100,
     },
     h3: {
         fontFamily: 'Roboto, sans-serif'
