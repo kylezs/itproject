@@ -407,13 +407,15 @@ function ArtefactView(props) {
         }
     }
 
+    const showPrivacy =
+        !mode.view || (Object.keys(state).length !== 0 && state.isPublic)
     const components = [
         { comp: Name, name: 'name' },
         { comp: State, name: 'state' },
         { comp: Admin, name: 'admin' },
         { comp: Date, name: 'date' },
         { comp: Description, name: 'description' },
-        { comp: mode.view ? null : Privacy, name: 'isPublic' },
+        { comp: showPrivacy ? Privacy : null, name: 'isPublic' },
         { comp: Families, name: 'belongsToFamiliesBools' },
         {
             comp: mode.view && state.upload === 'False' ? null : Images,
@@ -427,7 +429,8 @@ function ArtefactView(props) {
         { comp: Admin, name: 'admin' },
         { comp: Date, name: 'date' },
         { comp: Description, name: 'description' },
-        { comp: Families, name: 'belongsToFamiliesBools' }
+        { comp: Families, name: 'belongsToFamiliesBools' },
+        { comp: showPrivacy ? Privacy : null, name: 'isPublic' }
     ]
     const regularView = !mode.view || state.upload === 'False'
 
@@ -453,7 +456,7 @@ function ArtefactView(props) {
                 {regularView &&
                     components.map(({ comp, name, widthProps }) => {
                         if (comp === null) return null
-                        if (!widthProps) widthProps = { xs: 6, sm: 6 }
+                        if (!widthProps) widthProps = { xs: 12, sm: 6 }
                         return (
                             <Grid
                                 container

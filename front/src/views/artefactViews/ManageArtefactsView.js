@@ -41,15 +41,10 @@ const HelpContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Select from your families in the corner to view their artefacts
+                Here you can view all of the artefacts which you are an admin of
             </DialogContentText>
             <DialogContentText>
-                Enter a family's join code in the box underneath to join
-                someone's family
-            </DialogContentText>
-            <DialogContentText>
-                The join code can be copied by clicking the button underneath
-                the family name
+                Click view to see more about the artefact or to edit it
             </DialogContentText>
         </DialogContent>
     </Fragment>

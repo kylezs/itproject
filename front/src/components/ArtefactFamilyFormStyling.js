@@ -57,8 +57,7 @@ export default makeStyles(theme => ({
     },
     dropzone: {
         backgroundColor: theme.palette.background.paper + '!important',
-        // minHeight: '160px',
-        minHeight: '85% !important',
+        height: '100%',
         borderRadius: 10,
         alignItems: 'flex-start !important'
     },

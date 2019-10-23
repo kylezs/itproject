@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 
 import { useMutation } from '@apollo/react-hooks'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 import { HelpDialog } from '../components'
 import authContext from '../authContext'
@@ -26,15 +27,11 @@ const HelpContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Select from your families in the corner to view their artefacts
+                Create a family by filling out the form and clicking "create"
             </DialogContentText>
             <DialogContentText>
-                Enter a family's join code in the box underneath to join
-                someone's family
-            </DialogContentText>
-            <DialogContentText>
-                The join code can be copied by clicking the button underneath
-                the family name
+                On creation you will receive a join code which will allow others
+                to join your new family
             </DialogContentText>
         </DialogContent>
     </Fragment>
@@ -171,7 +168,7 @@ function CreateFamilyView(props) {
                         Begin adding members to '{familyName}'!
                     </DialogTitle>
                     <DialogContent>
-                        <Typography align='center'>
+                        <Typography align='left'>
                             You can now add artefacts to this family. To view
                             them simply select '{familyName}' from the Select
                             Family dropdown on your home dashboard.
@@ -181,7 +178,10 @@ function CreateFamilyView(props) {
                             them to sign up and then they can join!
                             <br />
                             <br />
-                            {joinCode}
+                            {joinCode} &nbsp;
+                            <CopyToClipboard text={joinCode}>
+                                <Button variant='outlined'>Copy</Button>
+                            </CopyToClipboard>
                         </Typography>
                     </DialogContent>
                     <DialogActions>

@@ -217,7 +217,7 @@ export default function UserHomeView(props) {
                     xs={12}
                     lg={10}
                     container
-                    spacing={2}
+                    spacing={3}
                     justify='space-between'
                     className={classes.outerContainer}
                 >
@@ -325,7 +325,7 @@ export default function UserHomeView(props) {
                     </Grid>
                     <Grid
                         container
-                        justify='center'
+                        justify='flex-start'
                         alignItems='stretch'
                         spacing={1}
                         item

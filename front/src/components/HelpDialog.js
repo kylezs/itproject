@@ -8,7 +8,6 @@ export default ({ open, setOpen, content: MyDialogContent, ...rest }) => (
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby='help-title'
-        style={{ borderRadius: 10 }}
     >
         <MyDialogContent {...rest} />
         <DialogActions>
