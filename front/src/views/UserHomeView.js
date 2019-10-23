@@ -167,9 +167,7 @@ export default function UserHomeView(props) {
         }
     )
 
-    const [
-        selectFamily,
-    ] = useMutation(SELECT_FAMILY_MUTATION, {
+    const [selectFamily] = useMutation(SELECT_FAMILY_MUTATION, {
         refetchQueries: data => [{ query: HOMEPAGE_INFO }]
     })
 
