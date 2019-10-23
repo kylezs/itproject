@@ -76,7 +76,7 @@ function LandingPage(props) {
                         color: '#f0f0f0'
                     }}
                 >
-                    Family Artefacts Register
+                    Artefact Management System
                 </Typography>
                 <Typography
                     variant='h2'

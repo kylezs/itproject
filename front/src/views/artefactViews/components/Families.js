@@ -8,6 +8,11 @@ import {
     Typography
 } from '@material-ui/core'
 
+/*
+Handles the families list as part of an artefact view
+Will only show the artefact as part of the families that you are a part of.
+i.e. Will maintain other family's privacy.
+ */
 export default ({ states, setters, families, disabled, name, classes }) => {
     var { view } = states.mode
     var { state } = states
