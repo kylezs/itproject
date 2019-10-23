@@ -122,6 +122,7 @@ function ArtefactView(props) {
     // a message indicating successful edit
     const [snackbarOpen, setSnackbarOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
+    const [creating, setCreating] = useState(false)
 
     // state variables for the map
     const [locationState, setLocationState] = useState({
@@ -272,6 +273,7 @@ function ArtefactView(props) {
     // handlers for GQL mutations
     const handleCreationCompleted = data => {
         var id = data.data.artefactCreate.artefact.id
+        setCreating(false)
         pushViewArtefactURL(id)
     }
     const updateCompleted = async data => {
@@ -296,6 +298,7 @@ function ArtefactView(props) {
         successCallback,
         errorCallback
     ) => {
+        setCreating(true)
         let form_data = new FormData()
         // Image not passed through by variables
         if (state.files && state.files.length) {
@@ -478,7 +481,7 @@ function ArtefactView(props) {
         return <FetchArtefactError />
     }
 
-    if ((mode.view || mode.edit) && artefactLoading) {
+    if ((mode.view || mode.edit) && artefactLoading || creating) {
         return <Loading />
     }
 
