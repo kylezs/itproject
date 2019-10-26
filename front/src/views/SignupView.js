@@ -61,14 +61,17 @@ function Signup(props) {
     var emailValidator = require('email-validator')
 
     const classes = useStyles()
+
+    // ran after successful signup
     const _confirm = async data => {
-        // handle signup errors and potentially login
         props.history.push(`/login`)
     }
 
+    // ran after unsuccessful sign up
     const _handleError = async errors => {
         console.log('_handleError run')
         if (errors.graphQLErrors) {
+            // handle specific error for taken username
             const subMessage = errors.graphQLErrors[0].message.substring(0, 10)
             if (USERNAME_TAKEN_ERR_MSG.startsWith(subMessage)) {
                 setUsernameIsTaken(true)
@@ -87,7 +90,6 @@ function Signup(props) {
 
     const submitForm = async event => {
         event.preventDefault()
-        console.log('form submitted')
         signup({
             variables: { username: username, email: email, password: password }
         })
@@ -95,7 +97,6 @@ function Signup(props) {
 
     const changePassword = async pass => {
         setPassword(pass)
-
         // password validation
         var failedRules = PASSWORD_SCHEMA.validate(pass, { list: true })
         setFailedPassRules(failedRules)
@@ -106,15 +107,14 @@ function Signup(props) {
         }
     }
 
+    // form validation and error messages
     const errorPassword = !!password && !validPassword
     const errorConfirmPassword =
         !!confirmPassword && !(confirmPassword === password)
 
-    const disableSubmit =
-        (!!password && (!(confirmPassword === password) || !validPassword)) ||
-        (!!email && !emailValidator.validate(email))
-
     const invalidEmail = !!email && !emailValidator.validate(email)
+    const disableSubmit = errorPassword || errorConfirmPassword || invalidEmail
+
     const emailError = emailIsTaken || invalidEmail
     var emailErrMsg = ''
     if (invalidEmail) {
@@ -122,6 +122,34 @@ function Signup(props) {
     } else if (emailIsTaken) {
         emailErrMsg = 'Email is taken'
     }
+
+    // textfield properties
+    const fields = [
+        {
+            label: 'Username',
+            error: usernameIsTaken,
+            helperText: usernameIsTaken ? 'Username is taken' : '',
+            onChange: setUsername
+        },
+        {
+            label: 'Email',
+            error: emailError,
+            helperText: emailErrMsg,
+            onChange: setEmail
+        },
+        {
+            label: 'Password',
+            error: errorPassword,
+            helperText: errorPassword ? parseFailedRules(failedPassRules) : '',
+            onChange: changePassword
+        },
+        {
+            label: 'Confirm Password',
+            error: errorConfirmPassword,
+            helperText: errorConfirmPassword ? 'Passwords must match' : '',
+            onChange: setConfirmPassword
+        }
+    ]
 
     return (
         <Paper className={classes.paper} elevation={6}>
@@ -134,61 +162,22 @@ function Signup(props) {
                     Sign up
                 </Typography>
 
-                <TextField
-                    className={classes.root}
-                    onChange={e => setUsername(e.target.value)}
-                    variant='outlined'
-                    required
-                    fullWidth
-                    autoComplete='username'
-                    label='Username'
-                    type='username'
-                    autoFocus
-                    error={usernameIsTaken}
-                    helperText={usernameIsTaken ? 'Username is taken' : ''}
-                />
-
-                <TextField
-                    className={classes.root}
-                    variant='outlined'
-                    required
-                    fullWidth
-                    autoComplete='email'
-                    label='Email'
-                    type='email'
-                    onChange={e => setEmail(e.target.value)}
-                    error={emailError}
-                    helperText={emailErrMsg}
-                />
-
-                <TextField
-                    className={classes.root}
-                    variant='outlined'
-                    required
-                    fullWidth
-                    autoComplete='password'
-                    label='Password'
-                    type='password'
-                    onChange={e => changePassword(e.target.value)}
-                    error={errorPassword}
-                    helperText={
-                        errorPassword ? parseFailedRules(failedPassRules) : ''
-                    }
-                />
-
-                <TextField
-                    className={classes.root}
-                    variant='outlined'
-                    required
-                    fullWidth
-                    label='Confirm Password'
-                    type='password'
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    error={errorConfirmPassword}
-                    helperText={
-                        errorConfirmPassword ? 'Passwords must match' : ''
-                    }
-                />
+                {fields.map((field, index) => (
+                    <TextField
+                        key={index}
+                        className={classes.root}
+                        onChange={e => field.onChange(e.target.value)}
+                        variant='outlined'
+                        required
+                        fullWidth
+                        autoComplete={field.label.toLowerCase()}
+                        label={field.label}
+                        type={field.label.toLowerCase()}
+                        autoFocus={index === 0}
+                        error={field.error}
+                        helperText={field.helperText}
+                    />
+                ))}
 
                 <Grid
                     container

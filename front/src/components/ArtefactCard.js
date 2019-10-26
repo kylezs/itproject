@@ -57,11 +57,14 @@ function ArtefactCard({ artefact }) {
 
     var mediaURI = config.mediaRoot + upload
     if (upload === 'False' && !patternURI) {
-        // use primary colour of theme as a seed for the random colour generation
+        // use primary and seconary colours of theme as a seed for the random colour generation
         var pattern = Trianglify({
             width: 500,
             height: 500,
-            x_colors: [theme.palette.primary.dark, theme.palette.secondary.light],
+            x_colors: [
+                theme.palette.primary.dark,
+                theme.palette.secondary.light
+            ],
             y_colors: 'random'
         })
         setPatternURI(pattern.png())

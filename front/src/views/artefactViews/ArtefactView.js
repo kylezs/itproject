@@ -2,17 +2,16 @@ import React, { useContext, useState, Fragment } from 'react'
 import { withRouter, Link as RouterLink } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'
 
-import {
-    CssBaseline,
-    Grid,
-    Typography,
-    Link
-} from '@material-ui/core'
+import { CssBaseline, Grid, Typography, Link } from '@material-ui/core'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 import DateFnsUtils from '@date-io/date-fns'
 
-import { geocodeQuery, artefactFamilyFormUseStyles, Loading } from '../../components'
+import {
+    geocodeQuery,
+    artefactFamilyFormUseStyles,
+    Loading
+} from '../../components'
 
 import {
     Head,
@@ -69,7 +68,7 @@ const FetchArtefactError = () => {
                     padding: '2rem'
                 }}
             >
-                This artefact is not public.
+                This artefact is either not public or does not exist.
                 <br />
                 You do not have access to view this artefact. Join a family that
                 this artefact is assigned to in order to view it. <br />
@@ -331,13 +330,10 @@ function ArtefactView(props) {
         }
     )
 
-    const [deleteArtefact] = useMutation(
-        DELETE_ARTEFACT_MUTATION,
-        {
-            onCompleted: deleteCompleted,
-            onError: handleDeleteError
-        }
-    )
+    const [deleteArtefact] = useMutation(DELETE_ARTEFACT_MUTATION, {
+        onCompleted: deleteCompleted,
+        onError: handleDeleteError
+    })
 
     const parseDate = date => {
         return date ? date.toISOString().slice(0, -1) : null
@@ -448,7 +444,9 @@ function ArtefactView(props) {
 
     const showPrivacy =
         !mode.view || (Object.keys(state).length !== 0 && state.isPublic)
-    const components = [
+    const regularView = !mode.view || state.upload === 'False'
+
+    const componentsRegView = [
         { comp: Name, name: 'name' },
         { comp: State, name: 'state' },
         { comp: Admin, name: 'admin' },
@@ -466,7 +464,7 @@ function ArtefactView(props) {
         }
     ]
 
-    const componentsViewMode = [
+    const componentsNonRegView = [
         { comp: Name, name: 'name' },
         { comp: State, name: 'state' },
         { comp: Admin, name: 'admin' },
@@ -475,13 +473,16 @@ function ArtefactView(props) {
         { comp: Families, name: 'belongsToFamiliesBools' },
         { comp: showPrivacy ? Privacy : null, name: 'isPublic' }
     ]
-    const regularView = !mode.view || state.upload === 'False'
+
+    const renderingComponents = regularView
+        ? componentsRegView
+        : componentsNonRegView
 
     if (fetchError) {
         return <FetchArtefactError />
     }
 
-    if ((mode.view || mode.edit) && artefactLoading || creating) {
+    if (((mode.view || mode.edit) && artefactLoading) || creating) {
         return <Loading />
     }
 
@@ -504,10 +505,37 @@ function ArtefactView(props) {
                     />
                 </Grid>
 
-                {regularView &&
-                    components.map(({ comp, name, widthProps }) => {
+                {/* "non-reglar view" has the image on one side, separate to the other fields */}
+                {!regularView && (
+                    <Grid container item xs={12} sm={6} alignContent='stretch'>
+                        <FieldWrapper
+                            child={Images}
+                            name={'files'}
+                            childProps={componentProps}
+                            editButtonProps={editButtonProps}
+                            classes={classes}
+                        />
+                    </Grid>
+                )}
+
+                {/* "non-regular view" puts this entire container beside the photo for large screens  */}
+                <Grid
+                    container
+                    item
+                    xs={12}
+                    sm={regularView ? 12 : 6}
+                    alignContent='stretch'
+                    spacing={1}
+                >
+                    {renderingComponents.map(({ comp, name, widthProps }) => {
                         if (comp === null) return null
-                        if (!widthProps) widthProps = { xs: 12, sm: 6 }
+                        if (!widthProps) {
+                            if (regularView) {
+                                widthProps = { xs: 12, sm: 6 }
+                            } else {
+                                widthProps = { xs: 12 }
+                            }
+                        }
                         return (
                             <Grid
                                 container
@@ -515,6 +543,7 @@ function ArtefactView(props) {
                                 {...widthProps}
                                 key={name}
                                 alignContent='stretch'
+                                padding={1}
                             >
                                 <FieldWrapper
                                     key={comp}
@@ -527,67 +556,9 @@ function ArtefactView(props) {
                             </Grid>
                         )
                     })}
+                </Grid>
 
-                {!regularView && (
-                    <Fragment>
-                        <Grid
-                            container
-                            item
-                            xs={12}
-                            sm={6}
-                            // alignItems='flex-start'
-                            alignContent='stretch'
-                        >
-                            <FieldWrapper
-                                child={Images}
-                                name={'files'}
-                                childProps={componentProps}
-                                editButtonProps={editButtonProps}
-                                classes={classes}
-                            />
-                        </Grid>
-
-                        <Grid
-                            container
-                            item
-                            xs={12}
-                            sm={6}
-                            // alignItems='flex-start'
-                            alignContent='stretch'
-                            spacing={1}
-                        >
-                            {componentsViewMode.map(
-                                ({ comp, name, widthProps }) => {
-                                    if (comp === null) return null
-                                    if (!widthProps) widthProps = { xs: 12 }
-                                    return (
-                                        <Grid
-                                            container
-                                            item
-                                            {...widthProps}
-                                            key={name}
-                                            // alignItems='flex-start'
-                                            alignContent='stretch'
-                                            padding={1}
-                                        >
-                                            <FieldWrapper
-                                                key={comp}
-                                                child={comp}
-                                                name={name}
-                                                childProps={componentProps}
-                                                editButtonProps={
-                                                    editButtonProps
-                                                }
-                                                classes={classes}
-                                            />
-                                        </Grid>
-                                    )
-                                }
-                            )}
-                        </Grid>
-                    </Fragment>
-                )}
-
+                {/* if viewing only show map if the artefact has an address */}
                 {(!mode.view || state.address) && (
                     <Grid item xs={12}>
                         <FieldWrapper
