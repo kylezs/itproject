@@ -62,7 +62,10 @@ class Query(ObjectType):
     me = Field(UserType)
 
     def resolve_users(self, info, **kwargs):
-        return get_user_model().objects.all()
+        if user.is_superuser:
+            return get_user_model().objects.all()
+        else:
+            raise Exception(AUTH_EXCEPTION)
 
     ## NEEDS TO BE FIXED FOR USER PROFILES, QUERY BY ID
     def resolve_user(self, info, **kwargs):
@@ -101,10 +104,14 @@ class Query(ObjectType):
 
     def resolve_families(self, info, **kwargs):
         user = info.context.user
-        print("requesting user: " + user.username)
-        return Family.objects.all()
+        if user.is_superuser:
+            return Family.objects.all()
+        else:
+            raise Exception(AUTH_EXCEPTION)
 
 
+
+# The mutations are kept in the specific app namespace
 class Mutation(ObjectType):
     # ==== Artefact mutations ====
     artefact_create = ArtefactCreate.Field()

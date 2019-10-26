@@ -9,7 +9,9 @@ from django.contrib.auth.models import User
 
 from gql.errors import *
 
-
+# These are the only two fields required as input to create a family
+# The rest are added through other means e.g. joining a family
+# or auto-assigned family admin
 class FamilyInputType(InputObjectType):
     family_name = String()
     about = String(required=False)

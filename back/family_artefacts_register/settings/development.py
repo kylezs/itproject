@@ -1,6 +1,18 @@
+"""
+In development we want to use our local database, which
+is fetched using the .env local file which is not in the
+git repo.
+
+The hosts allowed to connect are localhost:3000 ports
+i.e. the react development server ports
+
+We also want to just store media files locally.
+NB: These are ignored by git
+
+"""
+
 from .base import *
 from datetime import timedelta
-
 
 DEBUG = True
 

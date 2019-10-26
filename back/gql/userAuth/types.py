@@ -8,4 +8,5 @@ from graphene_django import DjangoObjectType
 class UserType(DjangoObjectType):
 
     class Meta:
+        # use django's builtin user model
         model = get_user_model()

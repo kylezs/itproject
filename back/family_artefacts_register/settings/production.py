@@ -1,3 +1,12 @@
+"""
+In production we want to allow only the server it's hosted on allowed
+to make requests.
+
+We want to use AWS as static and media file storage and not local
+We also want to use the DB that's hosted on heroku.
+"""
+
+
 from .base import *
 import dj_database_url
 DEBUG = True
@@ -9,10 +18,7 @@ SECRET_KEY = '1y3zcu)8516zgu9*^d)6siy6+y2qys=%emm(3+#u3*=6h#$e%u'
 
 # Just for testing, replaced by heroku url
 ALLOWED_HOSTS = ["glacial-caverns-32653.herokuapp.com",
-                 "glacial-caverns-32653.herokuapp.com/graphql/",
-                 "*.herokuapp.com", "127.0.0.1:8000",
-                 "http://0.0.0.0:5000",
-                 "localhost"]
+                 "glacial-caverns-32653.herokuapp.com/graphql/"]
 
 INSTALLED_APPS += [
     # Amazon AWS
