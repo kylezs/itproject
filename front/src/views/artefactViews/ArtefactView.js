@@ -1,3 +1,14 @@
+/**
+ * Input props (booleans) create, view, and edit determine the mode.
+ * If not in create mode, an artefact should be provided via props,
+ * intended use is in conjunction with GetArtefactWrapper.
+ *
+ * @summary A polymorphic artefact viewing/editing/creating component
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:13:43
+ */
+
 import React, { useContext, useState, Fragment } from 'react'
 import { withRouter, Link as RouterLink } from 'react-router-dom'
 import { useMutation } from '@apollo/react-hooks'

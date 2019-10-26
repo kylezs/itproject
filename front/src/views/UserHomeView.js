@@ -1,3 +1,16 @@
+/**
+ * Home page consists of:
+ *      A summary of the information for the selected family
+ *      A select field for the user's families
+ *      An input for a familie's join code
+ *      A grid displaying the artefacts belonging to the selected family
+ *
+ * @summary Renders the home page for a user
+ * @author Zane Duffield, Kyle Zsembery
+ *
+ * Last modified  : 2019-10-26 18:21:42
+ */
+
 import React, { useState, Fragment } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 

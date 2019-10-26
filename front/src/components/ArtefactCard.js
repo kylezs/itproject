@@ -1,3 +1,12 @@
+/**
+ * Requires as input an artefact as provided by GQL backend.
+ *
+ * @summary Provides a material card-like summary of an artefact
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 17:47:35
+ */
+
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'

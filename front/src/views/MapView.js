@@ -1,3 +1,12 @@
+/**
+ * Leverages the mapbox APIs via both Map.js and MapAPI.js within ../components
+ *
+ * @summary Renders an interactive map displaying artefacts of the users families
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:18:41
+ */
+
 import React, { useState, Fragment } from 'react'
 import { useTheme } from '@material-ui/styles'
 import {
@@ -61,7 +70,8 @@ const MyDialogContent = () => (
         <DialogTitle id='help-title'>Help</DialogTitle>
         <DialogContent>
             <DialogContentText>
-                Select from your families to view artefacts from that family as pins on the map.
+                Select from your families to view artefacts from that family as
+                pins on the map.
             </DialogContentText>
             <DialogContentText>
                 Only artefacts with a location will be shown.
@@ -173,7 +183,7 @@ function MapView(props) {
                 setErrorSnackbar({ open: true, msg: 'Error loading family' })
                 console.log(error)
             }
-        },
+        }
     })
 
     var artefacts = []
@@ -218,7 +228,6 @@ function MapView(props) {
                         borderRadius: 10
                     }}
                     artefacts={mapArtefacts}
-                    // onClick={e => setState({ ...state, selectedArtefact: {} })}
                 />
             </Grid>
             <Grid

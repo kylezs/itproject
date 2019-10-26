@@ -1,3 +1,10 @@
+/**
+ * @summary Renders a simple family creation form
+ * @author Zane Duffield, Kyle Zsembery
+ *
+ * Last modified  : 2019-10-26 18:16:12
+ */
+
 import React, { useContext, useState, Fragment } from 'react'
 import {
     Button,
@@ -39,7 +46,13 @@ const HelpContent = () => (
 )
 
 // dialog shown after successful family creation
-const FamilyCreatedDialog = ({ open, handleClose, familyName, joinCode, setCopied }) => (
+const FamilyCreatedDialog = ({
+    open,
+    handleClose,
+    familyName,
+    joinCode,
+    setCopied
+}) => (
     <Dialog open={open} onClose={handleClose}>
         <DialogTitle onClose={handleClose}>
             Begin adding members to '{familyName}'!

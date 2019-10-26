@@ -1,3 +1,14 @@
+/**
+ * PASSWORD_SCHEMA provides a "validate" method
+ * parseFailedRules interprets the output of PASSWORD_SCHEMA
+ * see SignupView.js for example usage
+ *
+ * @summary Handles password validation via it's exports
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:08:11
+ */
+
 var passwordValidator = require('password-validator');
 
 // Create a schema

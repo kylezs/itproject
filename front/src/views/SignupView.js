@@ -1,3 +1,10 @@
+/**
+ * @summary Renders a simple signup form
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:19:09
+ */
+
 import React, { useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
