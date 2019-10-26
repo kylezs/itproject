@@ -38,6 +38,40 @@ const HelpContent = () => (
     </Fragment>
 )
 
+// dialog shown after successful family creation
+const FamilyCreatedDialog = ({ open, handleClose, familyName, joinCode, setCopied }) => (
+    <Dialog open={open} onClose={handleClose}>
+        <DialogTitle onClose={handleClose}>
+            Begin adding members to '{familyName}'!
+        </DialogTitle>
+        <DialogContent>
+            <Typography align='left'>
+                You can now add artefacts to this family. To view them simply
+                select '{familyName}' from the Select Family dropdown on your
+                home dashboard.
+                <br />
+                Begin getting members to join your family! Simply share the code
+                below to your family members, get them to sign up and then they
+                can join!
+                <br />
+                <br />
+                {joinCode} &nbsp;
+                <CopyToClipboard text={joinCode} onCopy={() => setCopied(true)}>
+                    <Button variant='outlined'>Copy</Button>
+                </CopyToClipboard>
+                <br />
+                <br />
+                (This code will also be available on the home page)
+            </Typography>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleClose} color='primary' autoFocus>
+                Continue
+            </Button>
+        </DialogActions>
+    </Dialog>
+)
+
 function CreateFamilyView(props) {
     const classes = artefactFamilyFormUseStyles()
 
@@ -78,6 +112,30 @@ function CreateFamilyView(props) {
         props.history.push(`/`)
     }
 
+    // text field properties
+    const fields = [
+        {
+            label: 'Family name',
+            onChange: e => setFamilyName(e.target.value),
+            autoFocus: true
+        },
+        {
+            label: 'Tell people about your family',
+            multiline: true,
+            rows: 6,
+            onChange: e => setAbout(e.target.value)
+        },
+        {
+            label: 'Family Admin',
+            onChange: e =>
+                console.error(
+                    'The admin value was changed, how is this even possible?'
+                ),
+            defaultValue: username,
+            disabled: true
+        }
+    ]
+
     return (
         <form className={classes.form} onSubmit={submitForm}>
             <Grid container spacing={1} className={classes.outerContainer}>
@@ -93,56 +151,23 @@ function CreateFamilyView(props) {
                     </Typography>
                 </Grid>
 
-                <Grid item xs={12}>
-                    <Paper className={classes.paperWrapper} elevation={3}>
-                        <FormControl className={classes.formControl} fullWidth>
-                            <TextField
-                                variant='outlined'
-                                required
+                {fields.map(field => (
+                    <Grid item xs={12} key={field.label}>
+                        <Paper className={classes.paperWrapper} elevation={3}>
+                            <FormControl
+                                className={classes.formControl}
                                 fullWidth
-                                id='family-name'
-                                label='Family name'
-                                autoFocus
-                                onChange={e => setFamilyName(e.target.value)}
-                            />
-                        </FormControl>
-                    </Paper>
-                </Grid>
-                <Grid item xs={12}>
-                    <Paper className={classes.paperWrapper} elevation={3}>
-                        <FormControl className={classes.formControl} fullWidth>
-                            <TextField
-                                variant='outlined'
-                                multiline
-                                rows={6}
-                                fullWidth
-                                id='about'
-                                label='Tell people about your family'
-                                onChange={e => setAbout(e.target.value)}
-                            />
-                        </FormControl>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Paper className={classes.paperWrapper} elevation={3}>
-                        <FormControl className={classes.formControl} fullWidth>
-                            <TextField
-                                variant='outlined'
-                                disabled
-                                defaultValue={username}
-                                fullWidth
-                                id='family-admin'
-                                label='Family Admin'
-                                onChange={e =>
-                                    console.error(
-                                        'The admin value was changed, how is this even possible?'
-                                    )
-                                }
-                            />
-                        </FormControl>
-                    </Paper>
-                </Grid>
+                            >
+                                <TextField
+                                    variant='outlined'
+                                    required
+                                    fullWidth
+                                    {...field}
+                                />
+                            </FormControl>
+                        </Paper>
+                    </Grid>
+                ))}
 
                 <Grid item xs={12}>
                     <Button
@@ -164,39 +189,14 @@ function CreateFamilyView(props) {
                 content={HelpContent}
             />
 
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle onClose={handleClose}>
-                    Begin adding members to '{familyName}'!
-                </DialogTitle>
-                <DialogContent>
-                    <Typography align='left'>
-                        You can now add artefacts to this family. To view them
-                        simply select '{familyName}' from the Select Family
-                        dropdown on your home dashboard.
-                        <br />
-                        Begin getting members to join your family! Simply share
-                        the code below to your family members, get them to sign
-                        up and then they can join!
-                        <br />
-                        <br />
-                        {joinCode} &nbsp;
-                        <CopyToClipboard
-                            text={joinCode}
-                            onCopy={() => setCopied(true)}
-                        >
-                            <Button variant='outlined'>Copy</Button>
-                        </CopyToClipboard>
-                        <br />
-                        <br />
-                        (This code will also be available on the home page)
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color='primary' autoFocus>
-                        Continue
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <FamilyCreatedDialog
+                open={open}
+                handleClose={handleClose}
+                familyName={familyName}
+                joinCode={joinCode}
+                setCopied={setCopied}
+            />
+
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',

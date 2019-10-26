@@ -61,14 +61,17 @@ function Signup(props) {
     var emailValidator = require('email-validator')
 
     const classes = useStyles()
+
+    // ran after successful signup
     const _confirm = async data => {
-        // handle signup errors and potentially login
         props.history.push(`/login`)
     }
 
+    // ran after unsuccessful sign up
     const _handleError = async errors => {
         console.log('_handleError run')
         if (errors.graphQLErrors) {
+            // handle specific error for taken username
             const subMessage = errors.graphQLErrors[0].message.substring(0, 10)
             if (USERNAME_TAKEN_ERR_MSG.startsWith(subMessage)) {
                 setUsernameIsTaken(true)
@@ -87,7 +90,6 @@ function Signup(props) {
 
     const submitForm = async event => {
         event.preventDefault()
-        console.log('form submitted')
         signup({
             variables: { username: username, email: email, password: password }
         })
@@ -95,7 +97,6 @@ function Signup(props) {
 
     const changePassword = async pass => {
         setPassword(pass)
-
         // password validation
         var failedRules = PASSWORD_SCHEMA.validate(pass, { list: true })
         setFailedPassRules(failedRules)
@@ -106,15 +107,14 @@ function Signup(props) {
         }
     }
 
+    // form validation and error messages
     const errorPassword = !!password && !validPassword
     const errorConfirmPassword =
         !!confirmPassword && !(confirmPassword === password)
 
-    const disableSubmit =
-        (!!password && (!(confirmPassword === password) || !validPassword)) ||
-        (!!email && !emailValidator.validate(email))
-
     const invalidEmail = !!email && !emailValidator.validate(email)
+    const disableSubmit = errorPassword || errorConfirmPassword || invalidEmail
+
     const emailError = emailIsTaken || invalidEmail
     var emailErrMsg = ''
     if (invalidEmail) {
@@ -123,6 +123,7 @@ function Signup(props) {
         emailErrMsg = 'Email is taken'
     }
 
+    // textfield properties
     const fields = [
         {
             label: 'Username',
@@ -172,7 +173,7 @@ function Signup(props) {
                         autoComplete={field.label.toLowerCase()}
                         label={field.label}
                         type={field.label.toLowerCase()}
-                        autoFocus={index === 1}
+                        autoFocus={index === 0}
                         error={field.error}
                         helperText={field.helperText}
                     />

@@ -85,6 +85,21 @@ function Login({ history }) {
         event.preventDefault()
     }
 
+    const fields = [
+        {
+            label: 'Username',
+            error: invalidCred,
+            helperText: '',
+            onChange: setUsername
+        },
+        {
+            label: 'Password',
+            error: invalidCred,
+            helperText: invalidCred ? 'Please enter valid credentials' : '',
+            onChange: setPassword
+        }
+    ]
+
     return (
         <Paper className={classes.paper} elevation={6}>
             <form onSubmit={submitForm} className={classes.form}>
@@ -95,31 +110,23 @@ function Login({ history }) {
                 >
                     Log In
                 </Typography>
-                <TextField
-                    className={classes.root}
-                    variant='outlined'
-                    required
-                    fullWidth
-                    id='username'
-                    label='Username'
-                    autoFocus
-                    onChange={e => setUsername(e.target.value)}
-                    error={invalidCred}
-                />
-                <TextField
-                    className={classes.root}
-                    variant='outlined'
-                    required
-                    fullWidth
-                    label='Password'
-                    type='password'
-                    id='password'
-                    onChange={e => setPassword(e.target.value)}
-                    error={invalidCred}
-                    helperText={
-                        invalidCred ? 'Please enter valid credentials' : ''
-                    }
-                />
+
+                {fields.map((field, index) => (
+                    <TextField
+                        key={index}
+                        className={classes.root}
+                        onChange={e => field.onChange(e.target.value)}
+                        variant='outlined'
+                        required
+                        fullWidth
+                        autoComplete={field.label.toLowerCase()}
+                        label={field.label}
+                        type={field.label.toLowerCase()}
+                        autoFocus={index === 0}
+                        error={field.error}
+                        helperText={field.helperText}
+                    />
+                ))}
 
                 <Grid
                     container

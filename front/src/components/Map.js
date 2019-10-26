@@ -31,7 +31,7 @@ const InteractiveMapbox = ReactMapboxGl({
 export default function Map(props) {
     const classes = useStyles()
 
-    const MapType = props.interactive ? InteractiveMapbox : Mapbox
+    const Map = props.interactive ? InteractiveMapbox : Mapbox
     var artefacts = props.artefacts
     if (!artefacts) artefacts = []
 
@@ -53,7 +53,7 @@ export default function Map(props) {
     }
 
     return (
-        <MapType
+        <Map
             style={
                 props.mapStyle
                     ? props.mapStyle
@@ -63,6 +63,7 @@ export default function Map(props) {
             {...props.mapState}
             onClick={onMapClick}
         >
+            {/* place a marker on each provided artefact */}
             {artefacts.map(artefact => {
                 var { center, popup, initPopupOpen, id } = artefact
                 if (initPopupOpen) {
@@ -101,6 +102,6 @@ export default function Map(props) {
                     </Fragment>
                 )
             })}
-        </MapType>
+        </Map>
     )
 }
