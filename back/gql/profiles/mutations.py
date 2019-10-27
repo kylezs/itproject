@@ -1,3 +1,8 @@
+"""
+@author Kyle Zsembery
+"""
+
+
 from graphene_django.rest_framework.mutation import SerializerMutation
 from rest_framework import serializers
 from userprofile.models import Profile

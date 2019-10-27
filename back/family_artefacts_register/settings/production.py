@@ -4,6 +4,8 @@ to make requests.
 
 We want to use AWS as static and media file storage and not local
 We also want to use the DB that's hosted on heroku.
+
+Author: Kyle Zsembery, Zhuoping Miao
 """
 
 

@@ -1,3 +1,9 @@
+"""
+Defines a user profile model, that acts as user settings too
+@author Kyle Zsembery
+"""
+
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save

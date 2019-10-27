@@ -1,3 +1,7 @@
+"""
+@author Kyle Zsembery
+"""
+
 from graphene_django.rest_framework.mutation import SerializerMutation
 from graphene import Field, ID, InputObjectType, Mutation, String
 from rest_framework import serializers
@@ -48,6 +52,8 @@ class FamilyCreate(Mutation):
         
         return FamilyCreate(family=family)
 
+
+# Used when someone enters the join code to join a family
 class FamilyJoin(Mutation):
     class Arguments:
         joinCode = String(required=True)

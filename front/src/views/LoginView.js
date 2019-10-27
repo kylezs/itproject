@@ -1,6 +1,6 @@
 /**
  * @summary Renders a simple login form
- * @author Zane Duffield
+ * @author Zane Duffield, Kyle Zsembery
  *
  * Last modified  : 2019-10-26 18:17:09
  */

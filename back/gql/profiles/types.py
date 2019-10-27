@@ -1,3 +1,8 @@
+"""
+Return type for profile
+@author Kyle Zsembery
+"""
+
 from graphene_django import DjangoObjectType
 from userprofile.models import Profile
 

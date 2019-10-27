@@ -1,3 +1,9 @@
+/**
+ * @summary Creates a context for authentication
+ * @author Kyle Zsembery
+ */
+
+
 import { createContext } from "react";
 
 const authContext = createContext({

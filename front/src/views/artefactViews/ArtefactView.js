@@ -4,7 +4,7 @@
  * intended use is in conjunction with GetArtefactWrapper.
  *
  * @summary A polymorphic artefact viewing/editing/creating component
- * @author Zane Duffield
+ * @author Zane Duffield, Kyle Zsembery
  *
  * Last modified  : 2019-10-26 18:13:43
  */

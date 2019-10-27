@@ -1,3 +1,11 @@
+"""
+Defines all the read queries in GraphQL
+Defines resolvers for each required query and
+each is protected with the relevant access rights
+@author Kyle Zsembery
+"""
+
+# Generic imports
 from graphene import Argument, Field, ID, ObjectType, Schema, List
 import graphql_jwt
 from graphene_django import DjangoConnectionField
@@ -59,6 +67,9 @@ class Query(ObjectType):
 
     user = Field(UserType, id=Argument(ID, required=True))
 
+    # query for the details of a logged in user
+    # i.e. make it easier on the front end by using the 
+    # JWT token passed with each request
     me = Field(UserType)
 
     def resolve_users(self, info, **kwargs):
@@ -96,12 +107,14 @@ class Query(ObjectType):
         family = Family.objects.get(id=kwargs.get('id'))
         user_in_family = user in family.family_members.all()
 
+        # should only be able to see a family if that user is the
+        # family admin or a member of that family, or superuser
         if user.is_superuser or family.family_admin == user or user_in_family:
             return family
         else:
             raise Exception(AUTH_EXCEPTION)
 
-
+    # admin only query, for debugging purposes
     def resolve_families(self, info, **kwargs):
         user = info.context.user
         if user.is_superuser:

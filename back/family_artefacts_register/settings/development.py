@@ -9,6 +9,7 @@ i.e. the react development server ports
 We also want to just store media files locally.
 NB: These are ignored by git
 
+Author: Kyle Zsembery
 """
 
 from .base import *
