@@ -1,3 +1,10 @@
+/**
+ * @summary Auth provider created to give all parts of
+ * the application access to the credentials required
+ * @author Kyle Zsembery
+ */
+
+
 import React, { useState } from "react";
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';

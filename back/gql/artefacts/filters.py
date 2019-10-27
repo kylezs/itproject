@@ -1,3 +1,8 @@
+"""
+Define a search filter for artefacts
+@author Kyle Zsembery
+"""
+
 from django.db.models import Q
 import django_filters
 from artefacts.models import Artefact

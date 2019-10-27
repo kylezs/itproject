@@ -1,3 +1,8 @@
+"""
+Define the return type of an Artefact Object
+@author Kyle Zsembery
+"""
+
 from graphene_django import DjangoObjectType
 from artefacts.models import Artefact
 

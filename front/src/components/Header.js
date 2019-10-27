@@ -1,12 +1,18 @@
+/**
+ * @summary Renders an appbar for logged in and out users
+ * @author Zane Duffield, Kyle Zsembery
+ *
+ * Last modified  : 2019-10-26 17:59:17
+ */
+
 import React, { useContext, useState } from 'react'
 import {
     IconButton,
     Toolbar,
     AppBar,
     makeStyles,
-    Typography,
+    Typography
 } from '@material-ui/core'
-// import MenuIcon from '@material-ui/icons/Menu'
 
 import { Home, Menu, Brightness4, Brightness7 } from '@material-ui/icons'
 
@@ -68,7 +74,6 @@ export default function MenuAppBar(props) {
                     <Typography variant='h6' className={classes.title} noWrap>
                         AMS
                     </Typography>
-
 
                     <IconButton
                         className={classes.iconButton}

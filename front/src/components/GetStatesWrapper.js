@@ -1,3 +1,11 @@
+/**
+ * @summary A wrapper component that provides the possible states for an artefact
+ * according to the database
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 17:55:51
+ */
+
 import React, { useState } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 

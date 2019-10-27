@@ -1,5 +1,6 @@
 # IT PROJECT 2019 SEM 2
 ## Family Artefacts Register
+### Author: Kyle Zsembery
 
 ### Stack:
 * React.js

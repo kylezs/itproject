@@ -1,3 +1,11 @@
+/**
+ * @summary Renders one component if the user is authenticated (via JWT tokens)
+ * and another otherwise
+ * @author Kyle Zsembery
+ *
+ * Last modified  : 2019-10-26 18:10:48
+ */
+
 import React, { Component, useContext } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import authContext from '../authContext'

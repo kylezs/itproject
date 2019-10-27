@@ -1,3 +1,7 @@
+"""
+@author Kyle Zsembery
+"""
+
 from graphene_django.rest_framework.mutation import SerializerMutation
 from graphene import Field, ID, InputObjectType, Mutation, String
 from rest_framework import serializers
@@ -9,7 +13,9 @@ from django.contrib.auth.models import User
 
 from gql.errors import *
 
-
+# These are the only two fields required as input to create a family
+# The rest are added through other means e.g. joining a family
+# or auto-assigned family admin
 class FamilyInputType(InputObjectType):
     family_name = String()
     about = String(required=False)
@@ -46,6 +52,8 @@ class FamilyCreate(Mutation):
         
         return FamilyCreate(family=family)
 
+
+# Used when someone enters the join code to join a family
 class FamilyJoin(Mutation):
     class Arguments:
         joinCode = String(required=True)

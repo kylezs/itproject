@@ -1,3 +1,13 @@
+/**
+ * Must be provided a component "content" via props which renders the
+ * specific help DialogContent for the page it appears on
+ *
+ * @summary Provides a generic template for the help dialog on each page
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:00:41
+ */
+
 import React from 'react'
 import { Button, Dialog, DialogActions } from '@material-ui/core'
 

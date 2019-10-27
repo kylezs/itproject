@@ -1,5 +1,9 @@
+"""
+Define the mutations (C, U, D of CRUD) for artefacts
+@author Kyle Zsembery, King Wai Theng
+"""
+
 from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float, Scalar
-from graphene import Boolean, Field, ID, InputObjectType, Mutation, String, List, Float
 from graphene.types.datetime import Date
 from rest_framework import serializers
 from graphene_django.rest_framework.mutation import SerializerMutation

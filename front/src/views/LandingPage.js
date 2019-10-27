@@ -1,3 +1,10 @@
+/**
+ * @summary Renders a landing page for new / logged out users
+ * @author Kyle Zsembery
+ *
+ * Last modified  : 2019-10-26 18:16:46
+ */
+
 import React, { useState, useEffect } from 'react'
 import Particles from 'react-particles-js'
 import { Button } from '@material-ui/core'

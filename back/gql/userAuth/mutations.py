@@ -1,3 +1,7 @@
+"""
+@author Kyle Zsembery
+"""
+
 from django.contrib.auth import get_user_model
 
 import graphene
@@ -25,6 +29,7 @@ class CreateUser(graphene.Mutation):
             first_name=firstname,
             last_name=lastname
         )
+        # ensures it's hashed and salted
         user.set_password(password)
         user.save()
 

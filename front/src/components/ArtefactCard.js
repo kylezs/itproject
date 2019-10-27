@@ -1,3 +1,12 @@
+/**
+ * Requires as input an artefact as provided by GQL backend.
+ *
+ * @summary Provides a material card-like summary of an artefact
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 17:47:35
+ */
+
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useTheme } from '@material-ui/styles'
@@ -57,11 +66,14 @@ function ArtefactCard({ artefact }) {
 
     var mediaURI = config.mediaRoot + upload
     if (upload === 'False' && !patternURI) {
-        // use primary colour of theme as a seed for the random colour generation
+        // use primary and seconary colours of theme as a seed for the random colour generation
         var pattern = Trianglify({
             width: 500,
             height: 500,
-            x_colors: [theme.palette.primary.dark, theme.palette.secondary.light],
+            x_colors: [
+                theme.palette.primary.dark,
+                theme.palette.secondary.light
+            ],
             y_colors: 'random'
         })
         setPatternURI(pattern.png())

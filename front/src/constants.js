@@ -1,3 +1,9 @@
+/**
+ * @summary contains constants throughout app. Some change whether
+ * in build or dev
+ * @author Kyle Zsembery, Zane Duffield
+ */
+
 export const AUTH_TOKEN = 'auth-token'
 export const THEME_TYPE = 'theme-type'
 export const USERNAME_TAKEN_ERR_MSG = `duplicate key`

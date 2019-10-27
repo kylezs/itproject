@@ -1,3 +1,10 @@
+/**
+ * @summary Component leveraging the ArtefactView component in view mode
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:14:39
+ */
+
 import React from 'react'
 import ArtefactView from './ArtefactView'
 import {

@@ -1,3 +1,10 @@
+/**
+ * @summary Renders the RHS of the appbar for logged in users
+ * @author Kyle Zsembery
+ *
+ * Last modified  : 2019-10-26 18:04:10
+ */
+
 import React, { useContext } from 'react'
 import {
     IconButton,

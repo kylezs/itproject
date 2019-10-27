@@ -1,3 +1,13 @@
+/**
+ * This file renders it's children below a header and provides
+ * a theme to it's children to be accessed via the useTheme hook
+ *
+ * @summary Provides the basic structure and theming for most pages
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:02:38
+ */
+
 import React, { useState } from 'react'
 import { CssBaseline } from '@material-ui/core'
 import Header from './Header'
@@ -12,11 +22,11 @@ const typography = {
     fontFamily: 'Dosis, Roboto, sans-serif',
     h1: {
         fontFamily: 'Roboto, sans-serif',
-        fontWeight: 100,
+        fontWeight: 100
     },
     h2: {
         fontFamily: 'Roboto, sans-serif',
-        fontWeight: 100,
+        fontWeight: 100
     },
     h3: {
         fontFamily: 'Roboto, sans-serif'
@@ -31,28 +41,6 @@ const typography = {
         fontFamily: 'Roboto, sans-serif'
     }
 }
-
-// const typography = {
-//     fontFamily: 'Roboto, Dosis, sans-serif',
-//     h1: {
-//         fontFamily: 'Dosis, sans-serif'
-//     },
-//     h2: {
-//         fontFamily: 'Dosis, sans-serif'
-//     },
-//     h3: {
-//         fontFamily: 'Dosis, sans-serif'
-//     },
-//     h4: {
-//         fontFamily: 'Dosis, sans-serif'
-//     },
-//     h5: {
-//         fontFamily: 'Dosis, sans-serif'
-//     },
-//     h6: {
-//         fontFamily: 'Dosis, sans-serif'
-//     }
-// }
 
 const lightPalette = {
     primary: indigo,
@@ -84,15 +72,12 @@ let lightTheme = createMuiTheme({
 })
 lightTheme = responsiveFontSizes(lightTheme)
 
-
 let darkTheme = createMuiTheme({
     palette: darkPalette,
     type: 'dark',
     typography: typography
 })
 darkTheme = responsiveFontSizes(darkTheme)
-
-
 
 export default props => {
     // Get the user's theme from local storage. This will clear if localStorage.clear()

@@ -1,3 +1,10 @@
+/**
+ * @summary Configure everything from Apollo and link back to the configurations
+ * set in constants
+ * @author Kyle Zsembery
+ */
+
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'

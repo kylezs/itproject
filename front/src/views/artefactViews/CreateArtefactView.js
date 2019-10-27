@@ -1,3 +1,10 @@
+/**
+ * @summary Component leveraging the ArtefactView component in create mode
+ * @author Zane Duffield
+ *
+ * Last modified  : 2019-10-26 18:14:20
+ */
+
 import React from 'react'
 import ArtefactView from './ArtefactView'
 import {
