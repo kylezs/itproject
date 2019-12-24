@@ -40,7 +40,7 @@ DATABASES = {
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
+        'HOST': env('DB_HOST'), # docker-compose.yml will be set to have db
         'PORT': '5432'
     }
 }

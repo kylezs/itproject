@@ -1,0 +1,42 @@
+version: '2.3'
+
+# volumes (as it's setup now in web service) allows us to make realtime changes, it's a sync between current directory and the code dir
+# (the active dir) in the container, without having to rerun the container
+
+# Ports: 
+# container:host
+
+services:
+    db:
+        image: postgres
+        environment:
+            - POSTGRES_USER=artefacts
+            - POSTGRES_PASSWORD=Password123
+            - POSTGRES_DB=artefacts
+            - POSTGRES_PORT=5432
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        ports:
+            - "5432:5432"
+        restart: always
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:5432"]
+            interval: 5s
+            timeout: 30s
+            retries: 5
+    web:
+        build: 
+            context: "."
+        command: "python manage.py runserver 0.0.0.0:8000"
+        volumes: 
+            - .:/code
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+        links: 
+            - db:db
+        restart: on-failure
+
+volumes:
+    postgres_data:
